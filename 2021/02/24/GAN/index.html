@@ -18,7 +18,7 @@
 <meta property="og:image" content="http://example.com/2021/02/24/GAN/gan.png">
 <meta property="og:image" content="http://example.com/2021/02/24/GAN/algorithm.png">
 <meta property="article:published_time" content="2021-02-24T02:35:35.000Z">
-<meta property="article:modified_time" content="2021-02-24T13:08:05.594Z">
+<meta property="article:modified_time" content="2021-02-24T13:37:03.939Z">
 <meta property="article:author" content="Yunong">
 <meta property="article:tag" content="论文笔记">
 <meta name="twitter:card" content="summary">
@@ -180,6 +180,7 @@
 发表：NIPS 2014</p>
 </blockquote>
 <p>论文提出了一个利用对抗过程进行生成的模型，主要有两个部分组成：一个生成模型G来学习数据的分布，一个判别模型D来评估一个样本来自训练数据而不是D的概率。G的训练目标就是最大化D给出错误判断的概率。对于这个模型论文给出了一个形象的比喻，G就像制造假钞的人，而D是警察，D的目标是检验出哪些是“假钞”，哪些是“真钞”，G的目标则是制作出足够真实的“假钞”来骗过D。论文证明了对于可取任意函数的G和D，存在特殊的解使得G能够模拟出训练数据的分布并使D在任何取值上都等于 <span class="math inline">\(\frac{1}{2}\)</span>。</p>
+<h2 id="对抗网络">对抗网络</h2>
 <p>为了学习数据 <span class="math inline">\(x\)</span> 的概率分布 <span class="math inline">\(p_g\)</span>, 首先定义输入噪声的先验概率 <span class="math inline">\(p_z(z)\)</span> ,然后通过用带参数 <span class="math inline">\(\theta_g\)</span> 的多层感知机表示的可微分函数 <span class="math inline">\(G\)</span> ，将噪声映射到数据空间 <span class="math inline">\(G(z;\theta_g)\)</span> 。并且定义另一个多层感知机 <span class="math inline">\(D(x;\theta_d)\)</span> ,它输出一个标量 <span class="math inline">\(D(x)\)</span> 表示 <span class="math inline">\(x\)</span> 来自数据而不是 <span class="math inline">\(p_g\)</span> 生成的概率。训练过程中，让 <span class="math inline">\(D\)</span> 最大化分配正确标签的概率，同时让 <span class="math inline">\(G\)</span> 最小化 <span class="math inline">\(log(1-D(G(z)))\)</span> 。即 <span class="math inline">\(D\)</span> 和 <span class="math inline">\(G\)</span> 在进行对目标函数 <span class="math inline">\(V(G,D)\)</span> 的minimax game： <span class="math display">\[
 \min _{G} \max _{D} V(D, G)=\mathbb{E}_{\boldsymbol{x} \sim p_{\text {data }}(\boldsymbol{x})}[\log D(\boldsymbol{x})]+\mathbb{E}_{\boldsymbol{z} \sim p_{\boldsymbol{z}}(\boldsymbol{z})}[\log (1-D(G(\boldsymbol{z})))]
 \]</span></p>
@@ -187,16 +188,20 @@
 <center>
 <img src="/2021/02/24/GAN/gan.png" alt="gan方法图示">
 </center>
+<h2 id="理论结果">理论结果</h2>
 <p>生成器 <span class="math inline">\(G\)</span> 对于输入噪声 <span class="math inline">\(\boldsymbol{z} \sim p_{\boldsymbol{z}}\)</span> 隐式地定义了一个概率分布 <span class="math inline">\(G(z)\)</span> 。因此如果给定足够的存储空间和训练时间，可以利用该方法获取数据分布 <span class="math inline">\(p_{\text {data }}\)</span> 的很好模拟。其算法如下：</p>
 <center>
 <img src="/2021/02/24/GAN/algorithm.png" alt="gan算法">
 </center>
 <p>之后，论文通过理论推导，证明了：</p>
-<p>1.对于固定的 <span class="math inline">\(G\)</span>，最优的判别器D为： <span class="math display">\[
+<p>1.对于固定的 <span class="math inline">\(G\)</span>，最优的判别器 <span class="math inline">\(D\)</span> 为： <span class="math display">\[
 D_{G}^{*}(\boldsymbol{x})=\frac{p_{\text {data }}(\boldsymbol{x})}{p_{\text {data }}(\boldsymbol{x})+p_{g}(\boldsymbol{x})}
 \]</span></p>
 <p>2.训练过程中，当且仅当 <span class="math inline">\(p_g = p_{data}\)</span> 时，目标函数取得全局最小值 <span class="math inline">\(-log4\)</span>。</p>
-<p>3.如果 <span class="math inline">\(G\)</span> 和<span class="math inline">\(D\)</span>有足够的容量，在算法中的每一步，对给定的 <span class="math inline">\(G\)</span> ，判别器 <span class="math inline">\(D\)</span> 会达到它的最优解，并且 <span class="math inline">\(p_g\)</span> 会不断更新收敛于 <span class="math inline">\(p_{data}\)</span></p>
+<p>3.如果 <span class="math inline">\(G\)</span> 和 <span class="math inline">\(D\)</span> 有足够的容量，在算法中的每一步，对给定的 <span class="math inline">\(G\)</span> ，判别器 <span class="math inline">\(D\)</span> 会达到它的最优解，并且 <span class="math inline">\(p_g\)</span> 会不断更新收敛于 <span class="math inline">\(p_{data}\)</span></p>
+<h2 id="优缺点">优缺点</h2>
+<p>优点: 不需要用到马尔科夫链，仅需反向传播获得梯度。学习过程中不需要用到推断（inference）。模型可以利用到多种形式的函数。</p>
+<p>缺点：没有 <span class="math inline">\(p_g(x)\)</span> 的显式表达式。 <span class="math inline">\(D\)</span> 必须与 <span class="math inline">\(G\)</span> 同步训练并同时取得比较好的结果。计算复杂度比较高。</p>
 
       
 
@@ -434,11 +439,11 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">论文笔记</a>
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+                <a href="javascript:void(0)" class="js-tag color5">论文笔记</a>
               </li>
             
             <div class="clearfix"></div>
