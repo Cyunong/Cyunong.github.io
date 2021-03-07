@@ -148,6 +148,113 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-GAN-with-Gumbel" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/07/GAN-with-Gumbel/">GAN with Gumbel</a>
+    </h1>
+  
+
+        
+        <a href="/2021/03/07/GAN-with-Gumbel/" class="archive-article-date">
+  	<time datetime="2021-03-07T13:59:58.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-07</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>标题：GANS for Sequences of Discrete Elements with the Gumbel-softmax Distribution<br>
+作者：Matt J. Kusner, José Miguel Hernández-Lobato<br>
+发表：2016</p>
+</blockquote>
+<p>GAN在生成文本等离散元素序列时有着局限性，因为从如多项式这样的离散分布中取样是无法对参数求导的。对此，论文提出了使用Gumbel-softmax分布来对多项式分布作连续的拟合。</p>
+<h2 id="gumbel-softmax分布">Gumbel-softmax分布</h2>
+<p>用one-hot编码的离散数据，可以从以softmax函数输出作为概率的多项式分布中取样得来。对 <span class="math inline">\(d\)</span> 维one-hot编码向量 <span class="math inline">\(\mathbf{y}\)</span>，可以用连续的 <span class="math inline">\(d\)</span> 维向量 <span class="math inline">\(\mathbf{h}\)</span>，通过softmax函数得到表示多项式分布 <span class="math inline">\(\mathbf{y}\)</span> 概率的向量 <span class="math inline">\(\mathbf{p}\)</span>，其中 <span class="math inline">\(p_i = p(y_i = 1),i = 1,...,d.\)</span>，即： <span class="math display">\[\mathbf{p} = softmax(\mathbf{h}) \tag{1}\]</span></p>
+<p>这里softmax(·)使用softmax函数返回一个 <span class="math inline">\(d\)</span> 维向量： <span class="math display">\[
+[\operatorname{softmax}(\mathbf{h})]_{i}=\frac{\exp \left(\mathbf{h}_{i}\right)}{\sum_{j=1}^{K} \exp \left(\mathbf{h}_{j}\right)}, \quad \text { for } \quad i=1, \ldots, d \tag{2}
+\]</span> 可以证明从 <span class="math inline">\((1)\)</span> 中概率表示的多项式中采样 <span class="math inline">\(\mathbf{y}\)</span> 等价于从以下公式中取样 <span class="math inline">\(\mathbf{y}\)</span>： <span class="math display">\[
+\mathbf{y}=\text { one\_hot }(\underset{i}{\arg \max }(h_{i}+g_{i})) \tag{3},
+\]</span></p>
+<p>其中 <span class="math inline">\(g_i\)</span> 独立服从 <span class="math inline">\(\mu = 0, \beta = 1\)</span> 的Gumbel分布。</p>
+<p>从 <span class="math inline">\((3)\)</span> 中取得的样本对 <span class="math inline">\(\mathbf{h}\)</span> 的梯度为0，因为 <span class="math inline">\(\text { one\_hot }(\underset{i}{\arg \max(·)) }\)</span> 不可微。因此论文提出通过soft-max变换，用一个可微的函数来替换，具体的，使用： <span class="math display">\[ \mathbf{y}=softmax(1/\tau(\mathbf{h}+\mathbf{g})) \tag{4}\]</span></p>
+<p>其中 <span class="math inline">\(\tau\)</span> 是一个inverse temperature参数，当 <span class="math inline">\(\tau \to 0\)</span> 时，由 <span class="math inline">\((4)\)</span> 产生的样本和 <span class="math inline">\((3)\)</span> 有着相同的分布；当 <span class="math inline">\(\tau \to \infty\)</span> 时，样本是从均匀分布中得来；当 <span class="math inline">\(\tau\)</span> 取正值时，由 <span class="math inline">\((4)\)</span> 产生的样本是与 <span class="math inline">\(\mathbf{h}\)</span> 有关的光滑可导的分布。</p>
+<p><span class="math inline">\((4)\)</span> 表示的概率分布就叫做Gumbel-softmax分布，包含参数 <span class="math inline">\(\tau\)</span> 和 <span class="math inline">\(\mathbf{h}\)</span>。用于生成离散数据的GAN模型可以使用该分布进行训练，初始设定较大的 <span class="math inline">\(\tau\)</span> 值，在训练过程中逐步减小到0。</p>
+<h2 id="lstm生成模型">LSTM生成模型</h2>
+<center>
+<img src="/2021/03/07/GAN-with-Gumbel/generator.PNG" alt="生成器">
+</center>
+<center>
+<img src="/2021/03/07/GAN-with-Gumbel/discriminator.PNG" alt="判别器">
+</center>
+<h3 id="使用gumbel-softmax分布">使用Gumbel-softmax分布</h3>
+<p>生成器 <span class="math inline">\(G\)</span> 和判别器 <span class="math inline">\(D\)</span> 都是LSTM网络，分别有参数 <span class="math inline">\(\Theta\)</span> 和 <span class="math inline">\(\Phi\)</span>。训练目标是通过取样输入 <span class="math inline">\(\mathbf{x}\)</span> 和生成的数据 <span class="math inline">\(\mathbf{z}\)</span> 来学习 <span class="math inline">\(G\)</span> 和 <span class="math inline">\(D\)</span>，最小化 <span class="math inline">\(G\)</span> 和 <span class="math inline">\(D\)</span> 的损失函数来更新 <span class="math inline">\(\Theta\)</span> 和 <span class="math inline">\(\Phi\)</span>。但是从softmax分布中取样的数据 <span class="math inline">\(\mathbf{z}\)</span> 是不可导的，也就无法更新参数。在这里使用上文介绍的Gumbel-softmax分布进行替换，就可以使用梯度方法更新参数。</p>
+<h2 id="算法">算法</h2>
+<center>
+<img src="/2021/03/07/GAN-with-Gumbel/algorithm.PNG" alt="算法">
+</center>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">论文笔记</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">GAN</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/03/07/GAN-with-Gumbel/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-知识图谱综述" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -425,6 +532,10 @@ D_{G}^{*}(\boldsymbol{x})=\frac{p_{\text {data }}(\boldsymbol{x})}{p_{\text {dat
 			 
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">论文笔记</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">GAN</a>
         		</li>
       		
 		</ul>
@@ -746,11 +857,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+                <a href="javascript:void(0)" class="js-tag color4">GAN</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">
