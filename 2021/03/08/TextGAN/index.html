@@ -6,15 +6,26 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://chenyunong.com">
-  <title>Tag: 论文笔记 | Control Yourself</title>
+  <title>TextGAN | Control Yourself</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Control Yourself">
-<meta property="og:url" content="http://chenyunong.com/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/index.html">
+  <meta name="description" content="标题：Generating Text via Adversarial Training 作者：Yizhe Zhang, Zhe Gan, Lawrence Carin 发表：NIPS 2016  论文使用LSTM作为生成器，CNN作为判别器来进行对抗训练生成文本，在训练生成器时，使用匹配特征分布的方法。另外，论文还使用了多种预训练的方法并解决了离散变量的问题。 文本生成一个简单的方法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TextGAN">
+<meta property="og:url" content="http://chenyunong.com/2021/03/08/TextGAN/index.html">
 <meta property="og:site_name" content="Control Yourself">
+<meta property="og:description" content="标题：Generating Text via Adversarial Training 作者：Yizhe Zhang, Zhe Gan, Lawrence Carin 发表：NIPS 2016  论文使用LSTM作为生成器，CNN作为判别器来进行对抗训练生成文本，在训练生成器时，使用匹配特征分布的方法。另外，论文还使用了多种预训练的方法并解决了离散变量的问题。 文本生成一个简单的方法">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://chenyunong.com/2021/03/08/TextGAN/model.PNG">
+<meta property="og:image" content="http://chenyunong.com/2021/03/08/TextGAN/CNN.PNG">
+<meta property="og:image" content="http://chenyunong.com/2021/03/08/TextGAN/temperature.jpg">
+<meta property="og:image" content="http://chenyunong.com/2021/03/08/TextGAN/framework.PNG">
+<meta property="article:published_time" content="2021-03-08T13:52:40.000Z">
+<meta property="article:modified_time" content="2021-03-08T14:08:55.412Z">
 <meta property="article:author" content="Yunong">
+<meta property="article:tag" content="论文笔记">
+<meta property="article:tag" content="GAN">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://chenyunong.com/2021/03/08/TextGAN/model.PNG">
   
     <link rel="alternative" href="/atom.xml" title="Control Yourself" type="application/atom+xml">
   
@@ -146,36 +157,118 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
+            <article id="post-TextGAN" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
   
+    <h1 class="article-title" itemprop="name">
+      TextGAN
+    </h1>
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/03/08/TextGAN/" class="archive-article-date">
+
+        
+        <a href="/2021/03/08/TextGAN/" class="archive-article-date">
   	<time datetime="2021-03-08T13:52:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-08</time>
 </a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/03/08/TextGAN/">TextGAN</a>
-    </h1>
-  
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>标题：Generating Text via Adversarial Training<br>
+作者：Yizhe Zhang, Zhe Gan, Lawrence Carin<br>
+发表：NIPS 2016</p>
+</blockquote>
+<p>论文使用LSTM作为生成器，CNN作为判别器来进行对抗训练生成文本，在训练生成器时，使用匹配特征分布的方法。另外，论文还使用了多种预训练的方法并解决了离散变量的问题。</p>
+<p>文本生成一个简单的方法就是通过基于 RNN 的 encoder-decoder 学习表示句子的隐藏空间，然后通过解码隐藏空间的随机样本来生成句子。但是用autoencoder将句子映射到潜在向量空间时，映射往往只会覆盖很小的结构性的区域，所以如果选择嵌入空间的任意向量的话，解码很可能得到无意义的句子。另外一个不足是因为RNN的结构很可能导致错误的累计，就致使句子的前半部分较合理但后半部分偏差就比较大。而用GAN模型就能很好解决以上问题。</p>
+<h2 id="textgan">TextGAN</h2>
+给定语料库 <span class="math inline">\(S = \{s_1,···,s_n\}\)</span>，其中 <span class="math inline">\(n\)</span> 是句子的总数。令 <span class="math inline">\(w^t\)</span> 表示句子 <span class="math inline">\(s\)</span> 中的第 <span class="math inline">\(t\)</span> 个词，每个词 <span class="math inline">\(w^t\)</span> 使用 <span class="math inline">\(k\)</span> 维的词向量 <span class="math inline">\(\mathbf{x}_t = \mathbf{W}_e[w^t]\)</span> 嵌入表示，其中 <span class="math inline">\(\mathbf{W}_e \in \mathbb{R}^{k \times V}\)</span> 是需要学习的词嵌入矩阵，<span class="math inline">\(V\)</span> 是词典大小，符号 <span class="math inline">\([v]\)</span> 表示矩阵的第 <span class="math inline">\(v\)</span> 列。
+<center>
+<img src="/2021/03/08/TextGAN/model.PNG" alt="model">
+</center>
+<h3 id="cnn判别器">CNN判别器</h3>
+<p>CNN架构由卷积层和最大池化操作组成。一个长度为 <span class="math inline">\(T\)</span> 的句子可以通过连接词嵌入向量作为每一列，表示为矩阵 <span class="math inline">\(\mathbf{X} \in \mathbb{R}^{T-h+1}\)</span>，即 <span class="math inline">\(\mathbf{X}\)</span> 的第 <span class="math inline">\(t\)</span> 列为 <span class="math inline">\(x_t\)</span>。</p>
+<p>卷积操作使用卷积核 <span class="math inline">\(\mathbf{W}_c \in \mathbb{R}^{k \times h}\)</span>，应用到相邻 <span class="math inline">\(h\)</span> 个词汇产生特征。据此可以产生feature map <span class="math inline">\(\boldsymbol{c}=f\left(\mathbf{X} * \mathbf{W}_{c}+\boldsymbol{b}\right) \in \mathbb{R}^{T-h+1}\)</span>，其中 <span class="math inline">\(f(·)\)</span> 是非线性激活函数，<span class="math inline">\(\boldsymbol{b} \in \mathbb{R}^{T-h+1}\)</span> 是偏置向量。之后对feature map做max-over-time池化操作，即 <span class="math inline">\(\hat{c} = max\{\boldsymbol{c}\}\)</span>，该操作提取出重要信息且保证提取特征与输入句子长度无关。</p>
+在模型中会使用不同窗口大小的多个卷积核，在提取出来的向量特征层上会使用一个softmax层来将输入的句子映射到输出 <span class="math inline">\(D(\mathbf{X}) \in [0,1]\)</span>，表示 <span class="math inline">\(\mathbf{X}\)</span> 属于真实数据分布的概率。
+<center>
+<img src="/2021/03/08/TextGAN/CNN.PNG" alt="CNN判别器">
+</center>
+<h3 id="lstm生成器">LSTM生成器</h3>
+<p>LSTM解码器由于将特征向量 <span class="math inline">\(z\)</span> 转化成生成语句 <span class="math inline">\(\tilde{s}\)</span>。给定特征向量 <span class="math inline">\(z\)</span>，生成长度为 <span class="math inline">\(T\)</span> 的句子 <span class="math inline">\(\tilde{s}\)</span> 的概率为： <span class="math display">\[
+p(\tilde{s} \mid \boldsymbol{z})=p\left(w^{1} \mid \boldsymbol{z}\right) \prod_{t=2}^{T} p\left(w^{t} \mid w^{&lt;t}, \boldsymbol{z}\right)
+\]</span></p>
+<p>特别的，<span class="math inline">\(p\left(w^{1} \mid \boldsymbol{z}\right) = \operatorname{argmax}(\mathbf{V}h_1)\)</span>，其中 <span class="math inline">\(h_1 = \tanh(\mathbf{C}\boldsymbol{z})\)</span>，<span class="math inline">\(\mathbf{V}\)</span> 是一个用来计算词分布的权重矩阵。LSTM第 <span class="math inline">\(t\)</span> 步的输入 <span class="math inline">\(\boldsymbol{y}_{t-1}\)</span>是最大化 <span class="math inline">\(w^{t-1}\)</span> 的上一个单词的嵌入向量： <span class="math display">\[\boldsymbol{y}_{t-1} = \mathbf{W}_e[w^{t-1}] \tag{1}\]</span> 则生成的句子 <span class="math inline">\(s=\left[\operatorname{argmax}\left(w^{1}\right), \cdots, \operatorname{argmax}\left(w^{L}\right)\right]\)</span>。</p>
+<h3 id="训练技术">训练技术</h3>
+<p><strong>训练目标</strong>   不使用原始GAN模型目标函数，而是采用类似于特征匹配的方法，分两步进行迭代优化： <span class="math display">\[
+\text { minimizing: } L_{D}=-\mathbb{E}_{s \sim \mathcal{S}} \log D(s)-\mathbb{E}_{z \sim p_{z}(z)} \log [1-D(G(z))]
+\]</span></p>
+<p><span class="math display">\[
+\text { minimizing: } L_{G}=\operatorname{tr}\left(\boldsymbol{\Sigma}_{s}^{-1} \boldsymbol{\Sigma}_{r}+\boldsymbol{\Sigma}_{r}^{-1} \boldsymbol{\Sigma}_{s}\right)+\left(\boldsymbol{\mu}_{s}-\boldsymbol{\mu}_{r}\right)^{T}\left(\boldsymbol{\Sigma}_{s}^{-1}+\boldsymbol{\Sigma}_{r}^{-1}\right)\left(\boldsymbol{\mu}_{s}-\boldsymbol{\mu}_{r}\right)
+\]</span></p>
+<p>其中 <span class="math inline">\(\boldsymbol{\Sigma}_{s}\)</span>，<span class="math inline">\(\boldsymbol{\Sigma}_{r}\)</span>分别表示合成的和真实的句子特征向量 <span class="math inline">\(\boldsymbol{f}_{s}\)</span>，<span class="math inline">\(\boldsymbol{f}_{r}\)</span> 的协方差矩阵，<span class="math inline">\(\boldsymbol{\mu}_{s}\)</span>，<span class="math inline">\(\boldsymbol{\mu}_{r}\)</span> 表示 <span class="math inline">\(\boldsymbol{f}_{s}\)</span>，<span class="math inline">\(\boldsymbol{f}_{r}\)</span> 的平均向量，他们都是从批样本中经验性地估计得来。损失函数 <span class="math inline">\(L_G\)</span> 实际上是两个多变量高斯分布 <span class="math inline">\(\mathcal{N}(\boldsymbol{\mu}_{r},\boldsymbol{\Sigma}_{r})\)</span> 和 <span class="math inline">\(\mathcal{N}(\boldsymbol{\mu}_{s},\boldsymbol{\Sigma}_{s})\)</span> 的 JS 散度。</p>
+<p><strong>离散近似</strong>   训练的生成器 <span class="math inline">\(G\)</span> 中包含离散变量，无法直接使用梯度。基于得分函数的方法，例如 REINFORCE 算法，通过蒙特卡洛估计获得无偏的梯度估计。但是梯度估计的方差会比较大。在这里使用一个 soft-argmax 函数进行估计： <span class="math display">\[
+\boldsymbol{y}_{t-1}=\mathbf{W}_{e} \operatorname{softmax}\left(\mathbf{V} \boldsymbol{h}_{t-1} \odot L\right)
+\]</span></p>
+<p>其中 <span class="math inline">\(\odot\)</span> 表示 element-wise 乘积，当 <span class="math inline">\(L \to \infty\)</span> 时，其估计将会变成 <span class="math inline">\((1)\)</span>。</p>
+<p><strong>特征学习的混合预训练</strong>   GAN模型训练时有难以收敛的问题，通过预训练一个标准的自编码LSTM模型来初始化LSTM参数。对于判别器，随机交换语料库句子中的两个单词来构建 tweaked sentences，判别器预训练分辨真实的和tweaked sentence。 <br></p>
+<blockquote>
+<p>标题：Adversarial Feature Matching for Text Generation<br>
+作者：Yizhe Zhang, Zhe Gan, etc.<br>
+发表：ICML 2017</p>
+</blockquote>
+<p>这篇论文是上面的续作，同样使用 LSTM 作为生成器，CNN 作为判别器，通过 kernelized discrepancy metric 来匹配真实句子和合成句子的高维隐藏特征分布。这种方法可以解决对抗训练中的模式崩溃问题。</p>
+<blockquote>
+什么是模式崩溃（mode collapse）？<br>
+真实世界中的数据分布可能会有多个样本集中的“波峰”。例如，假设有一个数据集，其中包含澳大利亚中部爱丽丝泉（通常非常热）和南极南极（通常非常寒冷）的夏日温度的混合数据。数据的分布是双峰的 - 两个地区的平均温度存在峰值，两者之间存在差距。如下图。
+<center>
+<img src="/2021/03/08/TextGAN/temperature.jpg" alt="温度图">
+</center>
+<p>现在我们想训练一个产生合理温度值的 GAN。直观地说，我们希望生成器学会以几乎相等的概率产生热和冷的温度。然而，通常遇到的问题是模式崩溃，导致生成器仅从单一模式输出样本（例如，仅低温）。为什么会这样？可以考虑以下情形：<br>
+1、生成器学习到它可以通过产生接近南极温度的值来欺骗判别器认为它正在输出实际温度。<br>
+2、判别器通过了解所有澳大利亚温度都是真实的（不是由生成器产生的）而对生成器进行反驳，并且猜测南极温度是真实的还是虚假的，因为它们无法区分。<br>
+3、该生成器切换模式使得产生的值接近澳大利亚的温度来欺骗判别器，放弃南极模式。<br>
+4、判别器现在假设澳大利亚所有的温度都是假的，而南极的温度是真实的。<br>
+5、返回到第1步。<br>
+这种猫捉老鼠的游戏总是重复让人厌烦，生成器也从未被直接激励来覆盖这两种模式。在这种情况下，生成器在生成的样本中将表现出非常差的多样性，这限制了 GAN 的使用。</p>
+</blockquote>
+<p>同时，模型还在Reproducing Kernel Hilbert Space（RKHS）上使用基于核的矩匹配（moment-matching），来使得真实句子和合成句子的经验分布在隐藏特征空间中有匹配的矩。</p>
+<h2 id="textgan-1">TextGAN</h2>
+<p>给定句子语料库 <span class="math inline">\(\mathcal{S}\)</span>，使用类似于特征匹配模式替代标准GAN模型中的目标函数： <span class="math display">\[
+\begin{aligned}
+\mathcal{L}_{D} &amp;=\mathcal{L}_{G A N}-\lambda_{r} \mathcal{L}_{r e c o n}+\lambda_{m} \mathcal{L}_{M M D^{2}} \\
+\mathcal{L}_{G} &amp;=\mathcal{L}_{M M D^{2}} \\
+\mathcal{L}_{G A N} &amp;=\mathbb{E}_{s \sim \mathcal{S}} \log D(s)+\mathbb{E}_{z \sim p_{z}} \log [1-D(G(z))] \\
+\mathcal{L}_{\text {recon }} &amp;=\|\hat{z}-z\|^{2},
+\end{aligned}
+\]</span></p>
+<p>其中判别器最大化 <span class="math inline">\(\mathcal{L}_D\)</span>，生成器最小化 <span class="math inline">\(\mathcal{L}_G\)</span>。 <span class="math inline">\(\mathcal{L}_{GAN}\)</span> 是GAN中标准的目标函数。<span class="math inline">\(\mathcal{L}_{recon}\)</span> 是原始编码和重构的隐藏编码之间的欧氏距离，<span class="math inline">\(z\)</span> 来自先验分布 <span class="math inline">\(p_z(·)\)</span>。<span class="math inline">\(\mathcal{L}_{M M D^{2}}\)</span> 表示生成数据 <span class="math inline">\(\tilde{\boldsymbol{f}}\)</span> 和真实数据句子嵌入 <span class="math inline">\(\boldsymbol{f}\)</span> 经验分布之间的最大平均差（Maximum Mean Discrepancy）。</p>
+<blockquote>
+<p>MMD：maximum mean discrepancy。最大平均差异。最先提出的时候用于双样本的检测（two-sample test）问题，用于判断两个分布p和q是否相同。它的基本假设是：如果对于所有以分布生成的样本空间为输入的函数f，如果两个分布生成的足够多的样本在f上的对应的像的均值都相等，那么那么可以认为这两个分布是同一个分布。现在一般用于度量两个分布之间的相似性。</p>
+</blockquote>
+<p>MMD度量值刻画了样本集合 <span class="math inline">\(\mathcal{X}\)</span> 和 <span class="math inline">\(\mathcal{Y}\)</span> 在Reproducing Kernel Hilbert Space (RKHS)，<span class="math inline">\(\mathcal{H}\)</span> 上关于核函数 <span class="math inline">\(k(\cdot): \mathbb{R}^{d} \times \mathbb{R}^{d} \mapsto \mathbb{R}\)</span> 的差别。用数学公式表示为： <span class="math display">\[
+\begin{aligned}
+\mathcal{L}_{M M D^{2}} &amp;=\left\|\mathbb{E}_{x \sim \mathcal{X}} \phi(x)-\mathbb{E}_{y \sim \mathcal{Y}} \boldsymbol{\phi}(y)\right\|_{\mathcal{H}}^{2} \\
+&amp;=\mathbb{E}_{x \sim \mathcal{X}} \mathbb{E}_{x^{\prime} \sim \mathcal{X}}\left[k\left(x, x^{\prime}\right)\right] \\
+&amp;+\mathbb{E}_{y \sim \mathcal{Y}} \mathbb{E}_{y^{\prime} \sim \mathcal{Y}}\left[k\left(y, y^{\prime}\right)\right]-2 \mathbb{E}_{x \sim \mathcal{X}} \mathbb{E}_{y \sim \mathcal{Y}}[k(x, y)]
+\end{aligned} \tag{4}
+\]</span></p>
+模型框架图如下：
+<center>
+<img src="/2021/03/08/TextGAN/framework.PNG" alt="模型框架图">
+</center>
+<p>在判别器的目标函数中，（1）<span class="math inline">\(\mathcal{L}_{GAN}\)</span> 要求 <span class="math inline">\(\tilde{\boldsymbol{f}}\)</span> 和 <span class="math inline">\(\boldsymbol{f}\)</span> 尽量有区别；（2）<span class="math inline">\(\mathcal{L}_{recon}\)</span>要求 <span class="math inline">\(\tilde{\boldsymbol{f}}\)</span> 和 <span class="math inline">\(\boldsymbol{f}\)</span> 尽量保留用于生成句子的隐藏编码 <span class="math inline">\(z\)</span> 的重构信息；（3）<span class="math inline">\(\mathcal{L}_{MMD^2}\)</span> 要求判别器 <span class="math inline">\(D(\cdot)\)</span> 选择最具有挑战性特征让生成器去匹配。这三个部分时段判别器可以生成有区分度、有代表性、有挑战性的句子特征。</p>
+<p>MMD的使用，使得生成器尽量产生多样性的句子来匹配真实句子的变化，这一定程度上解决了模式崩溃问题。另外，GAN在训练过程中还存在收敛问题，当真实数据和生成数据相距很远时，JS散度只能产生很弱的梯度信号。在 <span class="math inline">\((4)\)</span> 中，本质上是通过高斯核使用了神经网络嵌入来匹配句子 <span class="math inline">\(s\)</span> 和 <span class="math inline">\(\tilde{s}\)</span>。当和函数是共用的时，MMD metric能比较好的解决梯度消失问题。</p>
 
-        <div class="article-info info-on-right">
-          
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -191,103 +284,106 @@
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://chenyunong.com/2021/03/08/TextGAN/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/03/07/GAN-with-Gumbel/" class="archive-article-date">
-  	<time datetime="2021-03-07T13:59:58.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-07</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2021/03/07/GAN-with-Gumbel/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">GAN with Gumbel</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/03/07/GAN-with-Gumbel/">GAN with Gumbel</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">论文笔记</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">GAN</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/02/24/GAN/" class="archive-article-date">
-  	<time datetime="2021-02-24T02:35:35.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-02-24</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/02/24/GAN/">GAN论文笔记</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">论文笔记</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">GAN</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
   
 
-    
+  
 
 
           </div>
@@ -313,9 +409,9 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
