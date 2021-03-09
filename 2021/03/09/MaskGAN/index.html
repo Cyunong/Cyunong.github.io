@@ -6,25 +6,23 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://chenyunong.com">
-  <title>GAN with Gumbel论文笔记 | Control Yourself</title>
+  <title>MaskGAN论文笔记 | Control Yourself</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="标题：GANS for Sequences of Discrete Elements with the Gumbel-softmax Distribution 作者：Matt J. Kusner, José Miguel Hernández-Lobato 发表：2016  GAN在生成文本等离散元素序列时有着局限性，因为从如多项式这样的离散分布中取样是无法对参数求导的。对此，论文提出了">
+  <meta name="description" content="标题：MaskGAN: Better Text Generation via Filling in the______ 作者：William Fedus, Ian Goodfellow, Andrew M. Dai 发表：ICLR 2018  文本生成的神经模型常常是自回归语言模型或者seq2seq模型，这些模型通过序列采样单词生成文本，每个词的生成受之前产生词的影响。虽然这些方法在一">
 <meta property="og:type" content="article">
-<meta property="og:title" content="GAN with Gumbel论文笔记">
-<meta property="og:url" content="http://chenyunong.com/2021/03/07/GAN-with-Gumbel/index.html">
+<meta property="og:title" content="MaskGAN论文笔记">
+<meta property="og:url" content="http://chenyunong.com/2021/03/09/MaskGAN/index.html">
 <meta property="og:site_name" content="Control Yourself">
-<meta property="og:description" content="标题：GANS for Sequences of Discrete Elements with the Gumbel-softmax Distribution 作者：Matt J. Kusner, José Miguel Hernández-Lobato 发表：2016  GAN在生成文本等离散元素序列时有着局限性，因为从如多项式这样的离散分布中取样是无法对参数求导的。对此，论文提出了">
+<meta property="og:description" content="标题：MaskGAN: Better Text Generation via Filling in the______ 作者：William Fedus, Ian Goodfellow, Andrew M. Dai 发表：ICLR 2018  文本生成的神经模型常常是自回归语言模型或者seq2seq模型，这些模型通过序列采样单词生成文本，每个词的生成受之前产生词的影响。虽然这些方法在一">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://chenyunong.com/2021/03/07/GAN-with-Gumbel/generator.PNG">
-<meta property="og:image" content="http://chenyunong.com/2021/03/07/GAN-with-Gumbel/discriminator.PNG">
-<meta property="og:image" content="http://chenyunong.com/2021/03/07/GAN-with-Gumbel/algorithm.PNG">
-<meta property="article:published_time" content="2021-03-07T13:59:58.000Z">
-<meta property="article:modified_time" content="2021-03-09T14:25:19.517Z">
+<meta property="og:image" content="http://chenyunong.com/2021/03/09/MaskGAN/generator.PNG">
+<meta property="article:published_time" content="2021-03-09T14:15:21.000Z">
+<meta property="article:modified_time" content="2021-03-09T14:19:24.764Z">
 <meta property="article:author" content="Yunong">
 <meta property="article:tag" content="论文笔记">
 <meta property="article:tag" content="GAN">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://chenyunong.com/2021/03/07/GAN-with-Gumbel/generator.PNG">
+<meta name="twitter:image" content="http://chenyunong.com/2021/03/09/MaskGAN/generator.PNG">
   
     <link rel="alternative" href="/atom.xml" title="Control Yourself" type="application/atom+xml">
   
@@ -156,20 +154,20 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-GAN-with-Gumbel" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-MaskGAN" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      GAN with Gumbel论文笔记
+      MaskGAN论文笔记
     </h1>
   
 
         
-        <a href="/2021/03/07/GAN-with-Gumbel/" class="archive-article-date">
-  	<time datetime="2021-03-07T13:59:58.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-07</time>
+        <a href="/2021/03/09/MaskGAN/" class="archive-article-date">
+  	<time datetime="2021-03-09T14:15:21.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-09</time>
 </a>
         
       </header>
@@ -177,35 +175,40 @@
     <div class="article-entry" itemprop="articleBody">
       
         <blockquote>
-<p>标题：GANS for Sequences of Discrete Elements with the Gumbel-softmax Distribution<br>
-作者：Matt J. Kusner, José Miguel Hernández-Lobato<br>
-发表：2016</p>
+<p>标题：MaskGAN: Better Text Generation via Filling in the______<br>
+作者：William Fedus, Ian Goodfellow, Andrew M. Dai<br>
+发表：ICLR 2018</p>
 </blockquote>
-<p>GAN在生成文本等离散元素序列时有着局限性，因为从如多项式这样的离散分布中取样是无法对参数求导的。对此，论文提出了使用Gumbel-softmax分布来对多项式分布作连续的拟合。</p>
-<h2 id="gumbel-softmax分布">Gumbel-softmax分布</h2>
-<p>用one-hot编码的离散数据，可以从以softmax函数输出作为概率的多项式分布中取样得来。对 <span class="math inline">\(d\)</span> 维one-hot编码向量 <span class="math inline">\(\mathbf{y}\)</span>，可以用连续的 <span class="math inline">\(d\)</span> 维向量 <span class="math inline">\(\mathbf{h}\)</span>，通过softmax函数得到表示多项式分布 <span class="math inline">\(\mathbf{y}\)</span> 概率的向量 <span class="math inline">\(\mathbf{p}\)</span>，其中 <span class="math inline">\(p_i = p(y_i = 1),i = 1,...,d.\)</span>，即： <span class="math display">\[\mathbf{p} = softmax(\mathbf{h}) \tag{1}\]</span></p>
-<p>这里softmax(·)使用softmax函数返回一个 <span class="math inline">\(d\)</span> 维向量： <span class="math display">\[
-[\operatorname{softmax}(\mathbf{h})]_{i}=\frac{\exp \left(\mathbf{h}_{i}\right)}{\sum_{j=1}^{K} \exp \left(\mathbf{h}_{j}\right)}, \quad \text { for } \quad i=1, \ldots, d \tag{2}
-\]</span> 可以证明从 <span class="math inline">\((1)\)</span> 中概率表示的多项式中采样 <span class="math inline">\(\mathbf{y}\)</span> 等价于从以下公式中取样 <span class="math inline">\(\mathbf{y}\)</span>： <span class="math display">\[
-\mathbf{y}=\text { one_hot }(\underset{i}{\arg \max }(h_{i}+g_{i})) \tag{3},
+<p>文本生成的神经模型常常是自回归语言模型或者seq2seq模型，这些模型通过序列采样单词生成文本，每个词的生成受之前产生词的影响。虽然这些方法在一些 benchmark 上有比较好的结果，比较适合优化 perplexity，但常会因为前段序列产生了训练数据中未出现过的单词而导致错误累计（exposure bias），产生很差的结果。而 GAN 模型解决了以上问题却对离散数据生成有着难以计算梯度的问题，因此论文提出了一个 actor-critic conditional GAN，MaskGAN，通过周围的语境填充缺失的文本进行训练，在条件和非条件的 text samples 中有着很好的效果。</p>
+<h2 id="maskgan">MaskGAN</h2>
+<p>用 <span class="math inline">\((x_t,y_t)\)</span> 表示输入和目标 tokens 对，&lt; m &gt; 表示用于遮住的 token（替代原 token），<span class="math inline">\(\hat{x_t}\)</span> 表示被遮住的原始的 token，<span class="math inline">\(\tilde{x_t}\)</span>表示填写的 token，它会被传递给判别器来判断真假。</p>
+<p>填写缺失的 tokens 需要结合之前和之后的信息，为此选择了 seq2seq 架构。生成器由编码模型和解码模型构成。对于一个离散的序列 <span class="math inline">\(\boldsymbol{x}=\left(x_{1}, \cdots, x_{T}\right)\)</span>，会随机或确定地生成一个相同长度的二元 mask，<span class="math inline">\(\boldsymbol{m}=\left(m_{1}, \cdots, m_{T}\right)\)</span>，其中 <span class="math inline">\(m_t \in \{0,1\}\)</span>，用于选择保留哪些 tokens。编码器会读入遮住后的序列，表示为 <span class="math inline">\(\boldsymbol{m}(\boldsymbol{x})\)</span>。</p>
+<p>在标准的语言模型中，解码器自回归地填充弄缺失的 tokens，但是现在这同时依赖于被遮住的文本 <span class="math inline">\(\boldsymbol{m}(\boldsymbol{x})\)</span> 和目前为止已填写的 tokens。生成器将序列的分布分解为顺序的条件序列<span class="math inline">\(P\left(\hat{x}_{1}, \cdots, \hat{x}_{T} \mid \boldsymbol{m}(\boldsymbol{x})\right)=\prod_{t=1}^{T} P\left(\hat{x}_{t} \mid \hat{x}_{1}, \cdots, \hat{x}_{t-1}, \boldsymbol{m}(\boldsymbol{x})\right)\)</span>，这样的话生成一个 token 的概率可以表示为： <span class="math display">\[
+G\left(x_{t}\right) \equiv P\left(\hat{x}_{t} \mid \hat{x}_{1}, \cdots, \hat{x}_{t-1}, \boldsymbol{m}(\boldsymbol{x})\right)
 \]</span></p>
-<p>其中 <span class="math inline">\(g_i\)</span> 独立服从 <span class="math inline">\(\mu = 0, \beta = 1\)</span> 的Gumbel分布。</p>
-<p>从 <span class="math inline">\((3)\)</span> 中取得的样本对 <span class="math inline">\(\mathbf{h}\)</span> 的梯度为0，因为 <span class="math inline">\(\text { one_hot }(\underset{i}{\arg \max(·)) }\)</span> 不可微。因此论文提出通过soft-max变换，用一个可微的函数来替换，具体的，使用： <span class="math display">\[ \mathbf{y}=softmax(1/\tau(\mathbf{h}+\mathbf{g})) \tag{4}\]</span></p>
-<p>其中 <span class="math inline">\(\tau\)</span> 是一个inverse temperature参数，当 <span class="math inline">\(\tau \to 0\)</span> 时，由 <span class="math inline">\((4)\)</span> 产生的样本和 <span class="math inline">\((3)\)</span> 有着相同的分布；当 <span class="math inline">\(\tau \to \infty\)</span> 时，样本是从均匀分布中得来；当 <span class="math inline">\(\tau\)</span> 取正值时，由 <span class="math inline">\((4)\)</span> 产生的样本是与 <span class="math inline">\(\mathbf{h}\)</span> 有关的光滑可导的分布。</p>
-<p><span class="math inline">\((4)\)</span> 表示的概率分布就叫做Gumbel-softmax分布，包含参数 <span class="math inline">\(\tau\)</span> 和 <span class="math inline">\(\mathbf{h}\)</span>。用于生成离散数据的GAN模型可以使用该分布进行训练，初始设定较大的 <span class="math inline">\(\tau\)</span> 值，在训练过程中逐步减小到0。</p>
-<h2 id="lstm生成模型">LSTM生成模型</h2>
 <center>
-<img src="/2021/03/07/GAN-with-Gumbel/generator.PNG" alt="生成器">
+<img src="/2021/03/09/MaskGAN/generator.PNG" alt="生成器模型">
 </center>
-<center>
-<img src="/2021/03/07/GAN-with-Gumbel/discriminator.PNG" alt="判别器">
-</center>
-<h3 id="使用gumbel-softmax分布">使用Gumbel-softmax分布</h3>
-<p>生成器 <span class="math inline">\(G\)</span> 和判别器 <span class="math inline">\(D\)</span> 都是LSTM网络，分别有参数 <span class="math inline">\(\Theta\)</span> 和 <span class="math inline">\(\Phi\)</span>。训练目标是通过取样输入 <span class="math inline">\(\mathbf{x}\)</span> 和生成的数据 <span class="math inline">\(\mathbf{z}\)</span> 来学习 <span class="math inline">\(G\)</span> 和 <span class="math inline">\(D\)</span>，最小化 <span class="math inline">\(G\)</span> 和 <span class="math inline">\(D\)</span> 的损失函数来更新 <span class="math inline">\(\Theta\)</span> 和 <span class="math inline">\(\Phi\)</span>。但是从softmax分布中取样的数据 <span class="math inline">\(\mathbf{z}\)</span> 是不可导的，也就无法更新参数。在这里使用上文介绍的Gumbel-softmax分布进行替换，就可以使用梯度方法更新参数。</p>
-<h2 id="算法">算法</h2>
-<center>
-<img src="/2021/03/07/GAN-with-Gumbel/algorithm.PNG" alt="算法">
-</center>
+<p>判别器与生成器有着相同的架构，但输出是每一时刻的属于真实数据的概率标量，而不是词汇表大小的分布。判别器接收生成器填充好的序列，同时还会接收原始遮住后的序列 <span class="math inline">\(\boldsymbol{m}(\boldsymbol{x})\)</span> 以帮助判别器做更好的判断。 <span class="math display">\[
+D_{\phi}\left(\tilde{x}_{t} \mid \tilde{x}_{0: T}, \boldsymbol{m}(\boldsymbol{x})\right)=P\left(\tilde{x}_{t}=x_{t}^{\mathrm{real}} \mid \tilde{x}_{0: T}, \boldsymbol{m}(\boldsymbol{x})\right)
+\]</span></p>
+<p>判别器估计概率的 log 值会作为奖励： <span class="math display">\[
+r_{t} \equiv \log D_{\phi}\left(\tilde{x}_{t} \mid \tilde{x}_{0: T}, \boldsymbol{m}(\boldsymbol{x})\right)
+\]</span></p>
+<p>模型中第三个网络是 critic network，作为判别器的补充。它用于估计 value function，是填充序列总的折扣奖励 <span class="math inline">\(R_{t}=\sum_{s=t}^{T} \gamma^{s} r_{s}\)</span>，其中 <span class="math inline">\(\gamma\)</span> 是序列中每个位置的折扣因子。</p>
+<h3 id="训练">训练</h3>
+<p>由于模型本身根据生成器的概率分布采样下一个 tokens 这一操作时不可微的，所以为了训练生成器，采用了策略梯度的方法，最大化累计奖励 <span class="math inline">\(R=\sum_{t=1}^{T} R_{t}\)</span>。 通过对<span class="math inline">\(\mathbb{E}_{G(\theta)}[R]\)</span> 执行梯度上升优化生成器的参数。可得其无偏估计 <span class="math inline">\(\nabla_{\theta} \mathbb{E}_{G}\left[R_{t}\right]=R_{t} \nabla_{\theta} \log G_{\theta}\left(\hat{x}_{t}\right)\)</span>，使用 critic 学习得到的 value function 作为baseline <span class="math inline">\(b_t = V^G(x_{1:t})\)</span> 进行简化得到生成器单个 token 的梯度贡献： <span class="math display">\[
+\nabla_{\theta} \mathbb{E}_{G}\left[R_{t}\right]=\left(R_{t}-b_{t}\right) \nabla_{\theta} \log G_{\theta}\left(\hat{x}_{t}\right)
+\]</span></p>
+<p>总的生成器梯度为 <span class="math display">\[
+\begin{aligned}
+\nabla_{\theta} \mathbb{E}[R] &amp;=\mathbb{E}_{\hat{x}_{t} \sim G}\left[\sum_{t=1}^{T}\left(R_{t}-b_{t}\right) \nabla_{\theta} \log \left(G_{\theta}\left(\hat{x}_{t}\right)\right)\right] \\
+&amp;=\mathbb{E}_{\hat{x}_{t} \sim G}\left[\sum_{t=1}^{T}\left(\sum_{s=t}^{T} \gamma^{s} r_{s}-b_{t}\right) \nabla_{\theta} \log \left(G_{\theta}\left(\hat{x}_{t}\right)\right)\right]
+\end{aligned}
+\]</span></p>
+<p>与传统GAN训练一样，判别器会根据以下梯度更新： <span class="math display">\[
+\nabla_{\phi} \frac{1}{m} \sum_{i=1}^{m}\left[\log D\left(x^{(i)}\right)\right]+\log \left(1-D\left(G\left(z^{(i)}\right)\right]\right.
+\]</span></p>
 
       
 
@@ -279,7 +282,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://chenyunong.com/2021/03/07/GAN-with-Gumbel/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://chenyunong.com/2021/03/09/MaskGAN/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -293,18 +296,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2021/03/08/TextGAN/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          TextGAN论文笔记
-        
-      </div>
-    </a>
   
-  
-    <a href="/2021/03/05/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E7%BB%BC%E8%BF%B0/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">知识图谱综述</div>
+    <a href="/2021/03/09/SeqGAN/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">SeqGAN论文笔记</div>
       <i class="icon-circle-right"></i>
     </a>
   

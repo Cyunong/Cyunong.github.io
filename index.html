@@ -148,6 +148,255 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-MaskGAN" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/09/MaskGAN/">MaskGAN论文笔记</a>
+    </h1>
+  
+
+        
+        <a href="/2021/03/09/MaskGAN/" class="archive-article-date">
+  	<time datetime="2021-03-09T14:15:21.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-09</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>标题：MaskGAN: Better Text Generation via Filling in the______<br>
+作者：William Fedus, Ian Goodfellow, Andrew M. Dai<br>
+发表：ICLR 2018</p>
+</blockquote>
+<p>文本生成的神经模型常常是自回归语言模型或者seq2seq模型，这些模型通过序列采样单词生成文本，每个词的生成受之前产生词的影响。虽然这些方法在一些 benchmark 上有比较好的结果，比较适合优化 perplexity，但常会因为前段序列产生了训练数据中未出现过的单词而导致错误累计（exposure bias），产生很差的结果。而 GAN 模型解决了以上问题却对离散数据生成有着难以计算梯度的问题，因此论文提出了一个 actor-critic conditional GAN，MaskGAN，通过周围的语境填充缺失的文本进行训练，在条件和非条件的 text samples 中有着很好的效果。</p>
+<h2 id="maskgan">MaskGAN</h2>
+<p>用 <span class="math inline">\((x_t,y_t)\)</span> 表示输入和目标 tokens 对，&lt; m &gt; 表示用于遮住的 token（替代原 token），<span class="math inline">\(\hat{x_t}\)</span> 表示被遮住的原始的 token，<span class="math inline">\(\tilde{x_t}\)</span>表示填写的 token，它会被传递给判别器来判断真假。</p>
+<p>填写缺失的 tokens 需要结合之前和之后的信息，为此选择了 seq2seq 架构。生成器由编码模型和解码模型构成。对于一个离散的序列 <span class="math inline">\(\boldsymbol{x}=\left(x_{1}, \cdots, x_{T}\right)\)</span>，会随机或确定地生成一个相同长度的二元 mask，<span class="math inline">\(\boldsymbol{m}=\left(m_{1}, \cdots, m_{T}\right)\)</span>，其中 <span class="math inline">\(m_t \in \{0,1\}\)</span>，用于选择保留哪些 tokens。编码器会读入遮住后的序列，表示为 <span class="math inline">\(\boldsymbol{m}(\boldsymbol{x})\)</span>。</p>
+<p>在标准的语言模型中，解码器自回归地填充弄缺失的 tokens，但是现在这同时依赖于被遮住的文本 <span class="math inline">\(\boldsymbol{m}(\boldsymbol{x})\)</span> 和目前为止已填写的 tokens。生成器将序列的分布分解为顺序的条件序列<span class="math inline">\(P\left(\hat{x}_{1}, \cdots, \hat{x}_{T} \mid \boldsymbol{m}(\boldsymbol{x})\right)=\prod_{t=1}^{T} P\left(\hat{x}_{t} \mid \hat{x}_{1}, \cdots, \hat{x}_{t-1}, \boldsymbol{m}(\boldsymbol{x})\right)\)</span>，这样的话生成一个 token 的概率可以表示为： <span class="math display">\[
+G\left(x_{t}\right) \equiv P\left(\hat{x}_{t} \mid \hat{x}_{1}, \cdots, \hat{x}_{t-1}, \boldsymbol{m}(\boldsymbol{x})\right)
+\]</span></p>
+<center>
+<img src="/2021/03/09/MaskGAN/generator.PNG" alt="生成器模型">
+</center>
+<p>判别器与生成器有着相同的架构，但输出是每一时刻的属于真实数据的概率标量，而不是词汇表大小的分布。判别器接收生成器填充好的序列，同时还会接收原始遮住后的序列 <span class="math inline">\(\boldsymbol{m}(\boldsymbol{x})\)</span> 以帮助判别器做更好的判断。 <span class="math display">\[
+D_{\phi}\left(\tilde{x}_{t} \mid \tilde{x}_{0: T}, \boldsymbol{m}(\boldsymbol{x})\right)=P\left(\tilde{x}_{t}=x_{t}^{\mathrm{real}} \mid \tilde{x}_{0: T}, \boldsymbol{m}(\boldsymbol{x})\right)
+\]</span></p>
+<p>判别器估计概率的 log 值会作为奖励： <span class="math display">\[
+r_{t} \equiv \log D_{\phi}\left(\tilde{x}_{t} \mid \tilde{x}_{0: T}, \boldsymbol{m}(\boldsymbol{x})\right)
+\]</span></p>
+<p>模型中第三个网络是 critic network，作为判别器的补充。它用于估计 value function，是填充序列总的折扣奖励 <span class="math inline">\(R_{t}=\sum_{s=t}^{T} \gamma^{s} r_{s}\)</span>，其中 <span class="math inline">\(\gamma\)</span> 是序列中每个位置的折扣因子。</p>
+<h3 id="训练">训练</h3>
+<p>由于模型本身根据生成器的概率分布采样下一个 tokens 这一操作时不可微的，所以为了训练生成器，采用了策略梯度的方法，最大化累计奖励 <span class="math inline">\(R=\sum_{t=1}^{T} R_{t}\)</span>。 通过对<span class="math inline">\(\mathbb{E}_{G(\theta)}[R]\)</span> 执行梯度上升优化生成器的参数。可得其无偏估计 <span class="math inline">\(\nabla_{\theta} \mathbb{E}_{G}\left[R_{t}\right]=R_{t} \nabla_{\theta} \log G_{\theta}\left(\hat{x}_{t}\right)\)</span>，使用 critic 学习得到的 value function 作为baseline <span class="math inline">\(b_t = V^G(x_{1:t})\)</span> 进行简化得到生成器单个 token 的梯度贡献： <span class="math display">\[
+\nabla_{\theta} \mathbb{E}_{G}\left[R_{t}\right]=\left(R_{t}-b_{t}\right) \nabla_{\theta} \log G_{\theta}\left(\hat{x}_{t}\right)
+\]</span></p>
+<p>总的生成器梯度为 <span class="math display">\[
+\begin{aligned}
+\nabla_{\theta} \mathbb{E}[R] &amp;=\mathbb{E}_{\hat{x}_{t} \sim G}\left[\sum_{t=1}^{T}\left(R_{t}-b_{t}\right) \nabla_{\theta} \log \left(G_{\theta}\left(\hat{x}_{t}\right)\right)\right] \\
+&amp;=\mathbb{E}_{\hat{x}_{t} \sim G}\left[\sum_{t=1}^{T}\left(\sum_{s=t}^{T} \gamma^{s} r_{s}-b_{t}\right) \nabla_{\theta} \log \left(G_{\theta}\left(\hat{x}_{t}\right)\right)\right]
+\end{aligned}
+\]</span></p>
+<p>与传统GAN训练一样，判别器会根据以下梯度更新： <span class="math display">\[
+\nabla_{\phi} \frac{1}{m} \sum_{i=1}^{m}\left[\log D\left(x^{(i)}\right)\right]+\log \left(1-D\left(G\left(z^{(i)}\right)\right]\right.
+\]</span></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">论文笔记</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">GAN</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/03/09/MaskGAN/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-SeqGAN" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/09/SeqGAN/">SeqGAN论文笔记</a>
+    </h1>
+  
+
+        
+        <a href="/2021/03/09/SeqGAN/" class="archive-article-date">
+  	<time datetime="2021-03-09T14:15:02.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-09</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>标题：SeqGAN: Sequence Generative Adversarial Nets with Policy Gradient<br>
+作者：Lantao Yu, Weinan Zhang, Jun Wang, Yong Yu<br>
+发表：AAAI 2017</p>
+</blockquote>
+<p>GAN模型在生成由离散 token 组成的句子时，判别器难以将梯度创给生成器更新参数，另外判别器只能评判整个句子，而对于生成句子的一部分，很难平衡当前分数和未来生成的句子的分数。这篇文章提出了 SeqGAN 来解决这些问题。该模型将生成器看成是强化学习中的随机策略，通过直接执行梯度策略（gradient policy）更新来绕过生成器的微分问题。模型使用GAN中判别器对整个句子评判的结果作为强化学习中的奖励信号，并用蒙特卡洛搜索将其传递给中间步的状态动作。</p>
+<h2 id="seqgan">SeqGAN</h2>
+<p>序列生成任务定义如下。给定真实世界的一个结构化序列数据集，训练一个以 <span class="math inline">\(\theta\)</span> 为参数的生成模型 <span class="math inline">\(G_{\theta}\)</span> 来生成一个序列 <span class="math inline">\(Y_{1: T}=\left(y_{1}, \ldots, y_{t}, \ldots, y_{T}\right), y_{t} \in \mathcal{Y}\)</span>，其中 <span class="math inline">\(\mathcal{Y}\)</span> 是候选 tokens 的词汇表。论文将该问题视为强化学习任务：在时间步 <span class="math inline">\(t\)</span> ，状态 <span class="math inline">\(s\)</span> 是当前已产生的 tokens <span class="math inline">\((y_{1}, \ldots, y_{t-1})\)</span>，动作 <span class="math inline">\(a\)</span> 是下一个要选择的 token <span class="math inline">\(y_t\)</span>，因此策略模型 <span class="math inline">\(G_{\theta}\left(y_{t} \mid Y_{1: t-1}\right)\)</span> 是随机的，尽管在动作选择后状态的迁移是确定的。</p>
+另外，论文也训练了一个以 <span class="math inline">\(\phi\)</span> 为参数的判别模型 <span class="math inline">\(D_{\phi}\)</span> 来提供改进生成器 <span class="math inline">\(G_{\theta}\)</span> 的指导。<span class="math inline">\(D_{\phi}(Y_{1:T})\)</span> 表示序列 <span class="math inline">\(Y_{1:T}\)</span> 有多大的概率来自真实的序列数据。如下图所示，判别器 <span class="math inline">\(D_{\phi}\)</span> 使用真实序列数据作为正样本，生成器 <span class="math inline">\(G_{\theta}\)</span> 生成的序列作为负样本进行训练。于此同时，生成器 <span class="math inline">\(G_{\theta}\)</span> 依据判别器 <span class="math inline">\(D_{\phi}\)</span> 给出的最终期待奖励值，使用策略梯度和蒙特卡洛搜索进行更新。
+<center>
+<img src="/2021/03/09/SeqGAN/model.PNG" alt="model">
+</center>
+<h3 id="策略梯度policy-gradient">策略梯度（Policy Gradient）</h3>
+<p>当不存在中间奖励时，生产模型 <span class="math inline">\(G_{\theta}\left(y_{t} \mid Y_{1: t-1}\right)\)</span> 的目标就是生成从开始状态 <span class="math inline">\(s_0\)</span> 起，最大化最终期望奖励的序列： <span class="math display">\[
+J(\theta)=\mathbb{E}\left[R_{T} \mid s_{0}, \theta\right]=\sum_{y_{1} \in \mathcal{Y}} G_{\theta}\left(y_{1} \mid s_{0}\right) \cdot Q_{D_{\phi}}^{G_{\theta}}\left(s_{0}, y_{1}\right)
+\]</span></p>
+<p>其中 <span class="math inline">\(R_{T}\)</span> 是完整序列的奖励，来自判别器 <span class="math inline">\(D_{\phi}\)</span>。<span class="math inline">\(Q_{D_{\phi}}^{G_{\theta}}\left(s_{0}, y_{1}\right)\)</span> 是序列的 action-value 函数，即从状态 <span class="math inline">\(s\)</span>，采取动作 <span class="math inline">\(a\)</span>，使用策略 <span class="math inline">\(G_{\theta}\)</span>的期望累计奖励值。这与生成器想要判别器认为生成的序列是真实的这一目标一致。</p>
+<p>所以接下来的问题就是如何估计 action-value 函数。首先，论文将判别器判断序列为真的概率 <span class="math inline">\(D_{\phi}(Y_{1:T})\)</span> 作为奖励值，则： <span class="math display">\[
+Q_{D_{\phi}}^{G_{\theta}}\left(a=y_{T}, s=Y_{1: T-1}\right)=D_{\phi}\left(Y_{1: T}\right)
+\]</span></p>
+<p>但是判别器只能为最终的句子提供一个奖励值，而对于每个时间步产生的句子的一部分，我们不仅应该考虑句子本身，还需要考虑未来输出的结果。就好像围棋和象棋，玩家有时会牺牲中间短暂的利益来换取长期的胜利。所以为了评估中间状态的 action-value，论文使用了带有 roll-out 策略（在论文中与生成器相同） <span class="math inline">\(G_{\beta}\)</span> 的蒙特卡洛搜索（Monte Carlo search）来采样后半部分未知的 <span class="math inline">\(T - t\)</span> 个 tokens。将 <span class="math inline">\(N\)</span> 次的蒙特卡洛搜索表示为： <span class="math display">\[
+\left\{Y_{1: T}^{1}, \ldots, Y_{1: T}^{N}\right\}=\mathrm{MC}^{G_{\beta}}\left(Y_{1: t} ; N\right)
+\]</span></p>
+<blockquote>
+<p>roll-out 算法是对于当前状态，从每一个可能的动作开始，之后根据给定的策略进行路径采样，根据多次采样的奖励总和来对当前状态的行动值进行估计。当目前的估计值基本收敛时，会根据行动值最大的原则选择动作进入下一个状态再重复上述过程。在蒙特卡洛控制中，采样的目的是估计一个完整的，最优价值函数，但是roll-out中的采样目的只是为了计算当前状态的行动值以便进入下一个状态，而且这些估计的行动值并不会被保留。在roll-out中采用的策略往往比较简单被称作 roll-out 策略 (roll-out policy)。</p>
+</blockquote>
+<blockquote>
+<p>蒙特卡洛树搜索是上面提到的 roll-out 算法的拓展版，在于它会记录搜索过程中的行动值变化以便更好的采样，完整的步骤有以下四步：<br>
+1、选择：从根节点出发，根据树策略(tree policy)选择一个叶节点<br>
+2、拓展：有一定概率发生，从选择的叶节点中执行一个未执行过的行动来增加一个子节点<br>
+3、模拟：从当前叶节点开始，根据 roll-out 策略执行动作直到终止时间<br>
+4、回溯：利用本次模拟中得到的奖励和逐层更新所使用到的树内节点<br>
+<img src="/2021/03/09/SeqGAN/MC.jpg" alt="蒙特卡洛树搜索"></p>
+</blockquote>
+<p>使用 <span class="math inline">\(N\)</span> 次 roll-out 策略后，会得到一批输出样。因此有： <span class="math display">\[
+\begin{array}{ll}
+Q_{D_{\phi}}^{G_{\theta}}\left(s=Y_{1: t-1}, a=y_{t}\right)= 
+\left\{\begin{array}{ll}
+\frac{1}{N} \sum_{n=1}^{N} D_{\phi}\left(Y_{1: T}^{n}\right), Y_{1: T}^{n} \in \mathrm{MC}^{G_{\beta}}\left(Y_{1: t} ; N\right) &amp; \text { for } t&lt;T \\
+D_{\phi}\left(Y_{1: t}\right) &amp; \text { for } t=T
+\end{array}\right.
+\end{array}
+\]</span></p>
+<p>使用判别器 <span class="math inline">\(D_{\phi}\)</span> 作为奖励函数的好处是它可以动态地更新以进一步迭代地改善生成器。如果生成了一批更加真实的序列，应该重新训练生成器： <span class="math display">\[
+\min _{\phi}-\mathbb{E}_{Y \sim p_{\text {data }}}\left[\log D_{\phi}(Y)\right]-\mathbb{E}_{Y \sim G_{\theta}}\left[\log \left(1-D_{\phi}(Y)\right)\right]
+\]</span></p>
+<p>有了新的判别器后，就可以更新生成器，基于策略的方法通过直接最大化长期的奖励来优化参数。生成器目标函数 <span class="math inline">\(J(\theta)\)</span> 对参数 <span class="math inline">\(\theta\)</span> 的梯度可以推导为：<span class="math display">\[
+\nabla_{\theta} J(\theta)=\sum_{t=1}^{T} \mathbb{E}_{Y_{1: t-1} \sim G_{\theta}}\left[\sum_{y_{t} \in \mathcal{Y}} \nabla_{\theta} G_{\theta}\left(y_{t} \mid Y_{1: t-1}\right) \cdot Q_{D_{\phi}}^{G_{\theta}}\left(Y_{1: t-1}, y_{t}\right)\right]
+\]</span></p>
+<p>对上市构建一个无偏估计： <span class="math display">\[
+\begin{array}{l}
+\nabla_{\theta} J(\theta) \simeq \sum_{t=1}^{T} \sum_{y_{t} \in \mathcal{Y}} \nabla_{\theta} G_{\theta}\left(y_{t} \mid Y_{1: t-1}\right) \cdot Q_{D_{\phi}}^{G_{\theta}}\left(Y_{1: t-1}, y_{t}\right) \\
+=\sum_{t=1}^{T} \sum_{y_{t} \in \mathcal{Y}} G_{\theta}\left(y_{t} \mid Y_{1: t-1}\right) \nabla_{\theta} \log G_{\theta}\left(y_{t} \mid Y_{1: t-1}\right) \cdot Q_{D_{\phi}}^{G_{\theta}}\left(Y_{1: t-1}, y_{t}\right) \\
+=\sum_{t=1}^{T} \mathbb{E}_{y_{t} \sim G_{\theta}\left(y_{t} \mid Y_{1: t-1}\right)}\left[\nabla_{\theta} \log G_{\theta}\left(y_{t} \mid Y_{1: t-1}\right) \cdot Q_{D_{\phi}}^{G_{\theta}}\left(Y_{1: t-1}, y_{t}\right)\right]
+\end{array}
+\]</span> 其中 $ Y_{1: t-1}$ 是从 <span class="math inline">\(G_{\theta}\)</span> 中采样观察到的中间状态，期望 <span class="math inline">\(\mathbb{E}[\cdot]\)</span> 可以通过采样方法估计，然后就可以更新生成器的参数了： <span class="math display">\[
+\theta \leftarrow \theta+\alpha_{h} \nabla_{\theta} J(\theta),
+\]</span></p>
+<h3 id="算法">算法</h3>
+<p><img src="/2021/03/09/SeqGAN/algorithm.PNG"></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">论文笔记</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">GAN</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/03/09/SeqGAN/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-TextGAN" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -155,7 +404,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/08/TextGAN/">TextGAN</a>
+      <a class="article-title" href="/2021/03/08/TextGAN/">TextGAN论文笔记</a>
     </h1>
   
 
@@ -316,7 +565,7 @@ p(\tilde{s} \mid \boldsymbol{z})=p\left(w^{1} \mid \boldsymbol{z}\right) \prod_{
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/07/GAN-with-Gumbel/">GAN with Gumbel</a>
+      <a class="article-title" href="/2021/03/07/GAN-with-Gumbel/">GAN with Gumbel论文笔记</a>
     </h1>
   
 
