@@ -6,15 +6,26 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://chenyunong.com">
-  <title>Tag: 知识图谱 | Control Yourself</title>
+  <title>服务器部署neo4j | Control Yourself</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Control Yourself">
-<meta property="og:url" content="http://chenyunong.com/tags/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/index.html">
+  <meta name="description" content="一年前国创项目因前端展示需要，在阿里云上购置了一台服务器，促销价一年还不到一百，前段时间到期了（当时能够报销竟然只买了一年的)，其续费要用原价，贵的要死（果然都是套路）。现在随着结项答辩的临近，只能自掏腰包重新促销价购买了一年新的服务器。并且重新部署了neo4j，在服务器跑上我们的程序，成功借助微信公众号作为前端展示。重新部署的过程中，很多坑踩了两次，在这里记录下来，也算是一个总结。 服务器的购">
+<meta property="og:type" content="article">
+<meta property="og:title" content="服务器部署neo4j">
+<meta property="og:url" content="http://chenyunong.com/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/index.html">
 <meta property="og:site_name" content="Control Yourself">
+<meta property="og:description" content="一年前国创项目因前端展示需要，在阿里云上购置了一台服务器，促销价一年还不到一百，前段时间到期了（当时能够报销竟然只买了一年的)，其续费要用原价，贵的要死（果然都是套路）。现在随着结项答辩的临近，只能自掏腰包重新促销价购买了一年新的服务器。并且重新部署了neo4j，在服务器跑上我们的程序，成功借助微信公众号作为前端展示。重新部署的过程中，很多坑踩了两次，在这里记录下来，也算是一个总结。 服务器的购">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://chenyunong.com/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/aliyun.png">
+<meta property="og:image" content="http://chenyunong.com/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/neo4j.png">
+<meta property="og:image" content="http://chenyunong.com/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/textQue.png">
+<meta property="og:image" content="http://chenyunong.com/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/voiceQue.png">
+<meta property="article:published_time" content="2021-03-19T11:13:48.000Z">
+<meta property="article:modified_time" content="2021-04-02T13:08:55.727Z">
 <meta property="article:author" content="Yunong">
+<meta property="article:tag" content="技术">
+<meta property="article:tag" content="Neo4j">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://chenyunong.com/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/aliyun.png">
   
     <link rel="alternative" href="/atom.xml" title="Control Yourself" type="application/atom+xml">
   
@@ -146,36 +157,56 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-服务器部署neo4j" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/03/05/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E7%BB%BC%E8%BF%B0/" class="archive-article-date">
-  	<time datetime="2021-03-05T12:45:38.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-05</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/03/05/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E7%BB%BC%E8%BF%B0/">知识图谱综述</a>
+    <h1 class="article-title" itemprop="name">
+      服务器部署neo4j
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/" class="archive-article-date">
+  	<time datetime="2021-03-19T11:13:48.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-19</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>一年前国创项目因前端展示需要，在阿里云上购置了一台服务器，促销价一年还不到一百，前段时间到期了（<del>当时能够报销竟然只买了一年的</del>)，其续费要用原价，贵的要死（果然都是套路）。现在随着结项答辩的临近，只能自掏腰包重新促销价购买了一年新的服务器。并且重新部署了neo4j，在服务器跑上我们的程序，成功借助微信公众号作为前端展示。重新部署的过程中，很多坑踩了两次，在这里记录下来，也算是一个总结。</p>
+<h2 id="服务器的购置">服务器的购置</h2>
+<p>服务器我们是在三月采购季促销价在阿里云购置的，价格也还能接受。买之前我们也没有对比其他厂商，比如华为云，其广告打的挺多的，不知道价格怎么用。另外友情提醒，如果一年后还打算使用却又不想高价续费的，一定及时做好数据备份和迁移的准备。</p>
+<p>之后就是记录公网ip、重置密码什么的，这些都可以在阿里云的服务器控制台网页操作，另外网页还支持VNC对服务器便捷地连接。如果需要进行文件传输的话还可以下载MobaXterm、WinSCP等远程连接软件。</p>
+<h2 id="neo4j部署">Neo4j部署</h2>
+<p>Neo4j是基于Java的图形数据库，运行Neo4j需要启动JVM进程，因此必须安装JAVA SE的JDK，这里我们选择了JDK8安装。接着从官网下载Neo4j的安装包，解压安装。</p>
+安装好后按照我们的需要修改相应的配置，修改conf目录下的neo4j.conf文件如下： <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 修改54行，去掉该行的#，可以远程通过ip访问neo4j数据库  </span><br><span class="line">dbms.connectors.default_listen_address&#x3D;0.0.0.0  </span><br><span class="line"># 修改71行，去掉#，设置http端口为7687，端口可以自定义，只要不和其他端口冲突就行  </span><br><span class="line">dbms.connector.bolt.listen_address&#x3D;:7687  </span><br><span class="line"># 修改75行，去掉#，设置http端口为7474，端口可以自定义，只要不和其他端口冲突就行  </span><br><span class="line">dbms.connector.http.listen_address&#x3D;:7474 </span><br></pre></td></tr></table></figure> 为了使得Neo4j能够被正常连接，还要设置服务器的防火墙，打开相应端口。这里我们直接在阿里云的服务器控制台设置。
+<center>
+<img src="/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/aliyun.png" width="60%" alt="防火墙设置">
+</center>
+接着就可以在bin目录执行./neo4j start启动Neo4j
+<center>
+<img src="/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/neo4j.png" width="60%" alt="启动neo4j">
+</center>
+<h2 id="结果">结果</h2>
+在重新创建图数据库并配置好微信公众号作为前端展示方式后，我们的项目又能够正常使用啦！附两张使用图（C++问答）
+<center>
+<img src="/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/textQue.png" width="60%" alt="文字问答">
+</center>
+<center>
+<img src="/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/voiceQue.png" width="60%" alt="语音问答">
+</center>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -185,25 +216,121 @@
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">知识图谱</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Neo4j</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://chenyunong.com/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+    <a href="/2021/03/23/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          存储引擎
+        
+      </div>
+    </a>
   
   
-    </div></section>
+    <a href="/2021/03/10/LeakGAN/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">LeakGAN论文笔记</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -229,9 +356,9 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,

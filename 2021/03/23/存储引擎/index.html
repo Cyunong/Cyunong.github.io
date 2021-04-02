@@ -6,15 +6,23 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://chenyunong.com">
-  <title>Tag: 知识图谱 | Control Yourself</title>
+  <title>存储引擎 | Control Yourself</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Control Yourself">
-<meta property="og:url" content="http://chenyunong.com/tags/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/index.html">
+  <meta name="description" content="存储引擎是MySQL中重要的一环，其插件式的存储引擎为我们提供了很多选择，MySQL服务器的主要架构图如下：    下面分别介绍一下几个常用的存储引擎的特点 ### MyISAM MySQL 5.5版本以前默认的存储引擎。其主要关注点在于性能，插入速度快、访问速度快。但是非常致命的是它不支持事务、不支持外键。采用的是表级锁，因此也不支持高并发。另外它采用的二进制层次式的文件，在不同操作系统">
+<meta property="og:type" content="article">
+<meta property="og:title" content="存储引擎">
+<meta property="og:url" content="http://chenyunong.com/2021/03/23/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/index.html">
 <meta property="og:site_name" content="Control Yourself">
+<meta property="og:description" content="存储引擎是MySQL中重要的一环，其插件式的存储引擎为我们提供了很多选择，MySQL服务器的主要架构图如下：    下面分别介绍一下几个常用的存储引擎的特点 ### MyISAM MySQL 5.5版本以前默认的存储引擎。其主要关注点在于性能，插入速度快、访问速度快。但是非常致命的是它不支持事务、不支持外键。采用的是表级锁，因此也不支持高并发。另外它采用的二进制层次式的文件，在不同操作系统">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://chenyunong.com/2021/03/23/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/mysql.png">
+<meta property="article:published_time" content="2021-03-23T15:16:26.000Z">
+<meta property="article:modified_time" content="2021-03-23T15:21:49.108Z">
 <meta property="article:author" content="Yunong">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://chenyunong.com/2021/03/23/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/mysql.png">
   
     <link rel="alternative" href="/atom.xml" title="Control Yourself" type="application/atom+xml">
   
@@ -146,64 +154,169 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-存储引擎" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/03/05/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E7%BB%BC%E8%BF%B0/" class="archive-article-date">
-  	<time datetime="2021-03-05T12:45:38.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-05</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/03/05/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E7%BB%BC%E8%BF%B0/">知识图谱综述</a>
+    <h1 class="article-title" itemprop="name">
+      存储引擎
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2021/03/23/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" class="archive-article-date">
+  	<time datetime="2021-03-23T15:16:26.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-23</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        存储引擎是MySQL中重要的一环，其插件式的存储引擎为我们提供了很多选择，MySQL服务器的主要架构图如下：
+<center>
+<img src="/2021/03/23/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/mysql.png" width="60%" alt="MySQL架构">
+</center>
+<p>下面分别介绍一下几个常用的存储引擎的特点 ### MyISAM MySQL 5.5版本以前默认的存储引擎。其主要关注点在于性能，插入速度快、访问速度快。但是非常致命的是它不支持事务、不支持外键。采用的是表级锁，因此也不支持高并发。另外它采用的二进制层次式的文件，在不同操作系统间移植比较方便。</p>
+<h3 id="innodb">InnoDB</h3>
+<p>目前MySQL默认的存储引擎，支持事务、外键约束，采用行级锁，支持高并发。有独立的缓冲池，可以缓冲数据和索引。可以说是一个有着很多特性，均衡发展的存储引擎。但是插入查询速度比MyISAM而言较慢。</p>
+<h3 id="memory">Memory</h3>
+<p>该存储引擎将数据存储在RAM中，其优势自然是访问速度相当的快。但是服务器一旦出现断电之类的故障，存储在内存中的数据就玩完了。比较适合存储中间生成的表，或者是临时生成的用于计算的表。</p>
+<h3 id="archive">Archive</h3>
+<p>提供很高效的数据压缩，但是对查询更新的支持不好。适合用于存储大量不常用的历史归档数据。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">技术</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">数据库</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">知识图谱</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">MySQL</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://chenyunong.com/2021/03/23/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+    <a href="/2021/04/02/mysql-datatype/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          MySQL数据类型
+        
+      </div>
+    </a>
   
   
-    </div></section>
+    <a href="/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">服务器部署neo4j</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -229,9 +342,9 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,

@@ -148,6 +148,335 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-mysql-datatype" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/04/02/mysql-datatype/">MySQL数据类型</a>
+    </h1>
+  
+
+        
+        <a href="/2021/04/02/mysql-datatype/" class="archive-article-date">
+  	<time datetime="2021-04-02T12:50:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-02</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>数据库助教工作需要讲解MySQL基本数据类型，以下为准备内容</p>
+<hr>
+<p>当我们学习一门程序语言时，首先可能是了解它的语法，接着就是学习它的数据类型了。而对于SQL这种用在以存储为主的数据库上的语言来说，了解它所支持的数据类型就更加重要了，而接下来我们就来学习一下MySQL数据表中支持的数据类型。</p>
+<h2 id="整数类型">整数类型</h2>
+整数类型由小到大可以分为tinyint、smallint、mediumint、int、bigint几类，默认表示有符号数。如果希望表示无符号数，可用关键字“unsigned”进行修饰。如： <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">score tinyint unsigned</span><br></pre></td></tr></table></figure> 各整数类型的字节数和取值范围如下图所示：
+<div data-align="center">
+<p><img src="/2021/04/02/mysql-datatype/整数类型.PNG" width="80%" alt="整数类型"></p>
+</div>
+我们有时会见到tinyint(1),int(4)这样的定义，实际上括号里表示的是显示宽度，与类型实际的字节数和表示范围并无关系。比如说定义了一个id为int(5),并指定zero fill，则十进制不到五位的数，前面会用0填充，超过五位的还是照常显示，不受影响（见下图）
+<div data-align="center">
+<p><img src="/2021/04/02/mysql-datatype/zerofill.jpg" width="80%" alt="zerofill"></p>
+</div>
+<h2 id="小数类型">小数类型</h2>
+<p>小数类型可以分为精确小数类型（decimal）和浮点数类型（单精度float、双精度double）。</p>
+<p>decimal(length,precision)用来表示精读确定的小数类型，其中length表示包括整数部分和小数部分的最大位数，precision表示精度（小数部分的位数）。其本质上是使用字符串来表示小数，因此数据库中存储的值就等于插入的值，不会像浮点数类型那样可能产生精读的丢失。</p>
+<p>decimal(5,2)表示小数的取值范围：-999.99 ~ 999.99 decimal(5,0)表示：-99999 ~ 99999的整数 值得注意的是，如果插入的数据小数部分超过精读限制会进行四舍五入截断，而整数部分超出限制的话会报错。</p>
+浮点数类型的字节数和取值范围如下表所示，其也可以使用decimal的表示方式，且由于存储时十进制向二进制转化的缘故，可能存在精读的丢失。
+<div data-align="center">
+<p><img src="/2021/04/02/mysql-datatype/float.PNG" width="80%" alt="浮点数类型"></p>
+</div>
+<p>至于为什么表示范围是这么大，可以去了解一下浮点数阶码和位数的表示方式。</p>
+<h2 id="字符串类型">字符串类型</h2>
+<p>字符串类型主要可以分为定长字符串类型char和变长字符串类型varchar和text，在数据外观上使用单引号括起来以区别其他数据类型。</p>
+<p>char(n)和varchar(n)在存储或检索过程中不进行大小写转换，检索时对大小写是不敏感的。这和表命名的问题是类似的，之所以使用下划线而不是驼峰命名法，是因为是否区分大小写是与操作系统有关的，Linux下默认区分大小写，而windows下不区分，所以使用驼峰命名会带来一些问题。</p>
+<p>char(n)的n最大为255，也就是最多能存储255个字符。 varchar(n)的n取值实际上是受限于MySQL一行数据的最大长度以及字符编码方式。MySQL规定一行数据不能超过64K，所以varchar的长度不能超过65535字节，减去1个字节表示是否为NULL，2个字节存储字符串长度，剩下65532字节存储实际字符串。对于gbk编码来说，一个字符最多占2个字节，因此n最大为65532/2；对于utf-8编码，一个字符最多占3个字节，n最大为65532/3。</p>
+<p>这里有必要说一下字符的编码方式问题。我们一般常说的Unicode码实际上是一个字符集。因为ASCII码最初设计的时候只使用1个字节表示英文字母和一些可打印字符等，在互联网普及的今天已经完全不够用。因此出现Unicode码来表示多国语言的字符和一些扩充符号，它使用两个字节表示基础的一些符号，包括不同国家语言常用的符号，也就是UCS-2。之后使用4个字节扩展了许多其他的符号，也就是UCS-4（目前只使用了3个字节）。而gbk、utf-8、utf-16这些是对Unicode的不同编码方式，gbk主要是对简体中文的编码方式，采用两个字节表示中文的Unicode码点；utf-8使用变长编码，1个字节表示英文字符，3个字节表示中文字符，对于英文的存储来说可以有效地节省存储空间；utf-16则是直接使用两个字节（大端或小端）来表示Unicode码点，与UCS-2对应，windows操作系统中所说的Unicode编码实际上就是指utf-16小端编码。</p>
+<p>varchar(255)如果使用gbk编码存储一个'中'字，那么varchar(255)只占用3字节，其中2个字节存储字符'中',一个字节记录长度。 char(255)就算只存储一个汉字也需要占用255个字符长度的存储空间。</p>
+<p>在插入尾部有空格的字符串的时候，char会将尾部空格去除，而varchar则不会。实际上char未填满的字符空间都会用空格填充，因此字符串尾部的空格无法被识别。MySQL中两种类型比较的时候会使用PADSPACE校对规则，忽略字段末尾的空格字符，如果希望区分需要用到length函数。</p>
+<p>总结一下，以下情况使用varchar比较合适：</p>
+<ul>
+<li>字符串列的最大长度比平均长度大很多</li>
+<li>列的更新次数少，碎片不成问题</li>
+<li>UTF-8这样复杂的变长编码，使用不同的字节数存储字符</li>
+</ul>
+<p>以下情况使用char合适：</p>
+<ul>
+<li>字符串非常短或者所有值都接近一个长度，如MD5</li>
+<li>经常变更的值，定长的char不容易产生碎片</li>
+<li>列非常短，char存储效率更高，如存储字符'Y'或'N'表示布尔类型</li>
+</ul>
+<p>另外如果是存储中文的话可以使用nvarchar(n)，它是使用Unicode编码（UTF-16），可以在不同的系统中都很好的显示。</p>
+<h2 id="日期类型">日期类型</h2>
+<p>date表示日期，默认格式为'YYYY-MM-DD'，在MySQL中分隔符可任意指定，如@、%；time表示时间，格式'HH:MM:SS',其中分隔符必须为':'；year表示年份datetime与timestamp是是日期与时间的混合类型，格式为'YYYY-MM-DD HH:MM:SS'，该类型理论上可以使用date加time代替。这些类型可以使用字符串或者数字进行赋值，如果要获取当前时间，可以使用函数now()。</p>
+<p>datetime（8字节）和timestamp（4字节）都是日期和时间的混合类型，他们的区别在于：</p>
+<ul>
+<li>datetime保存的时间范围较大，年的数字在1000 - 9999之间，timestamp保存的时间范围较小，年的数字在1970 - 2037之间</li>
+<li>NULL在插入timestamp字段后，实际的值是MySQL服务器当前的日期和时间，而在datetime中就是NULL</li>
+<li>同一个timestamp类型的日期或时间，在不同的时区显示的结果不同</li>
+</ul>
+<h2 id="复合类型">复合类型</h2>
+<p>MySQL 支持两种复合数据类型：enum枚举类型和set集合类型。enum类型的字段类似于单选按钮的功能，一个enum类型的数据最多可以包含65535个元素（1或2个字节）。set 类型的字段类似于复选框的功能，一个set类型的数据最多可以包含64个元素（1、2、4或8个字节）。</p>
+<p>enum和set实际是采用整数存储，编号从1开始，0表示无效的enum值。</p>
+<h2 id="二进制类型">二进制类型</h2>
+<p>前面介绍的都是一些有实际意义的数据类型，但有一些数据是单纯地由'0','1'组成的字符串，比如说视频、音频和可执行程序等，这些数据就需要用二进制类型来存储。它与字符串类型的不同在于：字符串是以字符为单位存储，通过特定的编码将二进制串解释为字符，而二进制类型是按字节为单位存储，存储处理最原始的字节数据。</p>
+<p>二进制类型可以类比字符串类型，主要有：binary、varbinary、bit、blob。其中blob用于存储二进制大对象，排序索引使用前max_short_length个字符，默认为1024K，可自行设置。可存储的最大值由类型确定，客户端和服务器之间可传递的最大值由内存和通信缓存区大小max_allowd_packet确定。</p>
+<h2 id="数据类型选择原则">数据类型选择原则</h2>
+<p>对于数据库设计来说，选择合适的数据类型，不仅可以节省储存空间，还可以有效地提升数据的计算性能。 通常遵循以下原则：</p>
+<ul>
+<li>越小越好：在符合应用要求（取值范围、精度）的前提下，尽量使用“短”数据类型</li>
+<li>简单就好：数据类型越简单越好</li>
+<li>在MySQL中，应该用内置的日期和时间数据类型，而不是用字符串来存储日期和时间</li>
+<li>尽量采用精确小数类型（例如decimal），而不采用浮点数类型</li>
+<li>尽量避免NULL字段，建议将字段指定为NOT NULL约束</li>
+<li>整型是最好的选择，位数据类型可以用整数代替</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">数据库</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">MySQL</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/04/02/mysql-datatype/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-存储引擎" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/23/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/">存储引擎</a>
+    </h1>
+  
+
+        
+        <a href="/2021/03/23/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" class="archive-article-date">
+  	<time datetime="2021-03-23T15:16:26.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-23</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        存储引擎是MySQL中重要的一环，其插件式的存储引擎为我们提供了很多选择，MySQL服务器的主要架构图如下：
+<center>
+<img src="/2021/03/23/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/mysql.png" width="60%" alt="MySQL架构">
+</center>
+<p>下面分别介绍一下几个常用的存储引擎的特点 ### MyISAM MySQL 5.5版本以前默认的存储引擎。其主要关注点在于性能，插入速度快、访问速度快。但是非常致命的是它不支持事务、不支持外键。采用的是表级锁，因此也不支持高并发。另外它采用的二进制层次式的文件，在不同操作系统间移植比较方便。</p>
+<h3 id="innodb">InnoDB</h3>
+<p>目前MySQL默认的存储引擎，支持事务、外键约束，采用行级锁，支持高并发。有独立的缓冲池，可以缓冲数据和索引。可以说是一个有着很多特性，均衡发展的存储引擎。但是插入查询速度比MyISAM而言较慢。</p>
+<h3 id="memory">Memory</h3>
+<p>该存储引擎将数据存储在RAM中，其优势自然是访问速度相当的快。但是服务器一旦出现断电之类的故障，存储在内存中的数据就玩完了。比较适合存储中间生成的表，或者是临时生成的用于计算的表。</p>
+<h3 id="archive">Archive</h3>
+<p>提供很高效的数据压缩，但是对查询更新的支持不好。适合用于存储大量不常用的历史归档数据。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">数据库</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">MySQL</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/03/23/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-服务器部署neo4j" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/">服务器部署neo4j</a>
+    </h1>
+  
+
+        
+        <a href="/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/" class="archive-article-date">
+  	<time datetime="2021-03-19T11:13:48.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-19</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>一年前国创项目因前端展示需要，在阿里云上购置了一台服务器，促销价一年还不到一百，前段时间到期了（<del>当时能够报销竟然只买了一年的</del>)，其续费要用原价，贵的要死（果然都是套路）。现在随着结项答辩的临近，只能自掏腰包重新促销价购买了一年新的服务器。并且重新部署了neo4j，在服务器跑上我们的程序，成功借助微信公众号作为前端展示。重新部署的过程中，很多坑踩了两次，在这里记录下来，也算是一个总结。</p>
+<h2 id="服务器的购置">服务器的购置</h2>
+<p>服务器我们是在三月采购季促销价在阿里云购置的，价格也还能接受。买之前我们也没有对比其他厂商，比如华为云，其广告打的挺多的，不知道价格怎么用。另外友情提醒，如果一年后还打算使用却又不想高价续费的，一定及时做好数据备份和迁移的准备。</p>
+<p>之后就是记录公网ip、重置密码什么的，这些都可以在阿里云的服务器控制台网页操作，另外网页还支持VNC对服务器便捷地连接。如果需要进行文件传输的话还可以下载MobaXterm、WinSCP等远程连接软件。</p>
+<h2 id="neo4j部署">Neo4j部署</h2>
+<p>Neo4j是基于Java的图形数据库，运行Neo4j需要启动JVM进程，因此必须安装JAVA SE的JDK，这里我们选择了JDK8安装。接着从官网下载Neo4j的安装包，解压安装。</p>
+安装好后按照我们的需要修改相应的配置，修改conf目录下的neo4j.conf文件如下： <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 修改54行，去掉该行的#，可以远程通过ip访问neo4j数据库  </span><br><span class="line">dbms.connectors.default_listen_address&#x3D;0.0.0.0  </span><br><span class="line"># 修改71行，去掉#，设置http端口为7687，端口可以自定义，只要不和其他端口冲突就行  </span><br><span class="line">dbms.connector.bolt.listen_address&#x3D;:7687  </span><br><span class="line"># 修改75行，去掉#，设置http端口为7474，端口可以自定义，只要不和其他端口冲突就行  </span><br><span class="line">dbms.connector.http.listen_address&#x3D;:7474 </span><br></pre></td></tr></table></figure> 为了使得Neo4j能够被正常连接，还要设置服务器的防火墙，打开相应端口。这里我们直接在阿里云的服务器控制台设置。
+<center>
+<img src="/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/aliyun.png" width="60%" alt="防火墙设置">
+</center>
+接着就可以在bin目录执行./neo4j start启动Neo4j
+<center>
+<img src="/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/neo4j.png" width="60%" alt="启动neo4j">
+</center>
+<h2 id="结果">结果</h2>
+在重新创建图数据库并配置好微信公众号作为前端展示方式后，我们的项目又能够正常使用啦！附两张使用图（C++问答）
+<center>
+<img src="/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/textQue.png" width="60%" alt="文字问答">
+</center>
+<center>
+<img src="/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/voiceQue.png" width="60%" alt="语音问答">
+</center>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">技术</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Neo4j</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-LeakGAN" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1005,270 +1334,10 @@ p(\tilde{s} \mid \boldsymbol{z})=p\left(w^{1} \mid \boldsymbol{z}\right) \prod_{
 
 
   
-    <article id="post-GAN" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/02/24/GAN/">GAN论文笔记</a>
-    </h1>
-  
-
-        
-        <a href="/2021/02/24/GAN/" class="archive-article-date">
-  	<time datetime="2021-02-24T02:35:35.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-02-24</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <blockquote>
-<p>标题：Generative Adversarial Nets<br>
-作者：Ian Goodfellow, Jean Pouget-Abadie, etc.<br>
-发表：NIPS 2014</p>
-</blockquote>
-<p>论文提出了一个利用对抗过程进行生成的模型，主要有两个部分组成：一个生成模型G来学习数据的分布，一个判别模型D来评估一个样本来自训练数据而不是D的概率。G的训练目标就是最大化D给出错误判断的概率。对于这个模型论文给出了一个形象的比喻，G就像制造假钞的人，而D是警察，D的目标是检验出哪些是“假钞”，哪些是“真钞”，G的目标则是制作出足够真实的“假钞”来骗过D。论文证明了对于可取任意函数的G和D，存在特殊的解使得G能够模拟出训练数据的分布并使D在任何取值上都等于 <span class="math inline">\(\frac{1}{2}\)</span>。</p>
-<h2 id="对抗网络">对抗网络</h2>
-<p>为了学习数据 <span class="math inline">\(x\)</span> 的概率分布 <span class="math inline">\(p_g\)</span>, 首先定义输入噪声的先验概率 <span class="math inline">\(p_z(z)\)</span> ,然后通过用带参数 <span class="math inline">\(\theta_g\)</span> 的多层感知机表示的可微分函数 <span class="math inline">\(G\)</span> ，将噪声映射到数据空间 <span class="math inline">\(G(z;\theta_g)\)</span> 。并且定义另一个多层感知机 <span class="math inline">\(D(x;\theta_d)\)</span> ,它输出一个标量 <span class="math inline">\(D(x)\)</span> 表示 <span class="math inline">\(x\)</span> 来自数据而不是 <span class="math inline">\(p_g\)</span> 生成的概率。训练过程中，让 <span class="math inline">\(D\)</span> 最大化分配正确标签的概率，同时让 <span class="math inline">\(G\)</span> 最小化 <span class="math inline">\(log(1-D(G(z)))\)</span> 。即 <span class="math inline">\(D\)</span> 和 <span class="math inline">\(G\)</span> 在进行对目标函数 <span class="math inline">\(V(G,D)\)</span> 的minimax game： <span class="math display">\[
-\min _{G} \max _{D} V(D, G)=\mathbb{E}_{\boldsymbol{x} \sim p_{\text {data }}(\boldsymbol{x})}[\log D(\boldsymbol{x})]+\mathbb{E}_{\boldsymbol{z} \sim p_{\boldsymbol{z}}(\boldsymbol{z})}[\log (1-D(G(\boldsymbol{z})))]
-\]</span></p>
-对于该训练方法，论文给出以下图示解释：
-<center>
-<img src="/2021/02/24/GAN/gan.PNG" alt="gan方法图示">
-</center>
-<h2 id="理论结果">理论结果</h2>
-<p>生成器 <span class="math inline">\(G\)</span> 对于输入噪声 <span class="math inline">\(\boldsymbol{z} \sim p_{\boldsymbol{z}}\)</span> 隐式地定义了一个概率分布 <span class="math inline">\(G(z)\)</span> 。因此如果给定足够的存储空间和训练时间，可以利用该方法获取数据分布 <span class="math inline">\(p_{\text {data }}\)</span> 的很好模拟。其算法如下：</p>
-<center>
-<img src="/2021/02/24/GAN/algorithm.PNG" alt="gan算法">
-</center>
-<p>之后，论文通过理论推导，证明了：</p>
-<p>1.对于固定的 <span class="math inline">\(G\)</span>，最优的判别器 <span class="math inline">\(D\)</span> 为： <span class="math display">\[
-D_{G}^{*}(\boldsymbol{x})=\frac{p_{\text {data }}(\boldsymbol{x})}{p_{\text {data }}(\boldsymbol{x})+p_{g}(\boldsymbol{x})}
-\]</span></p>
-<p>2.训练过程中，当且仅当 <span class="math inline">\(p_g = p_{data}\)</span> 时，目标函数取得全局最小值 <span class="math inline">\(-log4\)</span>。</p>
-<p>3.如果 <span class="math inline">\(G\)</span> 和 <span class="math inline">\(D\)</span> 有足够的容量，在算法中的每一步，对给定的 <span class="math inline">\(G\)</span> ，判别器 <span class="math inline">\(D\)</span> 会达到它的最优解，并且 <span class="math inline">\(p_g\)</span> 会不断更新收敛于 <span class="math inline">\(p_{data}\)</span></p>
-<h2 id="优缺点">优缺点</h2>
-<p>优点: 不需要用到马尔科夫链，仅需反向传播获得梯度。学习过程中不需要用到推断（inference）。模型可以利用到多种形式的函数。</p>
-<p>缺点：没有 <span class="math inline">\(p_g(x)\)</span> 的显式表达式。 <span class="math inline">\(D\)</span> 必须与 <span class="math inline">\(G\)</span> 同步训练并同时取得比较好的结果。计算复杂度比较高。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">论文笔记</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">GAN</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/02/24/GAN/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-开学" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/02/22/%E5%BC%80%E5%AD%A6/">开学</a>
-    </h1>
-  
-
-        
-        <a href="/2021/02/22/%E5%BC%80%E5%AD%A6/" class="archive-article-date">
-  	<time datetime="2021-02-22T03:27:58.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-02-22</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>离我写第一篇博客过去了20天，一眨眼就到了开学的日子。在这期间我还是不孚所望地什么事都没干，唉~~ 国创3月8日开始申报，3月22日开始结项；毕设3月15开始中期检查（完成论文75%），我的天呐，之前还没觉得什么，现在一看通知和今天的日期，时间怎么这么紧啊！我现在已经没脸见龙哥了。</p>
-<p>现在真的是没办法了，鸡血不顶用，deadline可还是实打实地摆在那儿，我面临着严重地的假期后的焦虑，必须得做点事了。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/02/22/%E5%BC%80%E5%AD%A6/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-写在开始" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/02/03/%E5%86%99%E5%9C%A8%E5%BC%80%E5%A7%8B/">写在开始</a>
-    </h1>
-  
-
-        
-        <a href="/2021/02/03/%E5%86%99%E5%9C%A8%E5%BC%80%E5%A7%8B/" class="archive-article-date">
-  	<time datetime="2021-02-03T08:28:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-02-03</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="现状">现状</h2>
-<p>现在2021年2月初，我已经在家里舒舒服服的度过了大半个大四寒假。在家里吃了玩，玩了睡的生活固然惬意，但是跟导师许下的研究进展承诺和悬而未办的国创论文报告却总让我感到焦虑。从明天开始学习到下周开始学习，转眼一月就过去了，面对龙哥的push也只能说研究ing，我觉着再这样下去可能要完犊子了，于是便乘着这短暂的焦虑和热情开始着手我的正经事儿。</p>
-<h2 id="关于博客">关于博客</h2>
-<p>本来我是在枯燥无聊地做着调研工作，却在搜索资料的时候无意中看到了<a target="_blank" rel="noopener" href="https://tobiaslee.top/2018/09/30/Text-Generation-with-GAN/">TobiasLee</a>的一篇博客:</p>
-<blockquote>
-<p>SeqGAN 这一框架下的 GAN-based 文本生成模型，work 很大程度上是 training trick 的堆砌，并不适合工程应用，但依旧值得探索，或者蹭热点发 Paper</p>
-</blockquote>
-<p>能如此高屋建瓴的得出这样的结论，想必一定是NLP领域的大牛吧。怀着这样的好奇心我拜读了他的博客文章，结果却发现这竟然是人家大二写的一篇文章！！！而现在是一名北大的研究生。我翻着他的博客，通过文字走进了另一个人的生活，真是奇妙啊。有如此知识、文笔、勤奋，我真的十分羡慕他。相比起来，我的学习和生活简直平庸的不行。</p>
-<p>在本就焦虑的情况下再受到了这样的比较刺激，我感觉我又有动力了（鸡汤真香）。成为大佬的第一步就是向大佬学习，于是我在网上找了许多资料和教程，建了这样一个大佬同款博客，督促自己好好读论文、写笔记。就算无法实现，多看看书、打打字不也美哉？</p>
-<h2 id="后续工作">后续工作</h2>
-<p>寒假已经所剩无几了，但我却始终无法进入状态，干了这碗热鸡汤，我得将注意力转移到学习工作上来了。从现在开始，一天至少阅读一篇论文，写点笔记，学习一些知识，国创和毕业论文早日做出点东西，Fighting！！！</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/02/03/%E5%86%99%E5%9C%A8%E5%BC%80%E5%A7%8B/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
+    <nav id="page-nav">
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
+    </nav>
   
 
 
@@ -1396,11 +1465,23 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">数据库</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">MySQL</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">技术</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Neo4j</a>
               </li>
              
               <li class="article-tag-list-item">

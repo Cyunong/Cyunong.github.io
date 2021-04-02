@@ -6,11 +6,11 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://chenyunong.com">
-  <title>Tag: 知识图谱 | Control Yourself</title>
+  <title>Control Yourself</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta property="og:type" content="website">
 <meta property="og:title" content="Control Yourself">
-<meta property="og:url" content="http://chenyunong.com/tags/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/index.html">
+<meta property="og:url" content="http://chenyunong.com/page/2/index.html">
 <meta property="og:site_name" content="Control Yourself">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:author" content="Yunong">
@@ -148,62 +148,275 @@
           <div id="js-content" class="content-ll">
             
   
-  
+    <article id="post-GAN" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/03/05/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E7%BB%BC%E8%BF%B0/" class="archive-article-date">
-  	<time datetime="2021-03-05T12:45:38.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-05</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
     <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/03/05/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E7%BB%BC%E8%BF%B0/">知识图谱综述</a>
+      <a class="article-title" href="/2021/02/24/GAN/">GAN论文笔记</a>
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2021/02/24/GAN/" class="archive-article-date">
+  	<time datetime="2021-02-24T02:35:35.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-02-24</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>标题：Generative Adversarial Nets<br>
+作者：Ian Goodfellow, Jean Pouget-Abadie, etc.<br>
+发表：NIPS 2014</p>
+</blockquote>
+<p>论文提出了一个利用对抗过程进行生成的模型，主要有两个部分组成：一个生成模型G来学习数据的分布，一个判别模型D来评估一个样本来自训练数据而不是D的概率。G的训练目标就是最大化D给出错误判断的概率。对于这个模型论文给出了一个形象的比喻，G就像制造假钞的人，而D是警察，D的目标是检验出哪些是“假钞”，哪些是“真钞”，G的目标则是制作出足够真实的“假钞”来骗过D。论文证明了对于可取任意函数的G和D，存在特殊的解使得G能够模拟出训练数据的分布并使D在任何取值上都等于 <span class="math inline">\(\frac{1}{2}\)</span>。</p>
+<h2 id="对抗网络">对抗网络</h2>
+<p>为了学习数据 <span class="math inline">\(x\)</span> 的概率分布 <span class="math inline">\(p_g\)</span>, 首先定义输入噪声的先验概率 <span class="math inline">\(p_z(z)\)</span> ,然后通过用带参数 <span class="math inline">\(\theta_g\)</span> 的多层感知机表示的可微分函数 <span class="math inline">\(G\)</span> ，将噪声映射到数据空间 <span class="math inline">\(G(z;\theta_g)\)</span> 。并且定义另一个多层感知机 <span class="math inline">\(D(x;\theta_d)\)</span> ,它输出一个标量 <span class="math inline">\(D(x)\)</span> 表示 <span class="math inline">\(x\)</span> 来自数据而不是 <span class="math inline">\(p_g\)</span> 生成的概率。训练过程中，让 <span class="math inline">\(D\)</span> 最大化分配正确标签的概率，同时让 <span class="math inline">\(G\)</span> 最小化 <span class="math inline">\(log(1-D(G(z)))\)</span> 。即 <span class="math inline">\(D\)</span> 和 <span class="math inline">\(G\)</span> 在进行对目标函数 <span class="math inline">\(V(G,D)\)</span> 的minimax game： <span class="math display">\[
+\min _{G} \max _{D} V(D, G)=\mathbb{E}_{\boldsymbol{x} \sim p_{\text {data }}(\boldsymbol{x})}[\log D(\boldsymbol{x})]+\mathbb{E}_{\boldsymbol{z} \sim p_{\boldsymbol{z}}(\boldsymbol{z})}[\log (1-D(G(\boldsymbol{z})))]
+\]</span></p>
+对于该训练方法，论文给出以下图示解释：
+<center>
+<img src="/2021/02/24/GAN/gan.PNG" alt="gan方法图示">
+</center>
+<h2 id="理论结果">理论结果</h2>
+<p>生成器 <span class="math inline">\(G\)</span> 对于输入噪声 <span class="math inline">\(\boldsymbol{z} \sim p_{\boldsymbol{z}}\)</span> 隐式地定义了一个概率分布 <span class="math inline">\(G(z)\)</span> 。因此如果给定足够的存储空间和训练时间，可以利用该方法获取数据分布 <span class="math inline">\(p_{\text {data }}\)</span> 的很好模拟。其算法如下：</p>
+<center>
+<img src="/2021/02/24/GAN/algorithm.PNG" alt="gan算法">
+</center>
+<p>之后，论文通过理论推导，证明了：</p>
+<p>1.对于固定的 <span class="math inline">\(G\)</span>，最优的判别器 <span class="math inline">\(D\)</span> 为： <span class="math display">\[
+D_{G}^{*}(\boldsymbol{x})=\frac{p_{\text {data }}(\boldsymbol{x})}{p_{\text {data }}(\boldsymbol{x})+p_{g}(\boldsymbol{x})}
+\]</span></p>
+<p>2.训练过程中，当且仅当 <span class="math inline">\(p_g = p_{data}\)</span> 时，目标函数取得全局最小值 <span class="math inline">\(-log4\)</span>。</p>
+<p>3.如果 <span class="math inline">\(G\)</span> 和 <span class="math inline">\(D\)</span> 有足够的容量，在算法中的每一步，对给定的 <span class="math inline">\(G\)</span> ，判别器 <span class="math inline">\(D\)</span> 会达到它的最优解，并且 <span class="math inline">\(p_g\)</span> 会不断更新收敛于 <span class="math inline">\(p_{data}\)</span></p>
+<h2 id="优缺点">优缺点</h2>
+<p>优点: 不需要用到马尔科夫链，仅需反向传播获得梯度。学习过程中不需要用到推断（inference）。模型可以利用到多种形式的函数。</p>
+<p>缺点：没有 <span class="math inline">\(p_g(x)\)</span> 的显式表达式。 <span class="math inline">\(D\)</span> 必须与 <span class="math inline">\(G\)</span> 同步训练并同时取得比较好的结果。计算复杂度比较高。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">技术</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">论文笔记</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">知识图谱</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">GAN</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/02/24/GAN/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
   
+    <article id="post-开学" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
   
-    </div></section>
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/02/22/%E5%BC%80%E5%AD%A6/">开学</a>
+    </h1>
   
 
+        
+        <a href="/2021/02/22/%E5%BC%80%E5%AD%A6/" class="archive-article-date">
+  	<time datetime="2021-02-22T03:27:58.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-02-22</time>
+</a>
+        
+      </header>
     
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>离我写第一篇博客过去了20天，一眨眼就到了开学的日子。在这期间我还是不孚所望地什么事都没干，唉~~ 国创3月8日开始申报，3月22日开始结项；毕设3月15开始中期检查（完成论文75%），我的天呐，之前还没觉得什么，现在一看通知和今天的日期，时间怎么这么紧啊！我现在已经没脸见龙哥了。</p>
+<p>现在真的是没办法了，鸡血不顶用，deadline可还是实打实地摆在那儿，我面临着严重地的假期后的焦虑，必须得做点事了。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/02/22/%E5%BC%80%E5%AD%A6/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-写在开始" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/02/03/%E5%86%99%E5%9C%A8%E5%BC%80%E5%A7%8B/">写在开始</a>
+    </h1>
+  
+
+        
+        <a href="/2021/02/03/%E5%86%99%E5%9C%A8%E5%BC%80%E5%A7%8B/" class="archive-article-date">
+  	<time datetime="2021-02-03T08:28:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-02-03</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="现状">现状</h2>
+<p>现在2021年2月初，我已经在家里舒舒服服的度过了大半个大四寒假。在家里吃了玩，玩了睡的生活固然惬意，但是跟导师许下的研究进展承诺和悬而未办的国创论文报告却总让我感到焦虑。从明天开始学习到下周开始学习，转眼一月就过去了，面对龙哥的push也只能说研究ing，我觉着再这样下去可能要完犊子了，于是便乘着这短暂的焦虑和热情开始着手我的正经事儿。</p>
+<h2 id="关于博客">关于博客</h2>
+<p>本来我是在枯燥无聊地做着调研工作，却在搜索资料的时候无意中看到了<a target="_blank" rel="noopener" href="https://tobiaslee.top/2018/09/30/Text-Generation-with-GAN/">TobiasLee</a>的一篇博客:</p>
+<blockquote>
+<p>SeqGAN 这一框架下的 GAN-based 文本生成模型，work 很大程度上是 training trick 的堆砌，并不适合工程应用，但依旧值得探索，或者蹭热点发 Paper</p>
+</blockquote>
+<p>能如此高屋建瓴的得出这样的结论，想必一定是NLP领域的大牛吧。怀着这样的好奇心我拜读了他的博客文章，结果却发现这竟然是人家大二写的一篇文章！！！而现在是一名北大的研究生。我翻着他的博客，通过文字走进了另一个人的生活，真是奇妙啊。有如此知识、文笔、勤奋，我真的十分羡慕他。相比起来，我的学习和生活简直平庸的不行。</p>
+<p>在本就焦虑的情况下再受到了这样的比较刺激，我感觉我又有动力了（鸡汤真香）。成为大佬的第一步就是向大佬学习，于是我在网上找了许多资料和教程，建了这样一个大佬同款博客，督促自己好好读论文、写笔记。就算无法实现，多看看书、打打字不也美哉？</p>
+<h2 id="后续工作">后续工作</h2>
+<p>寒假已经所剩无几了，但我却始终无法进入状态，干了这碗热鸡汤，我得将注意力转移到学习工作上来了。从现在开始，一天至少阅读一篇论文，写点笔记，学习一些知识，国创和毕业论文早日做出点东西，Fighting！！！</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/02/03/%E5%86%99%E5%9C%A8%E5%BC%80%E5%A7%8B/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+  
+    <nav id="page-nav">
+      <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+    </nav>
+  
 
 
           </div>
@@ -228,10 +441,10 @@
     <script>
 	var yiliaConfig = {
 		mathjax: true,
-		isHome: false,
+		isHome: true,
 		isPost: false,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
