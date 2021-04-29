@@ -6,14 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://chenyunong.com">
-  <title>Tag: MySQL | Control Yourself</title>
+  <title>530打卡之数据库篇 | Control Yourself</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Control Yourself">
-<meta property="og:url" content="http://chenyunong.com/tags/MySQL/index.html">
+  <meta name="description" content="530的21天学习打卡系列活动，此篇将记录这期间学习的数据库知识。琦琦学长发钱了，冲啊！ 4.29 分区分表 挑战第一天，正好明天数据库上机课要讲分区分表，提前备好课，学习一下相关知识。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="530打卡之数据库篇">
+<meta property="og:url" content="http://chenyunong.com/2021/04/29/530%E6%89%93%E5%8D%A1%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AF%87/index.html">
 <meta property="og:site_name" content="Control Yourself">
+<meta property="og:description" content="530的21天学习打卡系列活动，此篇将记录这期间学习的数据库知识。琦琦学长发钱了，冲啊！ 4.29 分区分表 挑战第一天，正好明天数据库上机课要讲分区分表，提前备好课，学习一下相关知识。">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-04-29T12:19:11.000Z">
+<meta property="article:modified_time" content="2021-04-29T13:33:31.388Z">
 <meta property="article:author" content="Yunong">
+<meta property="article:tag" content="530打卡">
+<meta property="article:tag" content="数据库">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="Control Yourself" type="application/atom+xml">
@@ -146,106 +152,177 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-530打卡数据库篇" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/04/02/mysql-datatype/" class="archive-article-date">
-  	<time datetime="2021-04-02T12:50:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-02</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/04/02/mysql-datatype/">MySQL数据类型</a>
+    <h1 class="article-title" itemprop="name">
+      530打卡之数据库篇
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2021/04/29/530%E6%89%93%E5%8D%A1%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AF%87/" class="archive-article-date">
+  	<time datetime="2021-04-29T12:19:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-29</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>530的21天学习打卡系列活动，此篇将记录这期间学习的数据库知识。琦琦学长发钱了，冲啊！</p>
+<h2 id="分区分表">4.29 分区分表</h2>
+<p>挑战第一天，正好明天数据库上机课要讲分区分表，提前备好课，学习一下相关知识。</p>
+<a id="more"></a>
+<h3 id="为什么要分区分表">为什么要分区分表</h3>
+<p>虽然在我们平时的课程和作业中表中的数据都不多，在对表进行查询和修改时甚至感受不到延迟。但是在真实的数据库开发过程中，却经常会出现存储记录数达到百万级乃至千万级的大表。这种情况下，数据库的查询和修改耗时会很长，性能受到极大影响，对于多个大表的联合查询更是无法想象。</p>
+<p>那么是否可以多使用些索引来加快大表的查询呢？索引其实也不是万能的，对于静态的数据表，构造良好的索引的确可以提高查询效率，但更多情况下是有增删改需求的动态表，这时大表索引的维护会带来巨大的开销，甚至给总体的性能带来负面影响。</p>
+<p>所以我们要用到分表和分区的技术，减少数据库的负担，提高数据库增删改查的效率。</p>
+<h3 id="分区">分区</h3>
+<ul>
+<li>分区是将数据分段划分在多个位置存放，可以是同一块磁盘也可以在不同的机器。</li>
+<li>分区后，逻辑上还是一张表，但数据散列到多个位置了</li>
+<li>用户读写的时候操作的还是大表名字，数据库自动去组织分区的数据</li>
+<li>每个分区都需要独立地存储数据和索引等信息</li>
+</ul>
+<p>根据分区的这些特点，可以看出它主要依靠数据库底层的存储机制，将一张表分为多个块来存储，经过数据库本身的封装，可以为用户屏蔽底层的实现细节，用户可以和处理一张表一样来操作表的多个分区。如果有必要，用户也可以操作某个具体的分区，这样使得批量删除等操作非常便捷。正因为它依赖于数据库底层的实现机制，所以在MySQL5.1之后才出现分区功能。这种底层分区的方法提高了数据库和磁盘的IO性能，使其能够支持更高的并发。</p>
+<h3 id="分表">分表</h3>
+<ul>
+<li>分表是将一个大表按照一定的规则分解成多张具有独立存储空间的实体表</li>
+<li>这些子表可以分布在同一块磁盘上，也可以在不同的机器上</li>
+<li>读写的时候根据事先定义好的规则得到对应的子表名，然后去操作它</li>
+</ul>
+<p>与分区相比，分表是从逻辑上将一个表分成了多个子表，每个表都是独立的。也就是说，我们完全可以自己写代码来实现分表的操作，比如说一个用户表user可能不够存储，就可以将其分为user001、user002、...、user010十张表，将数据较为均匀地存储在这十张表内，可以有效地提高大表的性能。</p>
+<p>MySQL的分表在MyISAM存储引擎中使用较多，主要是因为引擎的锁机制。在InnoDB中写操作使用的是行级锁，对并发性能影响不大。而在MyISAM中使用的是表级锁，对表中某一行数据的修改需要锁住整个表，其他对该表的操作均会阻塞，在表中数据量较大，操作较频繁时，会极大地影响性能。而分表使修改操作分散到各个子表，能有效缓解该问题。例如采用MyISAM引擎的Discuz中有较多分表。</p>
+<h4 id="分表方式">分表方式</h4>
+<p>分表主要有垂直拆分和水平拆分两种方式。</p>
+<p>垂直拆分是指数据表列的拆分，把一张列比较多的表拆分为多张表。 垂直分割一般用于拆分大字段和访问频率低的字段，分离冷热数据。比如说在使用爬虫爬取数据时，数据爬取和信息获取两步，爬取到的数据很乱很杂，但它对应着的如标题、时间等信息是我们所想要的。所以可以将较大不常用的原始数据作为冷数据垂直拆分出去，分成新表，可提高对重要字段操作的性能。</p>
+<p>水平拆分是指数据表行的拆分，表的行数超过500万行或者单表容量超过10GB时，查询就会变慢，这时可以把一张的表的数据拆成多张表来存放。水平分表尽可能使每张表的数据量相当，比较均匀。举个例子：我们可以将用户信息表拆分成多个用户信息表，这样就可以避免单一表数据量过大对性能造成影响。可以使用Hash函数来实现，可以解决对较近插入数据访问的倾斜问题。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">数据库</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">530打卡</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">MySQL</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">数据库</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://chenyunong.com/2021/04/29/530%E6%89%93%E5%8D%A1%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AF%87/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/03/23/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" class="archive-article-date">
-  	<time datetime="2021-03-23T15:16:26.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-23</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2021/04/02/mysql-datatype/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">MySQL数据类型</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/03/23/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/">存储引擎</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">数据库</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">MySQL</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
   
 
-    
+  
+
+  
 
 
           </div>
@@ -271,9 +348,9 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
