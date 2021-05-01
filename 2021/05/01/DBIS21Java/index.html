@@ -6,21 +6,21 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://chenyunong.com">
-  <title>DBIS打卡之数据库篇 | Control Yourself</title>
+  <title>DBIS21Java | Control Yourself</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="DBIS的21天学习打卡系列活动，此篇将记录这期间学习的数据库知识。琦琦学长发钱了，冲啊！ 4.29 分区分表 挑战第一天，正好明天数据库上机课要讲分区分表，提前备好课，学习一下相关知识。">
+  <meta name="description" content="DBIS的21天学习打卡系列活动，此篇将记录这期间学习的数据库知识。琦琦学长发钱了，冲啊！ 感谢杀哥引路JavaGuide">
 <meta property="og:type" content="article">
-<meta property="og:title" content="DBIS打卡之数据库篇">
-<meta property="og:url" content="http://chenyunong.com/2021/04/29/DBIS21Database/index.html">
+<meta property="og:title" content="DBIS21Java">
+<meta property="og:url" content="http://chenyunong.com/2021/05/01/DBIS21Java/index.html">
 <meta property="og:site_name" content="Control Yourself">
-<meta property="og:description" content="DBIS的21天学习打卡系列活动，此篇将记录这期间学习的数据库知识。琦琦学长发钱了，冲啊！ 4.29 分区分表 挑战第一天，正好明天数据库上机课要讲分区分表，提前备好课，学习一下相关知识。">
+<meta property="og:description" content="DBIS的21天学习打卡系列活动，此篇将记录这期间学习的数据库知识。琦琦学长发钱了，冲啊！ 感谢杀哥引路JavaGuide">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-04-29T12:19:11.000Z">
-<meta property="article:modified_time" content="2021-04-30T13:02:11.432Z">
+<meta property="og:image" content="http://chenyunong.com/2021/05/01/DBIS21Java/Java_run.png">
+<meta property="article:published_time" content="2021-05-01T11:55:45.000Z">
+<meta property="article:modified_time" content="2021-05-01T12:04:46.114Z">
 <meta property="article:author" content="Yunong">
-<meta property="article:tag" content="DBIS打卡">
-<meta property="article:tag" content="数据库">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://chenyunong.com/2021/05/01/DBIS21Java/Java_run.png">
   
     <link rel="alternative" href="/atom.xml" title="Control Yourself" type="application/atom+xml">
   
@@ -152,20 +152,20 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-DBIS21Database" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-DBIS21Java" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      DBIS打卡之数据库篇
+      DBIS21Java
     </h1>
   
 
         
-        <a href="/2021/04/29/DBIS21Database/" class="archive-article-date">
-  	<time datetime="2021-04-29T12:19:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-29</time>
+        <a href="/2021/05/01/DBIS21Java/" class="archive-article-date">
+  	<time datetime="2021-05-01T11:55:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-05-01</time>
 </a>
         
       </header>
@@ -173,54 +173,19 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>DBIS的21天学习打卡系列活动，此篇将记录这期间学习的数据库知识。琦琦学长发钱了，冲啊！</p>
-<h2 id="分区分表">4.29 分区分表</h2>
-<p>挑战第一天，正好明天数据库上机课要讲分区分表，提前备好课，学习一下相关知识。</p>
+<p>感谢杀哥引路<a target="_blank" rel="noopener" href="https://snailclimb.gitee.io/javaguide/#/">JavaGuide</a></p>
 <a id="more"></a>
-<h3 id="为什么要分区分表">为什么要分区分表</h3>
-<p>虽然在我们平时的课程和作业中表中的数据都不多，在对表进行查询和修改时甚至感受不到延迟。但是在真实的数据库开发过程中，却经常会出现存储记录数达到百万级乃至千万级的大表。这种情况下，数据库的查询和修改耗时会很长，性能受到极大影响，对于多个大表的联合查询更是无法想象。</p>
-<p>那么是否可以多使用些索引来加快大表的查询呢？索引其实也不是万能的，对于静态的数据表，构造良好的索引的确可以提高查询效率，但更多情况下是有增删改需求的动态表，这时大表索引的维护会带来巨大的开销，甚至给总体的性能带来负面影响。</p>
-<p>所以我们要用到分表和分区的技术，减少数据库的负担，提高数据库增删改查的效率。</p>
-<h3 id="分区">分区</h3>
-<ul>
-<li>分区是将数据分段划分在多个位置存放，可以是同一块磁盘也可以在不同的机器。</li>
-<li>分区后，逻辑上还是一张表，但数据散列到多个位置了</li>
-<li>用户读写的时候操作的还是大表名字，数据库自动去组织分区的数据</li>
-<li>每个分区都需要独立地存储数据和索引等信息</li>
-</ul>
-<p>根据分区的这些特点，可以看出它主要依靠数据库底层的存储机制，将一张表分为多个块来存储，经过数据库本身的封装，可以为用户屏蔽底层的实现细节，用户可以和处理一张表一样来操作表的多个分区。如果有必要，用户也可以操作某个具体的分区，这样使得批量删除等操作非常便捷。正因为它依赖于数据库底层的实现机制，所以在MySQL5.1之后才出现分区功能。这种底层分区的方法提高了数据库和磁盘的IO性能，使其能够支持更高的并发。</p>
-<h3 id="分表">分表</h3>
-<ul>
-<li>分表是将一个大表按照一定的规则分解成多张具有独立存储空间的实体表</li>
-<li>这些子表可以分布在同一块磁盘上，也可以在不同的机器上</li>
-<li>读写的时候根据事先定义好的规则得到对应的子表名，然后去操作它</li>
-</ul>
-<p>与分区相比，分表是从逻辑上将一个表分成了多个子表，每个表都是独立的。也就是说，我们完全可以自己写代码来实现分表的操作，比如说一个用户表user可能不够存储，就可以将其分为user001、user002、...、user010十张表，将数据较为均匀地存储在这十张表内，可以有效地提高大表的性能。</p>
-<p>MySQL的分表在MyISAM存储引擎中使用较多，主要是因为引擎的锁机制。在InnoDB中写操作使用的是行级锁，对并发性能影响不大。而在MyISAM中使用的是表级锁，对表中某一行数据的修改需要锁住整个表，其他对该表的操作均会阻塞，在表中数据量较大，操作较频繁时，会极大地影响性能。而分表使修改操作分散到各个子表，能有效缓解该问题。例如采用MyISAM引擎的Discuz中有较多分表。</p>
-<h4 id="分表方式">分表方式</h4>
-<p>分表主要有垂直拆分和水平拆分两种方式。</p>
-<p><strong>垂直拆分</strong>是指数据表列的拆分，把一张列比较多的表拆分为多张表。 垂直分割一般用于拆分大字段和访问频率低的字段，分离冷热数据。比如说在使用爬虫爬取数据时，数据爬取和信息获取两步，爬取到的数据很乱很杂，但它对应着的如标题、时间等信息是我们所想要的。所以可以将较大不常用的原始数据作为冷数据垂直拆分出去，分成新表，可提高对重要字段操作的性能。</p>
-<p><strong>水平拆分</strong>是指数据表行的拆分，表的行数超过500万行或者单表容量超过10GB时，查询就会变慢，这时可以把一张的表的数据拆成多张表来存放。水平分表尽可能使每张表的数据量相当，比较均匀。举个例子：我们可以将用户信息表拆分成多个用户信息表，这样就可以避免单一表数据量过大对性能造成影响。可以使用Hash函数来实现，可以解决对较近插入数据访问的倾斜问题。</p>
-<h2 id="续">4.30 续</h2>
-<h3 id="数据存储的演进">数据存储的演进</h3>
-<p>在数据库最开始设计的时候通常是<strong>单库单表</strong>，这不是说一个数据库一张表，而是数据库中的每个表都只有一份。例如，有一张用户(user)表放在数据库DB中，所有的用户都可以在DB库中的user表中查到。</p>
-<p>然后随着表中数据量的增加，单张表不足以满足存储和性能的要求，就需要<strong>单库多表</strong>。比如说将user表水平拆分成user001、user002等表。</p>
-<p>当数据量增加到单台数据库服务器已无法支撑存储与计算时，需要用到<strong>多库多表</strong>，将数据库拆分到多台服务器上，实现分布式的存储和计算。</p>
-<p>一般大型在线游戏的用户数据表通过多库多表的方式存取。玩过大型在线游戏就会知道，在进入游戏时通常需要选择服务器（像一刀999这样的页游可能取名比较简单，比如一服、二服，像英雄联盟这样高级一点的可能取些花里胡哨的名字迎合用户，刚入坑的新手还得选符合自己品味的服务器名称，于是小姐姐选了黑色玫瑰，老爷们选了祖安），这些服务器就可以简单地理解成不同的数据库，当然实际上还有其他的计算和管理模块。选择了某个服务器，就和某个数据库进行了连接。通过划分服务器，使用多库的方式，可以将数据和访问人数压力分摊到多个节点上，提高访问性能和用户的游戏体验（游戏还会显示各服务器的负载状态来引导用户均衡选择）。但多库的情况下，数据库之间的通信和数据一致性保障是对性能的重要限制（网络传输），所以一些游戏会独立地运行各个数据库，不进行数据的传输，也就无法跨服务器的登录和交易。当然理论上是可以实现的，但是代价比较大。不过对于一些实时性和一致性要求没那么高的功能还是可以支持的，比如说跨服聊天。</p>
-<h3 id="mysql分区算法">MySQL分区算法</h3>
-<ul>
-<li>RANGE分区（常用）：基于属于一个给定连续区间的列值，把多行分配给分区。</li>
-<li>LIST分区：类似于按RANGE分区，区别在于LIST分区是基于列值匹配一个离散值集合中的某个值来进行选择。</li>
-<li>HASH分区：基于用户定义的表达式的返回值来进行选择的分区，该表达式使用将要插入到表中的这些行的列值进行计算。这个函数可以包含MySQL 中有效的、产生非负整数值的任何表达式。</li>
-<li>KEY分区：类似于按HASH分区，区别在于KEY分区只支持计算一列或多列，且MySQL服务器提供其自身的哈希函数。必须有一列或多列包含整数值。</li>
-</ul>
-<h3 id="分片">分片</h3>
-<p>在分布式存储系统中，数据需要分散存储在多台设备上，数据分片（Sharding）就是用来确定数据在多台存储设备上分布的技术。数据分片要达到三个目的：</p>
-<ul>
-<li>分布均匀，即每台设备上的数据量要尽可能相近；</li>
-<li>负载均衡，即每台设备上的请求量要尽可能相近；</li>
-<li>扩缩容时产生的数据迁移尽可能少。</li>
-</ul>
-<p>分片的本质其实就是分表，将一张大表通过一定的分片规则分成多个分片表存储在不同的存储设备上。同样的也有水平拆分和垂直拆分的方法。</p>
+<h2 id="java基础概念与常识">5.1 Java基础概念与常识</h2>
+<p>今日五一，但打卡不能停，就简单先看下Java的基础概念与常识部分吧，嘿嘿。</p>
+其实Java的程序的特点就在于它的运行方式，一图以概之：
+<center>
+<img src="/2021/05/01/DBIS21Java/Java_run.png" alt="Java程序运行">
+</center>
+<p><strong>JDK</strong>（Java Development Kit）是一套完整的Java开发包，它包含了<strong>JRE</strong>（Java Runtime Enviroment）,还有javac编译器将我们写的.java文件编译成.class文件。这似乎还和C++将源代码编译成汇编代码类似。但Java牛B在它有一个Java虚拟机（<strong>JVM</strong>），它针对不同系统有特点的实现，可以将.class文件解释为机器码运行。JVM屏蔽了操作系统的差异，而.class字节码对不同的JVM是没有差别的，这样就是Java所说的“一次编译，到处运行”。而且前一步是编译，后一步是解释，所以Java“编译与解释并存”。</p>
+<h3 id="oracle-jdk和openjdk">Oracle JDK和OpenJDK</h3>
+<p>OpenJDK是开源的参考模型，Oracle JDK是OpenJDK的一个实现，对OpenJDK进行了扩展和修复，性能更好更加稳定，但并不完全开源。</p>
+<h3 id="java和c区别">Java和C++区别</h3>
+<p>Java不提供指针直接访问内存，类不可以多继承，提供自动内存管理垃圾回收机制（GC），只支持方法重载不支持操作符重载。</p>
 
       
 
@@ -229,21 +194,6 @@
     <div class="article-info article-info-index">
       
       
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">DBIS打卡</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">数据库</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
       
 
       
@@ -294,7 +244,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://chenyunong.com/2021/04/29/DBIS21Database/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://chenyunong.com/2021/05/01/DBIS21Java/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -308,18 +258,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2021/05/01/DBIS21Java/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          DBIS21Java
-        
-      </div>
-    </a>
   
-  
-    <a href="/2021/04/02/mysql-datatype/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">MySQL数据类型</div>
+    <a href="/2021/04/29/DBIS21Database/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">DBIS打卡之数据库篇</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -338,19 +279,6 @@
             </div>
         </div>
         
-        
-        <div class="toc-container tooltip-left">
-            <i class="icon-font icon-category"></i>
-            <div class="tooltip tooltip-east">
-                <span class="tooltip-item">
-                </span>
-                <span class="tooltip-content">
-                    <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E5%8C%BA%E5%88%86%E8%A1%A8"><span class="toc-number">1.</span> <span class="toc-text">4.29 分区分表</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%88%86%E5%8C%BA%E5%88%86%E8%A1%A8"><span class="toc-number">1.1.</span> <span class="toc-text">为什么要分区分表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E5%8C%BA"><span class="toc-number">1.2.</span> <span class="toc-text">分区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E8%A1%A8"><span class="toc-number">1.3.</span> <span class="toc-text">分表</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E8%A1%A8%E6%96%B9%E5%BC%8F"><span class="toc-number">1.3.1.</span> <span class="toc-text">分表方式</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%AD"><span class="toc-number">2.</span> <span class="toc-text">4.30 续</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E7%9A%84%E6%BC%94%E8%BF%9B"><span class="toc-number">2.1.</span> <span class="toc-text">数据存储的演进</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mysql%E5%88%86%E5%8C%BA%E7%AE%97%E6%B3%95"><span class="toc-number">2.2.</span> <span class="toc-text">MySQL分区算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E7%89%87"><span class="toc-number">2.3.</span> <span class="toc-text">分片</span></a></li></ol></li></ol>
-                    </div>
-                </span>
-            </div>
-        </div>
         
     </div>
 </aside>
