@@ -17,8 +17,10 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://chenyunong.com/2021/05/01/DBIS21Java/Java_run.png">
 <meta property="og:image" content="http://chenyunong.com/2021/05/01/DBIS21Java/Java_key.PNG">
+<meta property="og:image" content="http://chenyunong.com/2021/05/01/DBIS21Java/exception_hierarchy.png">
+<meta property="og:image" content="http://chenyunong.com/2021/05/01/DBIS21Java/polymorphism.png">
 <meta property="article:published_time" content="2021-05-01T11:55:45.000Z">
-<meta property="article:modified_time" content="2021-05-02T13:53:04.485Z">
+<meta property="article:modified_time" content="2021-05-03T09:14:08.349Z">
 <meta property="article:author" content="Yunong">
 <meta property="article:tag" content="DBIS打卡">
 <meta property="article:tag" content="java">
@@ -194,7 +196,7 @@
 <ul>
 <li>一个源文件中只能有一个 public 类，与文件名一致</li>
 <li>final修饰的类不能够被继承，修饰的方法不能被继承类重新定义，修饰的变量为常量，是不可修改的</li>
-<li>public对子类可见，private仅该类可见</li>
+<li>default同一包内可见，public对所有类可见，private同一类内可见（不能修饰类），protected同一包内和所有子类可见（不能修饰类）</li>
 <li>abstract 抽象类，抽象方法public abstract sample();</li>
 <li>synchronized 关键字声明的方法同一时间只能被一个线程访问。synchronized 修饰符可以应用于四个访问修饰符。</li>
 <li>序列化的对象包含被 transient 修饰的实例变量时，java 虚拟机(JVM)跳过该特定的变量。</li>
@@ -206,6 +208,37 @@
 <center>
 <img src="/2021/05/01/DBIS21Java/Java_key.PNG" alt="Java关键字">
 </center>
+<h2 id="续">5.3 续</h2>
+<ul>
+<li>Java增强for循环，有点类似于python的for . in . <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> [] numbers = &#123;<span class="number">10</span>, <span class="number">20</span>, <span class="number">30</span>, <span class="number">40</span>, <span class="number">50</span>&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> x : numbers )&#123;</span><br><span class="line">    System.out.print( x );</span><br><span class="line">    System.out.print(<span class="string">&quot;,&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>装箱：将内置数据类型转为包装类。 拆箱：反之</li>
+<li>String类不可改变，要修改的话使用StringBuffer或StringBuilder类，StringBuilder不是线程安全的</li>
+<li>Arrays类的静态方法可以方便地操作数组</li>
+<li>Java有日期时间类Date，Calendar</li>
+<li>Jaava正则表达式Java.util.regex包</li>
+<li>语法糖可变参数typeName... parameterName，只能是最后一个，相当于数组</li>
+<li>finalize()，对象析构前调用的方法</li>
+<li>控制台输入，可以把System.in包装在一个BufferedReader对象中来创建一个字符流,然后使用read()读取字符，readline()读取字符串 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">BufferedReader br = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> </span><br><span class="line">                      InputStreamReader(System.in));</span><br></pre></td></tr></table></figure></li>
+<li>读写文件FileInputStream和FileOutputStream <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">InputStream f = <span class="keyword">new</span> FileInputStream(<span class="string">&quot;C:/java/hello&quot;</span>);</span><br></pre></td></tr></table></figure></li>
+<li>Scanner类来获取用户输入 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Scanner scan = <span class="keyword">new</span> Scanner(System.in);</span><br><span class="line"><span class="keyword">if</span> (scan.hasNext()) &#123;</span><br><span class="line">    String str1 = scan.next();</span><br><span class="line">    <span class="comment">// String str2 = scan.nextLine();</span></span><br><span class="line">    System.out.println(<span class="string">&quot;输入的数据为：&quot;</span> + str1);</span><br><span class="line">&#125;</span><br><span class="line">scan.close();</span><br></pre></td></tr></table></figure></li>
+<li>Java异常使用try/catch捕获处理，throws声明函数要抛出的异常，throw抛出异常，自定义异常继承Exception或RuntimeException</li>
+</ul>
+<center>
+<img src="/2021/05/01/DBIS21Java/exception_hierarchy.png" alt="异常层次图">
+</center>
+<ul>
+<li>extends继承，不支持多继承，默认继承java.lang.Object；implements继承接口，支持继承多个接口。父类构造函数有参需要显式地使用super调用</li>
+<li>重写与重载，重写是父类与子类之间多态性的一种表现，重载可以理解成多态的具体表现形式。</li>
+<li>多态的三个必要条件：继承、重写、父类引用指向子类对象</li>
+</ul>
+<center>
+<img src="/2021/05/01/DBIS21Java/polymorphism.png" alt="多态示意图">
+</center>
+<ul>
+<li>接口是抽象方法的集合。不能包含除static和final的成员变量，接口中的方法隐式的指定为public abstract，类使用implements关键字实现接口。在类声明中，Implements关键字放在class声明后面，接口也可以使用extends继承。没有任何方法的接口称为标记接口，主要用于建立一个公共的父接口或向一个类添加数据类型（将类通过多态性变成接口类型）</li>
+<li>枚举是一个特殊的类，常用在switch语句中，也可以有变量、方法和构造函数。</li>
+<li>package创建包，import导入包，编译时有多少个类和接口就有多少同名.class文件，CLASSPATH类文件路径</li>
+</ul>
 
       
 
@@ -322,7 +355,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#java%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E4%B8%8E%E5%B8%B8%E8%AF%86"><span class="toc-number">1.</span> <span class="toc-text">5.1 Java基础概念与常识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#oracle-jdk%E5%92%8Copenjdk"><span class="toc-number">1.1.</span> <span class="toc-text">Oracle JDK和OpenJDK</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#java%E5%92%8Cc%E5%8C%BA%E5%88%AB"><span class="toc-number">1.2.</span> <span class="toc-text">Java和C++区别</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95"><span class="toc-number">2.</span> <span class="toc-text">5.2 基本语法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#java%E5%85%B3%E9%94%AE%E5%AD%97"><span class="toc-number">2.1.</span> <span class="toc-text">Java关键字：</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#java%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E4%B8%8E%E5%B8%B8%E8%AF%86"><span class="toc-number">1.</span> <span class="toc-text">5.1 Java基础概念与常识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#oracle-jdk%E5%92%8Copenjdk"><span class="toc-number">1.1.</span> <span class="toc-text">Oracle JDK和OpenJDK</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#java%E5%92%8Cc%E5%8C%BA%E5%88%AB"><span class="toc-number">1.2.</span> <span class="toc-text">Java和C++区别</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95"><span class="toc-number">2.</span> <span class="toc-text">5.2 基本语法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#java%E5%85%B3%E9%94%AE%E5%AD%97"><span class="toc-number">2.1.</span> <span class="toc-text">Java关键字：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%AD"><span class="toc-number">3.</span> <span class="toc-text">5.3 续</span></a></li></ol>
                     </div>
                 </span>
             </div>
@@ -468,15 +501,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">java</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">论文笔记</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">GAN</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">java</a>
               </li>
              
               <li class="article-tag-list-item">
