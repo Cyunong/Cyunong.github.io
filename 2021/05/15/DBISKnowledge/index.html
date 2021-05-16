@@ -21,8 +21,10 @@
 <meta property="og:image" content="http://chenyunong.com/2021/05/15/DBISKnowledge/tcp-vs-udp.jpg">
 <meta property="og:image" content="http://chenyunong.com/2021/05/15/DBISKnowledge/state_code.png">
 <meta property="og:image" content="http://chenyunong.com/2021/05/15/DBISKnowledge/protocol_with_http.png">
+<meta property="og:image" content="http://chenyunong.com/2021/05/15/DBISKnowledge/Kernel_Layout.png">
+<meta property="og:image" content="http://chenyunong.com/2021/05/15/DBISKnowledge/pcocess_state.png">
 <meta property="article:published_time" content="2021-05-15T07:31:14.000Z">
-<meta property="article:modified_time" content="2021-05-15T11:07:15.956Z">
+<meta property="article:modified_time" content="2021-05-16T13:50:41.639Z">
 <meta property="article:author" content="Yunong">
 <meta property="article:tag" content="DBIS打卡">
 <meta property="article:tag" content="操作系统">
@@ -230,6 +232,32 @@
 <li>URI是统一资源标识符，可以唯一标识一个资源。URL是统一资源定位符，是一种具体的URI，不仅唯一标识资源还提供了定位该资源的信息</li>
 <li>HTTP默认端口80，HTTPS默认端口443。HTTP运行在TCP之上，传输明文，HTTPS运行在SSL/TSL上，SSL/TLS运行在TCP之上，传输内容经加密，安全性更高，但是耗费更多服务器资源</li>
 </ul>
+<h2 id="操作系统">操作系统</h2>
+<ul>
+<li>操作系统是管理计算机硬件和软件组资源的程序，屏蔽了硬件层的复杂性
+<center>
+<img src="/2021/05/15/DBISKnowledge/Kernel_Layout.png" alt="内核布局">
+</center></li>
+<li>运行在用户态的用户程序在进行系统态级别的资源有关操作时，需要通过系统调用方式向操作系统提出服务请求，如设备管理、文件管理、进程控制、进程通信、内存管理</li>
+<li>线程是进程划分的更小运行单元，一个进程可以产生多个线程。各进程基本上是独立的，各线程则不一定。在JVM中，多个线程共享进程的堆和方法区，但每个线程有自己的程序计数器、虚拟机栈和本地方法栈。线程执行开销小，但不利于资源的管理和保护，进程则相反</li>
+<li>进程有创建、就绪、运行、阻塞、结束五种状态
+<center>
+<img src="/2021/05/15/DBISKnowledge/pcocess_state.png" alt="进程状态">
+</center></li>
+<li>进程间的通信方式有管道/匿名管道、有名管道、信号、消息队列、信号量、共享内存、套接字</li>
+<li>线程间同步的方式有互斥量、信号量、事件（Wait/Notify）</li>
+<li>进程调度有先到先服务调度算法、短作业优先调度算法、时间片轮转调度算法、多级反馈队列调度算法、优先级调度</li>
+<li>死锁指有时进程申请的资源被其他等待进程占有，那么该等待进程可能再也无法改变状态</li>
+<li>死锁的四个必要条件：互斥、占有并等待、非抢占、循环等待</li>
+<li>操作系统内存管理主要负责内存的分配与回收，另外还有逻辑地址到物理地址的转换</li>
+<li>操作系统内存管理简单分为连续分配管理方式和非连续分配管理方式两种，前者有块式管理（将内存分为几个固定大小的块，每个块中只包含一个进程），后者有页式管理（划分成更小的页）和段式管理（按照逻辑信息将主存划分成段），还有段页式管理机制，先分段后分页</li>
+<li>快表加速虚拟地址到物理地址的转换，可以理解为一种特殊的高速缓存。多级页表目的是避免把全部页表都放在内存中占用空间，属于时间换空间的典型场景。都利用到了程序的局部性原理</li>
+<li>分页和分段机制都是为了提高内存利用率，减少内存碎片，且分配离散、内部连续。页面大小固定，段大小不固定。分页满足操作系统内存管理需求，分段能更好满足用户需求</li>
+<li>逻辑地址由操作系统决定，物理地址是真实物理内存中的地址</li>
+<li>MMU将虚拟地址翻译为物理地址来进行虚拟寻址，使用虚拟地址空间更安全，彼此隔离，并且使得程序可以使用大于可用物理内存的虚拟内存（存储在外部磁盘存储器上）</li>
+<li>局部性原理：时间局部性和空间局部性</li>
+<li>页面替换算法：最佳页面置换算法（未来最长时间不使用），FIFO页面置换算法（淘汰最先进入内存的页面），LRU页面置换算法（最近最久未使用），LFU页面置换算法（之前时期最少使用的页面）</li>
+</ul>
 
       
 
@@ -342,6 +370,19 @@
             </div>
         </div>
         
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C"><span class="toc-number">1.</span> <span class="toc-text">5.15 计算机网络</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="toc-number">2.</span> <span class="toc-text">操作系统</span></a></li></ol>
+                    </div>
+                </span>
+            </div>
+        </div>
         
     </div>
 </aside>
