@@ -26,7 +26,7 @@
 <meta property="og:image" content="http://chenyunong.com/2021/05/15/DBISKnowledge/file_system.png">
 <meta property="og:image" content="http://chenyunong.com/2021/05/15/DBISKnowledge/indirect.jpg">
 <meta property="article:published_time" content="2021-05-15T07:31:14.000Z">
-<meta property="article:modified_time" content="2021-05-17T13:03:29.716Z">
+<meta property="article:modified_time" content="2021-05-18T15:48:45.790Z">
 <meta property="article:author" content="Yunong">
 <meta property="article:tag" content="DBIS打卡">
 <meta property="article:tag" content="操作系统">
@@ -274,8 +274,17 @@
 </center></li>
 <li>获取文件内容 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cat # 取得文件内容</span><br><span class="line">tac # 从最后一行开始打印</span><br><span class="line">more # 一页一页查看文件内容</span><br><span class="line">less # 与more类似，但可以向前翻页</span><br><span class="line">head [-n number] filename # 取得文件前几行</span><br><span class="line">tail # 取得文件后几行</span><br></pre></td></tr></table></figure></li>
 <li>文件搜索 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">whereis [-bmsu] dirname/filename</span><br><span class="line">locate [-ir] keyword</span><br><span class="line">find [basedir] [option]</span><br></pre></td></tr></table></figure></li>
-<li>正则表达式 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">grep [-acinv] [--color=auto] 搜寻字符串 filename</span><br><span class="line">grep -n &#x27;the&#x27; regular_express.txt</span><br></pre></td></tr></table></figure></li>
+<li>正则表达式 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">grep [-acinv] [--color=auto] 搜寻字符串 filename</span><br><span class="line">grep -n &#x27;the&#x27; regular_express.txt</span><br></pre></td></tr></table></figure> ## 5.18 面经总结 Q：String 为什么设计为final？ A：String类的数组变量使用private final修饰的，也就意味着其一旦初始化就无法修改。这样可以实现字符串常量池，同一个字符串常量可以被多个String类引用，可以有效节省空间。同时不可修改的特性也能实现线程安全，多线程同时访问也不需要同步操作。</li>
 </ul>
+<p>Q：hashCode和equals的区别？ A：在Object类中equals方法用来比较两个对象是否引用的同一个对象，而在其他类中，重写的equals方法默认比较两个对象的值是否相等。而Object类中的hashCode更具对象的内存地址返回一个hash值。两个对象如果使用equals方法比较相等，那他们hashCode的值也必须相等；如果equals不等，hashCode值可相等也可不等；hashCode的值不相等那equals方法比较一定不相等。</p>
+<p>Q：hashCode用来做什么？ A：hashCode常用语Java中的Set集合，用于快速查找元素存储位置，判断Set中是否存在重复元素。如果只使用equals方法的话需要和每一个元素比较，而使用hashCode可以迅速找到元素应该存储的位置，然后判断元素是否存在与集合中。</p>
+<p>Q：hashCode冲突怎么解决？ A：常用的解决方法有：开放地址法（再散列），比如从冲突位置向后顺延一位。再哈希，使用多个hash函数，当前函数冲突就使用下一个函数。拉链法：每个位置使用链表或者树的结构来存储具体的值。</p>
+<p>Q：hashCode和equals什么时候重写？ A：当对象需要加入到集合中，或者需要比较值是否相等时，就需要重写equals方法。而重写equals方法就得重写hashCode方法，保证对值相等的对象他们的hashCode也相等。</p>
+<p>Q：重载和重写？ A：重载指的是类中可以有多个同名的函数，但他们的参数个数或类型需不同，最常见的是类的构造方法的重载。重写指的是子类可以重写从父类继承来的方法，但final、static、private修饰的方法不能被重写，构造方法不能被重写，子类重写的方法不能比父类方法访问权限更低，抛出的异常不能比父类抛出异常的类型范围更广。</p>
+<p>Q：Java容器的分类？ A：Java容器主要可以分为Collection和Map两大类。Collection下面有List、Set、Queue，List有ArrayList、LinkedList，Set有HashSet、LinkedHashSet、TreeSet。Map下面有HashMap、LinkedHashMap、TreeMap。</p>
+<p>Q：HashMap的put过程？ A：首先如果HashMpap为空则使用resize函数初始化，然后计算key的hashCode值，根据hashCode值判断key应该存储的位置，如果该位置未存储其他key，则直接在此插入。否则使用equals方法比较两个key是否相等，相等则直接覆盖，不等的话判断该位置数据类型是链表还是红黑树，是链表则遍历判断是否存在相等key，相等覆盖，都不相等从尾部插入；如果是红黑树则直接插入红黑树节点。</p>
+<p>Q：线程池的原理？ A：线程池是使用池化的技术来统一管理线程，这样可以减少线程重复创建和销毁的开销，同时也有利于资源的统一调配，不会出现无节制申请线程导致资源枯竭的现象。具体来说，如果要创建一个线程，会首先判断核心线程数是否已满，如果未满则会创建新的线程执行当前任务，如果已满则会加入等待队列等待其他线程执行完。如果等待队列已满会判断是否已达到最大线程数，如果未达到则创建新线程，已达到则会根据一定的策略来处理新到来的线程。</p>
+<p>Q：拒绝策略有哪些？ A：AbortPolicy抛出异常拒绝新任务的处理；CallerRunsPolicy调用执行自己的线程运行任务，也就是执行execute方法的线程；DiscardPolicy不处理新任务，直接丢弃掉；DiscardOldestPolicy丢弃最早未处理的任务。</p>
 
       
 
