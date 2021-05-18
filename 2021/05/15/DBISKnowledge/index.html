@@ -26,7 +26,7 @@
 <meta property="og:image" content="http://chenyunong.com/2021/05/15/DBISKnowledge/file_system.png">
 <meta property="og:image" content="http://chenyunong.com/2021/05/15/DBISKnowledge/indirect.jpg">
 <meta property="article:published_time" content="2021-05-15T07:31:14.000Z">
-<meta property="article:modified_time" content="2021-05-18T15:48:45.790Z">
+<meta property="article:modified_time" content="2021-05-18T15:53:39.042Z">
 <meta property="article:author" content="Yunong">
 <meta property="article:tag" content="DBIS打卡">
 <meta property="article:tag" content="操作系统">
@@ -274,8 +274,10 @@
 </center></li>
 <li>获取文件内容 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cat # 取得文件内容</span><br><span class="line">tac # 从最后一行开始打印</span><br><span class="line">more # 一页一页查看文件内容</span><br><span class="line">less # 与more类似，但可以向前翻页</span><br><span class="line">head [-n number] filename # 取得文件前几行</span><br><span class="line">tail # 取得文件后几行</span><br></pre></td></tr></table></figure></li>
 <li>文件搜索 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">whereis [-bmsu] dirname/filename</span><br><span class="line">locate [-ir] keyword</span><br><span class="line">find [basedir] [option]</span><br></pre></td></tr></table></figure></li>
-<li>正则表达式 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">grep [-acinv] [--color=auto] 搜寻字符串 filename</span><br><span class="line">grep -n &#x27;the&#x27; regular_express.txt</span><br></pre></td></tr></table></figure> ## 5.18 面经总结 Q：String 为什么设计为final？ A：String类的数组变量使用private final修饰的，也就意味着其一旦初始化就无法修改。这样可以实现字符串常量池，同一个字符串常量可以被多个String类引用，可以有效节省空间。同时不可修改的特性也能实现线程安全，多线程同时访问也不需要同步操作。</li>
+<li>正则表达式 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">grep [-acinv] [--color=auto] 搜寻字符串 filename</span><br><span class="line">grep -n &#x27;the&#x27; regular_express.txt</span><br></pre></td></tr></table></figure></li>
 </ul>
+<h2 id="面经总结">5.18 面经总结</h2>
+<p>Q：String 为什么设计为final？ A：String类的数组变量使用private final修饰的，也就意味着其一旦初始化就无法修改。这样可以实现字符串常量池，同一个字符串常量可以被多个String类引用，可以有效节省空间。同时不可修改的特性也能实现线程安全，多线程同时访问也不需要同步操作。</p>
 <p>Q：hashCode和equals的区别？ A：在Object类中equals方法用来比较两个对象是否引用的同一个对象，而在其他类中，重写的equals方法默认比较两个对象的值是否相等。而Object类中的hashCode更具对象的内存地址返回一个hash值。两个对象如果使用equals方法比较相等，那他们hashCode的值也必须相等；如果equals不等，hashCode值可相等也可不等；hashCode的值不相等那equals方法比较一定不相等。</p>
 <p>Q：hashCode用来做什么？ A：hashCode常用语Java中的Set集合，用于快速查找元素存储位置，判断Set中是否存在重复元素。如果只使用equals方法的话需要和每一个元素比较，而使用hashCode可以迅速找到元素应该存储的位置，然后判断元素是否存在与集合中。</p>
 <p>Q：hashCode冲突怎么解决？ A：常用的解决方法有：开放地址法（再散列），比如从冲突位置向后顺延一位。再哈希，使用多个hash函数，当前函数冲突就使用下一个函数。拉链法：每个位置使用链表或者树的结构来存储具体的值。</p>
@@ -405,7 +407,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C"><span class="toc-number">1.</span> <span class="toc-text">5.15 计算机网络</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="toc-number">2.</span> <span class="toc-text">5.16 操作系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#linux"><span class="toc-number">3.</span> <span class="toc-text">5.17 Linux</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C"><span class="toc-number">1.</span> <span class="toc-text">5.15 计算机网络</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="toc-number">2.</span> <span class="toc-text">5.16 操作系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#linux"><span class="toc-number">3.</span> <span class="toc-text">5.17 Linux</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9D%A2%E7%BB%8F%E6%80%BB%E7%BB%93"><span class="toc-number">4.</span> <span class="toc-text">5.18 面经总结</span></a></li></ol>
                     </div>
                 </span>
             </div>
