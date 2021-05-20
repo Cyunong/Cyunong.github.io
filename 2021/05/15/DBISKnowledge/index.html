@@ -26,7 +26,7 @@
 <meta property="og:image" content="http://chenyunong.com/2021/05/15/DBISKnowledge/file_system.png">
 <meta property="og:image" content="http://chenyunong.com/2021/05/15/DBISKnowledge/indirect.jpg">
 <meta property="article:published_time" content="2021-05-15T07:31:14.000Z">
-<meta property="article:modified_time" content="2021-05-19T15:37:56.500Z">
+<meta property="article:modified_time" content="2021-05-20T13:58:10.991Z">
 <meta property="article:author" content="Yunong">
 <meta property="article:tag" content="DBIS打卡">
 <meta property="article:tag" content="操作系统">
@@ -343,6 +343,23 @@ A：Cookie存放在HTTP报文的请求头部或者是响应头部，以Key=Value
 A：可以存储在IIS进程上、StateServer上、SQL Server数据库上。存储在IIS上简单、性能高，但容易丢失，存储在StateServer上对Web服务器依赖不高，Web服务关闭仍能保存，但还是在内存中。SQL Server上能够持久化保存，但是磁盘的读写比较耗时。</p>
 <p>Q：HashMap是线程不安全的，为什么？如何改进？<br>
 A：HashMap中的put和get操作都是不会加锁的，所以在多个线程中可能有多个线程同时操作HashMap，如果有两个线程同时Put同一个位置的Key，都取的是同一个链表头部，会出现插入值的丢失。在多个线程同时对HashMap进行resize扩容时，可能会导致链表成环，下次访问就会出现死循环。使用尾插法替代头插法可以一定程度上解决这些问题，但仍无法实现访问的同步。因此在多线程时最好使用ConcurrentHashMap（HashTable已不常用）</p>
+<h2 id="完结篇">5.20 完结篇</h2>
+<p>Q：ThreadLocal变量原理？<br>
+A：使用ThreadLocal创建的变量在每一个线程中都会有独立的实例副本，可以使用get和set方法来获取默认值及更改当前实例副本值。其具体存储使用的是ThreadLocalMap类，每个线程都会有自己的ThreadLocalMap存储键为ThreadLocal，值为具体对象的键值对。由于键ThreadLocal是弱引用，值是强引用，因此垃圾回收后键可能为NULL导致值无法回收，出现内存泄漏，所以ThreadLocalMap在调用set、get、remove方法后会清理掉key为null的记录。</p>
+<p>Q：管道介绍？无名、命名管道区别？<br>
+A：调用pipe函数，会在内核中开辟出一块缓冲区用于进程间的通信，就是匿名管道，它有一个读端和一个写端，使用两个文件描述符来表示，父进程可以通过fork来创建子进程，父进程关闭读端，子进程关闭写端，这样就可以实现通过管道的进程间通信。匿名管道只有具有亲缘关系的进程才能进行通信，命名管道解决了该问题，它提供一个路径名与之关联，以FIFO的文件形式存储在文件系统中。</p>
+<p>Q：TCP报文头？<br>
+A：一般为20字节（无选项），最长60字节。包含IP协议版本号、服务类型、头部长度、数据长度、标识、分片信息、校验和、目的IP、源IP等信息。</p>
+<p>Q：客户端最多和服务器建立多少个tcp连接？<br>
+A：理论上等于端口号的个数，端口号为unsigned short，0号端口有特殊用处，因此最多为65535个连接。但实际上还受硬件资源和网络带宽的影响。</p>
+<p>Q：TCP攻击？<br>
+A：SYN Flood、SYN-ACK Flood、ACK Flood、FIN/RST Flood、TCP连接耗尽攻击、分片攻击、异常报文攻击。Anti-DDos防御使用源认证，真实源IP限速。</p>
+<p>Q：TCP三次握手和四次挥手流程状态？<br>
+A：三次握手:SYN(syn-sent), SYN-ACK(syn-rcvd), ACK(established)。四次挥手：FIN(FIN-WAIT1), ACK(CLOSED-WAIT), (FIN-WAIT2), FIN(LAST-ACK), ACK(TIME_WAIT), (CLOSED), (CLOSED)。</p>
+<p>Q：半连接队列和全连接队列？<br>
+A：服务器收到客户端的SYN请求后，会发送SYN-ACK，同时内核把该连接加入半连接队列。在收到客户端的ACK后，会把该连接从半连接队列中取出来加入全连接队列，调用accept函数。</p>
+<p>Q：IO多路复用？<br>
+A：IO一般可分为同步阻塞IO、同步非阻塞IO、IO多路复用（异步阻塞IO）、异步非阻塞IO。IO多路复用使用的是经典的Reactor设计模式。建立在内核提供的多路分离函数select基础上。用户将需要进行IO操作的socket添加到select中，然后阻塞等待select函数调用返回，当数据到达时，socket被激活，select函数返回，用户线程可以正式发起read请求，读取数据并继续执行。通过Reactor方式，可以将用户轮询IO操作状态的工作交给handle_events循环来处理，用户注册完事件处理器后可继续其他的操作。handle_events会调用系统的select函数，如果有被激活的socket，会通知用户进程（或调用回调函数），执行对应handle_event函数来处理。</p>
 
       
 
@@ -463,7 +480,7 @@ A：HashMap中的put和get操作都是不会加锁的，所以在多个线程中
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C"><span class="toc-number">1.</span> <span class="toc-text">5.15 计算机网络</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="toc-number">2.</span> <span class="toc-text">5.16 操作系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#linux"><span class="toc-number">3.</span> <span class="toc-text">5.17 Linux</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9D%A2%E7%BB%8F%E6%80%BB%E7%BB%93"><span class="toc-number">4.</span> <span class="toc-text">5.18 面经总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%AD"><span class="toc-number">5.</span> <span class="toc-text">5.19 续</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C"><span class="toc-number">1.</span> <span class="toc-text">5.15 计算机网络</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="toc-number">2.</span> <span class="toc-text">5.16 操作系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#linux"><span class="toc-number">3.</span> <span class="toc-text">5.17 Linux</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9D%A2%E7%BB%8F%E6%80%BB%E7%BB%93"><span class="toc-number">4.</span> <span class="toc-text">5.18 面经总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%AD"><span class="toc-number">5.</span> <span class="toc-text">5.19 续</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%8C%E7%BB%93%E7%AF%87"><span class="toc-number">6.</span> <span class="toc-text">5.20 完结篇</span></a></li></ol>
                     </div>
                 </span>
             </div>
