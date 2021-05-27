@@ -148,6 +148,75 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-ByteDanceInterview" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/05/27/ByteDanceInterview/">字节后台开发面试</a>
+    </h1>
+  
+
+        
+        <a href="/2021/05/27/ByteDanceInterview/" class="archive-article-date">
+  	<time datetime="2021-05-27T09:30:08.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-05-27</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="一面">5.21 一面</h2>
+<p>自我介绍后没聊项目，直接问基础知识，答案为查询资料后复盘。</p>
+<h3 id="操作系统">操作系统</h3>
+<p>Q：Linux中输入echo命令发生了什么？<br>
+A：shell命令分为内建命令和外部命令。内建命令是shell解释程序内建的，直接调用函数执行，不需要派生新的进程。外部命令分为二进制代码或shell脚本，会通过fork调用创建一个新的进程来执行命令，默认shell会等待直到该进程结束。其中二进制命令会调用exec系列函数执行，取代子shell，脚本会在子shell中运行。echo是内建命令，会被shell直接执行。（面试官说从进程角度讲，应该是想问外部命令）</p>
+        
+          <a class="article-more-a" href="/2021/05/27/ByteDanceInterview/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/05/27/ByteDanceInterview/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-DBISKnowledge" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -869,92 +938,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2021/03/09/SeqGAN/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-TextGAN" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/08/TextGAN/">TextGAN论文笔记</a>
-    </h1>
-  
-
-        
-        <a href="/2021/03/08/TextGAN/" class="archive-article-date">
-  	<time datetime="2021-03-08T13:52:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-08</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <blockquote>
-<p>标题：Generating Text via Adversarial Training<br>
-作者：Yizhe Zhang, Zhe Gan, Lawrence Carin<br>
-发表：NIPS 2016</p>
-</blockquote>
-<p>论文使用LSTM作为生成器，CNN作为判别器来进行对抗训练生成文本，在训练生成器时，使用匹配特征分布的方法。另外，论文还使用了多种预训练的方法并解决了离散变量的问题。</p>
-<p>文本生成一个简单的方法就是通过基于 RNN 的 encoder-decoder 学习表示句子的隐藏空间，然后通过解码隐藏空间的随机样本来生成句子。但是用autoencoder将句子映射到潜在向量空间时，映射往往只会覆盖很小的结构性的区域，所以如果选择嵌入空间的任意向量的话，解码很可能得到无意义的句子。另外一个不足是因为RNN的结构很可能导致错误的累计，就致使句子的前半部分较合理但后半部分偏差就比较大。而用GAN模型就能很好解决以上问题。</p>
-        
-          <a class="article-more-a" href="/2021/03/08/TextGAN/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">论文笔记</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">GAN</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/08/TextGAN/">展开全文 >></a>
         </p>
       
 
