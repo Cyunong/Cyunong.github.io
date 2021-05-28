@@ -6,20 +6,23 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://chenyunong.com">
-  <title>写在开始 | Control Yourself</title>
+  <title>TinyKV课程 | Control Yourself</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="现状 现在2021年2月初，我已经在家里舒舒服服的度过了大半个大四寒假。在家里吃了玩，玩了睡的生活固然惬意，但是跟导师许下的研究进展承诺和悬而未办的国创论文报告却总让我感到焦虑。从明天开始学习到下周开始学习，转眼一月就过去了，面对龙哥的push也只能说研究ing，我觉着再这样下去可能要完犊子了，于是便乘着这短暂的焦虑和热情开始着手我的正经事儿。 关于博客 本来我是在枯燥无聊地做着调研工作，却">
+  <meta name="description" content="5.28 Overview TiKV使用Key-Value模型保存数据，并且提供有序遍历方法。可以看做一个按照Key的二进制顺序有序的巨大Map。使用开源的RocksDB作为单机存储引擎 Raft协议 Raft协议的每个副本都会处于三种状态之一：Leader、Follower、Candidate  Leader：所有请求的处理者，接受client的更新请求，本地处理后再同步给多个其他的副">
 <meta property="og:type" content="article">
-<meta property="og:title" content="写在开始">
-<meta property="og:url" content="http://chenyunong.com/2021/02/03/%E5%86%99%E5%9C%A8%E5%BC%80%E5%A7%8B/index.html">
+<meta property="og:title" content="TinyKV课程">
+<meta property="og:url" content="http://chenyunong.com/2021/05/28/TinyKV/index.html">
 <meta property="og:site_name" content="Control Yourself">
-<meta property="og:description" content="现状 现在2021年2月初，我已经在家里舒舒服服的度过了大半个大四寒假。在家里吃了玩，玩了睡的生活固然惬意，但是跟导师许下的研究进展承诺和悬而未办的国创论文报告却总让我感到焦虑。从明天开始学习到下周开始学习，转眼一月就过去了，面对龙哥的push也只能说研究ing，我觉着再这样下去可能要完犊子了，于是便乘着这短暂的焦虑和热情开始着手我的正经事儿。 关于博客 本来我是在枯燥无聊地做着调研工作，却">
+<meta property="og:description" content="5.28 Overview TiKV使用Key-Value模型保存数据，并且提供有序遍历方法。可以看做一个按照Key的二进制顺序有序的巨大Map。使用开源的RocksDB作为单机存储引擎 Raft协议 Raft协议的每个副本都会处于三种状态之一：Leader、Follower、Candidate  Leader：所有请求的处理者，接受client的更新请求，本地处理后再同步给多个其他的副">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-02-03T08:28:40.000Z">
-<meta property="article:modified_time" content="2021-03-05T13:42:12.693Z">
+<meta property="og:image" content="http://chenyunong.com/2021/05/28/TinyKV/region.png">
+<meta property="article:published_time" content="2021-05-28T03:12:56.000Z">
+<meta property="article:modified_time" content="2021-05-28T05:04:05.008Z">
 <meta property="article:author" content="Yunong">
-<meta property="article:tag" content="随笔">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="TinyKV">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://chenyunong.com/2021/05/28/TinyKV/region.png">
   
     <link rel="alternative" href="/atom.xml" title="Control Yourself" type="application/atom+xml">
   
@@ -151,37 +154,46 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-写在开始" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-TinyKV" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      写在开始
+      TinyKV课程
     </h1>
   
 
         
-        <a href="/2021/02/03/%E5%86%99%E5%9C%A8%E5%BC%80%E5%A7%8B/" class="archive-article-date">
-  	<time datetime="2021-02-03T08:28:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-02-03</time>
+        <a href="/2021/05/28/TinyKV/" class="archive-article-date">
+  	<time datetime="2021-05-28T03:12:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-05-28</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="现状">现状</h2>
-<p>现在2021年2月初，我已经在家里舒舒服服的度过了大半个大四寒假。在家里吃了玩，玩了睡的生活固然惬意，但是跟导师许下的研究进展承诺和悬而未办的国创论文报告却总让我感到焦虑。从明天开始学习到下周开始学习，转眼一月就过去了，面对龙哥的push也只能说研究ing，我觉着再这样下去可能要完犊子了，于是便乘着这短暂的焦虑和热情开始着手我的正经事儿。</p>
-<h2 id="关于博客">关于博客</h2>
-<p>本来我是在枯燥无聊地做着调研工作，却在搜索资料的时候无意中看到了<a target="_blank" rel="noopener" href="https://tobiaslee.top/2018/09/30/Text-Generation-with-GAN/">TobiasLee</a>的一篇博客:</p>
-<blockquote>
-<p>SeqGAN 这一框架下的 GAN-based 文本生成模型，work 很大程度上是 training trick 的堆砌，并不适合工程应用，但依旧值得探索，或者蹭热点发 Paper</p>
-</blockquote>
-<p>能如此高屋建瓴的得出这样的结论，想必一定是NLP领域的大牛吧。怀着这样的好奇心我拜读了他的博客文章，结果却发现这竟然是人家大二写的一篇文章！！！而现在是一名北大的研究生。我翻着他的博客，通过文字走进了另一个人的生活，真是奇妙啊。有如此知识、文笔、勤奋，我真的十分羡慕他。相比起来，我的学习和生活简直平庸的不行。</p>
-<p>在本就焦虑的情况下再受到了这样的比较刺激，我感觉我又有动力了（鸡汤真香）。成为大佬的第一步就是向大佬学习，于是我在网上找了许多资料和教程，建了这样一个大佬同款博客，督促自己好好读论文、写笔记。就算无法实现，多看看书、打打字不也美哉？</p>
-<h2 id="后续工作">后续工作</h2>
-<p>寒假已经所剩无几了，但我却始终无法进入状态，干了这碗热鸡汤，我得将注意力转移到学习工作上来了。从现在开始，一天至少阅读一篇论文，写点笔记，学习一些知识，国创和毕业论文早日做出点东西，Fighting！！！</p>
+        <h2 id="overview">5.28 Overview</h2>
+<p>TiKV使用Key-Value模型保存数据，并且提供有序遍历方法。可以看做一个按照Key的二进制顺序有序的巨大Map。使用开源的RocksDB作为单机存储引擎</p>
+<h3 id="raft协议">Raft协议</h3>
+<p>Raft协议的每个副本都会处于三种状态之一：Leader、Follower、Candidate</p>
+<ul>
+<li>Leader：所有请求的处理者，接受client的更新请求，本地处理后再同步给多个其他的副本</li>
+<li>Follower：请求的被动更新着，从Leader接受更新请求，让后写入本地日志文件</li>
+<li>Candidate：如果Follower在一定时间内没有收到Leader的心跳，则判断Leader可能已经故障，此时从新启动选主过程，此时副本会变成Candidate状态，直到选主结束</li>
+</ul>
+<a id="more"></a>
+<p>时间被分成很多连续的随机长度的term，term有唯一的id。每一个term一开始就进行选主。会有三种结果： - 自己被选成了主。收到majority的投票后，状态切换为Leader，并定期给其他Server发心跳消息，别的Server收到消息后将状态切换为Follower - 别人成为了主。将自己的state切换为Follower，并且更新本地的current_term_id - 没有选出主。投票被瓜分，没有Leader被选出，投票过程将超时，会增加current_term_id发起新一轮投票</p>
+<p>Leader被选出来后，接收客户端发来的请求，将它作为一个log entry添加到日志中，然后给其他Server发AppendEntriesRPC请求。当大多数副本已经将该命令写入到日志中，则执行这条log entry并返回结果到客户端。Raft保证一条commited（大多数副本写盘）的log entry持久化并且会被所有的节点执行。</p>
+<p>Leader刚选出来的时候，它的日志可能和其他Follower的不一致，有一定机制来保证日志的一致性。</p>
+<p>为了避免日志无限的增长，Raft会对整个系统进行snapshot，snapshot之前的日志都可以丢弃。在实际使用中snapshot频率需要合适。</p>
+<p>Raft考虑了集群的拓扑变化，支持增加/减少副本数，节点替换等。</p>
+<h3 id="region">Region</h3>
+<p>为了实现存储的水平扩展，需要将数据分散在多台机器上，TiKV将整个Key-Value空间分成很多端，每一段是一系列连续的Key，称作Region。数据会以Region为单位分散在集群中的所有节点上，并且保证每个节点上服务的Region数量差不多，同时以Region为单位做Raft的复制和成员管理</p>
+<center>
+<img src="/2021/05/28/TinyKV/region.png" alt="Region存储结构">
+</center>
 
       
 
@@ -195,7 +207,11 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">数据库</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">TinyKV</a>
         		</li>
       		
 		</ul>
@@ -251,7 +267,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://chenyunong.com/2021/02/03/%E5%86%99%E5%9C%A8%E5%BC%80%E5%A7%8B/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://chenyunong.com/2021/05/28/TinyKV/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -265,15 +281,11 @@
   
 <nav id="article-nav">
   
-    <a href="/2021/02/22/%E5%BC%80%E5%AD%A6/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          开学
-        
-      </div>
-    </a>
   
+    <a href="/2021/05/27/ByteDanceInterview/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">字节后台开发面试</div>
+      <i class="icon-circle-right"></i>
+    </a>
   
 </nav>
 
@@ -290,6 +302,19 @@
             </div>
         </div>
         
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#overview"><span class="toc-number">1.</span> <span class="toc-text">5.28 Overview</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#raft%E5%8D%8F%E8%AE%AE"><span class="toc-number">1.1.</span> <span class="toc-text">Raft协议</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#region"><span class="toc-number">1.2.</span> <span class="toc-text">Region</span></a></li></ol></li></ol>
+                    </div>
+                </span>
+            </div>
+        </div>
         
     </div>
 </aside>
