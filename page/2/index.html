@@ -148,6 +148,91 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-MaskGAN" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/09/MaskGAN/">MaskGAN论文笔记</a>
+    </h1>
+  
+
+        
+        <a href="/2021/03/09/MaskGAN/" class="archive-article-date">
+  	<time datetime="2021-03-09T14:15:21.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-09</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>标题：MaskGAN: Better Text Generation via Filling in the______<br>
+作者：William Fedus, Ian Goodfellow, Andrew M. Dai<br>
+发表：ICLR 2018</p>
+</blockquote>
+<p>文本生成的神经模型常常是自回归语言模型或者seq2seq模型，这些模型通过序列采样单词生成文本，每个词的生成受之前产生词的影响。虽然这些方法在一些 benchmark 上有比较好的结果，比较适合优化 perplexity，但常会因为前段序列产生了训练数据中未出现过的单词而导致错误累计（exposure bias），产生很差的结果。而 GAN 模型解决了以上问题却对离散数据生成有着难以计算梯度的问题，因此论文提出了一个 actor-critic conditional GAN，MaskGAN，通过周围的语境填充缺失的文本进行训练，在条件和非条件的 text samples 中有着很好的效果。</p>
+        
+          <a class="article-more-a" href="/2021/03/09/MaskGAN/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">论文笔记</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">GAN</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/03/09/MaskGAN/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-SeqGAN" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -990,6 +1075,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">面经</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
             
             <div class="clearfix"></div>

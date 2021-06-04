@@ -148,6 +148,95 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Algorithm" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/06/05/Algorithm/">DBISAlgorithm</a>
+    </h1>
+  
+
+        
+        <a href="/2021/06/05/Algorithm/" class="archive-article-date">
+  	<time datetime="2021-06-04T17:14:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-05</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="剑指offer">6.5 剑指Offer</h2>
+<ul>
+<li>数组中重复的数字（set、原地交换）</li>
+<li>二维数组中的查找（旋转45度类似二叉树，比较排除一行或一列）</li>
+<li>替换空格（遍历添加、原地扩展，反向遍历）</li>
+<li>从尾到头打印链表（递归、辅助栈）</li>
+<li>根据前序遍历和中序遍历重建二叉树（划分左右子树递归处理）</li>
+<li>两个栈实现队列（一个栈负责入队，一个栈负责出队）</li>
+<li>斐波那契数列（a, b）</li>
+<li>青蛙跳台阶，一步或两步（动态规划）</li>
+<li>旋转数组的最小数字（二分法，与首尾元素比较）</li>
+<li>矩阵中的路径组成单词（深度优先搜索+标志+剪枝）</li>
+<li>机器人运动范围，矩阵索引的位数和小于某个数（DFS/BFS）</li>
+<li>剪绳子，整数长度，最大乘积是多少（切成长度为3的等分段）</li>
+<li>二进制数中1的个数（循环移位与1、n&amp;(n-1)）</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">算法</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/06/05/Algorithm/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-TinyKV" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -896,91 +985,6 @@ A：shell命令分为内建命令和外部命令。内建命令是shell解释程
 
 
   
-    <article id="post-MaskGAN" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/09/MaskGAN/">MaskGAN论文笔记</a>
-    </h1>
-  
-
-        
-        <a href="/2021/03/09/MaskGAN/" class="archive-article-date">
-  	<time datetime="2021-03-09T14:15:21.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-09</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <blockquote>
-<p>标题：MaskGAN: Better Text Generation via Filling in the______<br>
-作者：William Fedus, Ian Goodfellow, Andrew M. Dai<br>
-发表：ICLR 2018</p>
-</blockquote>
-<p>文本生成的神经模型常常是自回归语言模型或者seq2seq模型，这些模型通过序列采样单词生成文本，每个词的生成受之前产生词的影响。虽然这些方法在一些 benchmark 上有比较好的结果，比较适合优化 perplexity，但常会因为前段序列产生了训练数据中未出现过的单词而导致错误累计（exposure bias），产生很差的结果。而 GAN 模型解决了以上问题却对离散数据生成有着难以计算梯度的问题，因此论文提出了一个 actor-critic conditional GAN，MaskGAN，通过周围的语境填充缺失的文本进行训练，在条件和非条件的 text samples 中有着很好的效果。</p>
-        
-          <a class="article-more-a" href="/2021/03/09/MaskGAN/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">论文笔记</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">GAN</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/09/MaskGAN/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
@@ -1157,6 +1161,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">面经</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
               </li>
             
             <div class="clearfix"></div>
