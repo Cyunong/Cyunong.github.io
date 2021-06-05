@@ -8,15 +8,15 @@
   <link rel="dns-prefetch" href="http://chenyunong.com">
   <title>DBISAlgorithm | Control Yourself</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="6.5 剑指Offer  数组中重复的数字（set、原地交换） 二维数组中的查找（旋转45度类似二叉树，比较排除一行或一列） 替换空格（遍历添加、原地扩展，反向遍历） 从尾到头打印链表（递归、辅助栈） 根据前序遍历和中序遍历重建二叉树（划分左右子树递归处理） 两个栈实现队列（一个栈负责入队，一个栈负责出队） 斐波那契数列（a, b） 青蛙跳台阶，一步或两步（动态规划） 旋转数组">
+  <meta name="description" content="6.4 剑指Offer  数组中重复的数字（set、原地交换） 二维数组中的查找（旋转45度类似二叉树，比较排除一行或一列） 替换空格（遍历添加、原地扩展，反向遍历） 从尾到头打印链表（递归、辅助栈） 根据前序遍历和中序遍历重建二叉树（划分左右子树递归处理） 两个栈实现队列（一个栈负责入队，一个栈负责出队） 斐波那契数列（a, b） 青蛙跳台阶，一步或两步（动态规划） 旋转数组">
 <meta property="og:type" content="article">
 <meta property="og:title" content="DBISAlgorithm">
 <meta property="og:url" content="http://chenyunong.com/2021/06/05/Algorithm/index.html">
 <meta property="og:site_name" content="Control Yourself">
-<meta property="og:description" content="6.5 剑指Offer  数组中重复的数字（set、原地交换） 二维数组中的查找（旋转45度类似二叉树，比较排除一行或一列） 替换空格（遍历添加、原地扩展，反向遍历） 从尾到头打印链表（递归、辅助栈） 根据前序遍历和中序遍历重建二叉树（划分左右子树递归处理） 两个栈实现队列（一个栈负责入队，一个栈负责出队） 斐波那契数列（a, b） 青蛙跳台阶，一步或两步（动态规划） 旋转数组">
+<meta property="og:description" content="6.4 剑指Offer  数组中重复的数字（set、原地交换） 二维数组中的查找（旋转45度类似二叉树，比较排除一行或一列） 替换空格（遍历添加、原地扩展，反向遍历） 从尾到头打印链表（递归、辅助栈） 根据前序遍历和中序遍历重建二叉树（划分左右子树递归处理） 两个栈实现队列（一个栈负责入队，一个栈负责出队） 斐波那契数列（a, b） 青蛙跳台阶，一步或两步（动态规划） 旋转数组">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-06-04T17:14:42.000Z">
-<meta property="article:modified_time" content="2021-06-04T17:17:12.206Z">
+<meta property="article:modified_time" content="2021-06-05T16:10:01.027Z">
 <meta property="article:author" content="Yunong">
 <meta property="article:tag" content="算法">
 <meta name="twitter:card" content="summary">
@@ -171,7 +171,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="剑指offer">6.5 剑指Offer</h2>
+        <h2 id="剑指offer">6.4 剑指Offer</h2>
 <ul>
 <li>数组中重复的数字（set、原地交换）</li>
 <li>二维数组中的查找（旋转45度类似二叉树，比较排除一行或一列）</li>
@@ -186,6 +186,17 @@
 <li>机器人运动范围，矩阵索引的位数和小于某个数（DFS/BFS）</li>
 <li>剪绳子，整数长度，最大乘积是多少（切成长度为3的等分段）</li>
 <li>二进制数中1的个数（循环移位与1、n&amp;(n-1)）</li>
+</ul>
+<h2 id="section">6.5</h2>
+<ul>
+<li>数值的整数次方（快速幂，二分法）</li>
+<li>打印从1到最大的n位数（考虑大数使用字符串全排列递归）</li>
+<li>正则表达式匹配'.'，'*'（动态规划）</li>
+<li>表示数值的字符串（有限状态自动机）</li>
+<li>调整数组顺序使奇数位于偶数前面（收尾双指针，快慢双指针）</li>
+<li>链表中倒数第k个节点（双指针）</li>
+<li>反转链表（双指针、递归）</li>
+<li>合并两个排序的链表（伪头节点）</li>
 </ul>
 
       
@@ -299,7 +310,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%91%E6%8C%87offer"><span class="toc-number">1.</span> <span class="toc-text">6.5 剑指Offer</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%91%E6%8C%87offer"><span class="toc-number">1.</span> <span class="toc-text">6.4 剑指Offer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#section"><span class="toc-number">2.</span> <span class="toc-text">6.5</span></a></li></ol>
                     </div>
                 </span>
             </div>
