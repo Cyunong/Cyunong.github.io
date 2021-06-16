@@ -16,7 +16,7 @@
 <meta property="og:description" content="6.4 剑指Offer  数组中重复的数字（set、原地交换） 二维数组中的查找（旋转45度类似二叉树，比较排除一行或一列） 替换空格（遍历添加、原地扩展，反向遍历） 从尾到头打印链表（递归、辅助栈） 根据前序遍历和中序遍历重建二叉树（划分左右子树递归处理） 两个栈实现队列（一个栈负责入队，一个栈负责出队） 斐波那契数列（a, b） 青蛙跳台阶，一步或两步（动态规划） 旋转数组">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-06-04T17:14:42.000Z">
-<meta property="article:modified_time" content="2021-06-10T15:48:07.783Z">
+<meta property="article:modified_time" content="2021-06-16T14:13:20.681Z">
 <meta property="article:author" content="Yunong">
 <meta property="article:tag" content="算法">
 <meta name="twitter:card" content="summary">
@@ -220,7 +220,7 @@
 <li>序列化二叉树（层序遍历BFS）</li>
 <li>字符串的排列（回溯法）</li>
 </ul>
-<h1 id="section-3">6.8</h1>
+<h2 id="section-3">6.8</h2>
 <ul>
 <li>数组中出现次数超过一半的数字（摩尔投票法）</li>
 <li>最小的K个数（基于快速排序的数组划分）</li>
@@ -235,7 +235,7 @@
 <li>第n个只包含2、3、5因子的丑数（动态规划）</li>
 <li>第一个只出现一次的字符（哈希表、有序哈希表）</li>
 </ul>
-<h1 id="section-4">6.9</h1>
+<h2 id="section-4">6.9</h2>
 <ul>
 <li>数组中的逆序对（归并排序）</li>
 <li>两个链表的第一个公共节点（双指针浪漫相遇）</li>
@@ -251,13 +251,21 @@
 <li>翻转单词顺序（双指针/库函数）</li>
 <li>滑动窗口的最大值（双端队列）</li>
 </ul>
-<h1 id="section-5">6.10</h1>
+<h2 id="section-5">6.10</h2>
 <ul>
 <li>n个骰子的点数（动态规划）</li>
 <li>扑克牌中的顺子（最大值-最小值，不重复）</li>
 <li>圆圈中剩下的数字（约瑟夫环，动态规划）</li>
 <li>股票的最大利润（动态规划）</li>
 <li>求1+2+...+n（逻辑运算符+递归）</li>
+</ul>
+<h2 id="section-6">6.16</h2>
+<ul>
+<li>不用加减乘除做加法（循环位运算求进位以及无进位和）</li>
+<li>构建乘积数组（维护元素左边和右边的乘积）</li>
+<li>字符串转换成整数（ASCII码，越界处理）</li>
+<li>二叉搜索树的最近公共祖先（迭代）</li>
+<li>二叉树的最近公共祖先（后序遍历迭代）</li>
 </ul>
 
       
@@ -371,7 +379,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%91%E6%8C%87offer"><span class="toc-number">1.</span> <span class="toc-text">6.4 剑指Offer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#section"><span class="toc-number">2.</span> <span class="toc-text">6.5</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#section-1"><span class="toc-number">3.</span> <span class="toc-text">6.6</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#section-2"><span class="toc-number">4.</span> <span class="toc-text">6.7</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#section-3"><span class="toc-number"></span> <span class="toc-text">6.8</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#section-4"><span class="toc-number"></span> <span class="toc-text">6.9</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#section-5"><span class="toc-number"></span> <span class="toc-text">6.10</span></a>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%91%E6%8C%87offer"><span class="toc-number">1.</span> <span class="toc-text">6.4 剑指Offer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#section"><span class="toc-number">2.</span> <span class="toc-text">6.5</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#section-1"><span class="toc-number">3.</span> <span class="toc-text">6.6</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#section-2"><span class="toc-number">4.</span> <span class="toc-text">6.7</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#section-3"><span class="toc-number">5.</span> <span class="toc-text">6.8</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#section-4"><span class="toc-number">6.</span> <span class="toc-text">6.9</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#section-5"><span class="toc-number">7.</span> <span class="toc-text">6.10</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#section-6"><span class="toc-number">8.</span> <span class="toc-text">6.16</span></a></li></ol>
                     </div>
                 </span>
             </div>
