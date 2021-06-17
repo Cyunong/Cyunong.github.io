@@ -148,6 +148,90 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Pytorch" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/06/17/Pytorch/">Pytorch</a>
+    </h1>
+  
+
+        
+        <a href="/2021/06/17/Pytorch/" class="archive-article-date">
+  	<time datetime="2021-06-17T13:44:48.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-17</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="section">6.17</h2>
+<ul>
+<li>torch.tensor和np.array类似，可以互相转换</li>
+<li>tensor.shape()获取大小，view()修改大小</li>
+<li>broadcasting自动改变维度相加减</li>
+<li>如果要求gradient可以自动建图</li>
+<li>pytorch提供to(device)来确定运行设备</li>
+<li>自动求gradient使用backward()</li>
+<li>torch.nn.Module, 如nn.Linear(d_in, d_out)</li>
+<li>Activation function如nn.ReLU()</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Pytorch</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/06/17/Pytorch/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Algorithm" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -902,91 +986,6 @@ A：shell命令分为内建命令和外部命令。内建命令是shell解释程
 
 
   
-    <article id="post-LeakGAN" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/10/LeakGAN/">LeakGAN论文笔记</a>
-    </h1>
-  
-
-        
-        <a href="/2021/03/10/LeakGAN/" class="archive-article-date">
-  	<time datetime="2021-03-10T13:34:31.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-10</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <blockquote>
-<p>标题：Long Text Generation via Adversarial Training with Leaked Information<br>
-作者：Jiaxian Guo, Sidi Lu, etc.<br>
-发表：AAAI 2018</p>
-</blockquote>
-<p>将生成器视为强化学习过程，使用判别器指导生成器训练的GAN模型在文本生成上取得了不错的结果。但是，标量指导信号只有在整个文本生成完后才能由判别器给出，且信号信息量不大，缺少了生成过程中文本结构的中间信息。所以在生成较长的文本时（超过20个单词）效果并不好。该论文提出了一个新的架构 LeakGAN，来解决长文本生成的问题。LeakGAN 允许判别器向生成器泄露抽取到的高层次特征来帮助生成器的学习。在生成过程的每一步中，生成器通过 MANAGER 模型将当前文本抽取到的特征作为输入，输出一个隐藏向量来指导 WORKER 模型生成下一个单词。</p>
-        
-          <a class="article-more-a" href="/2021/03/10/LeakGAN/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">论文笔记</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">GAN</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/10/LeakGAN/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
@@ -1167,6 +1166,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Pytorch</a>
               </li>
             
             <div class="clearfix"></div>
