@@ -16,7 +16,7 @@
 <meta property="og:description" content="6.17  torch.tensor和np.array类似，可以互相转换 tensor.shape()获取大小，view()修改大小 broadcasting自动改变维度相加减 如果要求gradient可以自动建图 pytorch提供to(device)来确定运行设备 自动求gradient使用backward() torch.nn.Module, 如nn.Linear(d_in,">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-06-17T13:44:48.000Z">
-<meta property="article:modified_time" content="2021-06-17T14:12:42.327Z">
+<meta property="article:modified_time" content="2021-06-18T13:35:13.594Z">
 <meta property="article:author" content="Yunong">
 <meta property="article:tag" content="Pytorch">
 <meta name="twitter:card" content="summary">
@@ -182,6 +182,18 @@
 <li>torch.nn.Module, 如nn.Linear(d_in, d_out)</li>
 <li>Activation function如nn.ReLU()</li>
 </ul>
+<a id="more"></a>
+<h2 id="section-1">6.18</h2>
+<ul>
+<li>torch.nn.Sequential(model1, model2...)一系列模型</li>
+<li>param = model.parameters() for循环</li>
+<li>损失函数 nn.MSELoss()等</li>
+<li>torch.optim <code>optim = torch.optim.SGD(model.parameters(), lr = 1e-2)</code></li>
+<li>Dataset 重写__init__, __len__, __getitem__</li>
+<li>DataLoader(dataaset, batch_size=4, shuffle=True, num_workers=4)</li>
+<li>detach()不计算tensor的梯度，使用with torch.no_grad()在预测时不计算梯度</li>
+<li>默认梯度会累加，通常在backward之前调用zero_grad()</li>
+</ul>
 
       
 
@@ -294,7 +306,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#section"><span class="toc-number">1.</span> <span class="toc-text">6.17</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#section"><span class="toc-number">1.</span> <span class="toc-text">6.17</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#section-1"><span class="toc-number">2.</span> <span class="toc-text">6.18</span></a></li></ol>
                     </div>
                 </span>
             </div>
