@@ -8,19 +8,19 @@
   <link rel="dns-prefetch" href="http://chenyunong.com">
   <title>服务器部署neo4j | Control Yourself</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="一年前国创项目因前端展示需要，在阿里云上购置了一台服务器，促销价一年还不到一百，前段时间到期了（当时能够报销竟然只买了一年的)，其续费要用原价，贵的要死（果然都是套路）。现在随着结项答辩的临近，只能自掏腰包重新促销价购买了一年新的服务器。并且重新部署了neo4j，在服务器跑上我们的程序，成功借助微信公众号作为前端展示。重新部署的过程中，很多坑踩了两次，在这里记录下来，也算是一个总结。 服务器的购">
+  <meta name="description" content="一年前国创项目因前端展示需要，在阿里云上购置了一台服务器，促销价一年还不到一百，前段时间到期了（当时能够报销竟然只买了一年的)，其续费要用原价，贵的要死（果然都是套路）。现在随着结项答辩的临近，只能自掏腰包重新促销价购买了一年新的服务器。并且重新部署了neo4j，在服务器跑上我们的程序，成功借助微信公众号作为前端展示。重新部署的过程中，很多坑踩了两次，在这里记录下来，也算是一个总结。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="服务器部署neo4j">
 <meta property="og:url" content="http://chenyunong.com/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/index.html">
 <meta property="og:site_name" content="Control Yourself">
-<meta property="og:description" content="一年前国创项目因前端展示需要，在阿里云上购置了一台服务器，促销价一年还不到一百，前段时间到期了（当时能够报销竟然只买了一年的)，其续费要用原价，贵的要死（果然都是套路）。现在随着结项答辩的临近，只能自掏腰包重新促销价购买了一年新的服务器。并且重新部署了neo4j，在服务器跑上我们的程序，成功借助微信公众号作为前端展示。重新部署的过程中，很多坑踩了两次，在这里记录下来，也算是一个总结。 服务器的购">
+<meta property="og:description" content="一年前国创项目因前端展示需要，在阿里云上购置了一台服务器，促销价一年还不到一百，前段时间到期了（当时能够报销竟然只买了一年的)，其续费要用原价，贵的要死（果然都是套路）。现在随着结项答辩的临近，只能自掏腰包重新促销价购买了一年新的服务器。并且重新部署了neo4j，在服务器跑上我们的程序，成功借助微信公众号作为前端展示。重新部署的过程中，很多坑踩了两次，在这里记录下来，也算是一个总结。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://chenyunong.com/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/aliyun.png">
 <meta property="og:image" content="http://chenyunong.com/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/neo4j.png">
 <meta property="og:image" content="http://chenyunong.com/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/textQue.png">
 <meta property="og:image" content="http://chenyunong.com/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/voiceQue.png">
 <meta property="article:published_time" content="2021-03-19T11:13:48.000Z">
-<meta property="article:modified_time" content="2021-04-02T13:08:55.727Z">
+<meta property="article:modified_time" content="2021-04-02T13:36:12.532Z">
 <meta property="article:author" content="Yunong">
 <meta property="article:tag" content="技术">
 <meta property="article:tag" content="Neo4j">
@@ -178,6 +178,7 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>一年前国创项目因前端展示需要，在阿里云上购置了一台服务器，促销价一年还不到一百，前段时间到期了（<del>当时能够报销竟然只买了一年的</del>)，其续费要用原价，贵的要死（果然都是套路）。现在随着结项答辩的临近，只能自掏腰包重新促销价购买了一年新的服务器。并且重新部署了neo4j，在服务器跑上我们的程序，成功借助微信公众号作为前端展示。重新部署的过程中，很多坑踩了两次，在这里记录下来，也算是一个总结。</p>
+<a id="more"></a>
 <h2 id="服务器的购置">服务器的购置</h2>
 <p>服务器我们是在三月采购季促销价在阿里云购置的，价格也还能接受。买之前我们也没有对比其他厂商，比如华为云，其广告打的挺多的，不知道价格怎么用。另外友情提醒，如果一年后还打算使用却又不想高价续费的，一定及时做好数据备份和迁移的准备。</p>
 <p>之后就是记录公网ip、重置密码什么的，这些都可以在阿里云的服务器控制台网页操作，另外网页还支持VNC对服务器便捷地连接。如果需要进行文件传输的话还可以下载MobaXterm、WinSCP等远程连接软件。</p>
@@ -340,7 +341,7 @@
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2021 Yunong
+    		&copy; 2022 Yunong
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -449,6 +450,14 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">面经</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">论文笔记</a>
               </li>
              
@@ -457,7 +466,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">技术</a>
+                <a href="javascript:void(0)" class="js-tag color2">TinyKV</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -473,11 +482,47 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">知识图谱</a>
+                <a href="javascript:void(0)" class="js-tag color3">技术</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Neo4j</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">知识图谱</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">DBIS打卡</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">java</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Pytorch</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">论文</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">推荐系统</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">增量推荐</a>
               </li>
             
             <div class="clearfix"></div>
@@ -529,27 +574,7 @@ MathJax.Hub.Queue(function() {
         <ul class="search-ul">
           
             <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接1</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接2</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接3</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接4</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接5</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接6</a>
+              <a href="https://joycepy.github.io/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>pcy</a>
             </li>
           
         </ul>

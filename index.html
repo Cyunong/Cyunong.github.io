@@ -148,92 +148,30 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-mysql-datatype" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-DynamicRec" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2021/04/02/mysql-datatype/">MySQL数据类型</a>
+      <a class="article-title" href="/2021/11/09/DynamicRec/">增量推荐系统论文</a>
     </h1>
   
 
         
-        <a href="/2021/04/02/mysql-datatype/" class="archive-article-date">
-  	<time datetime="2021-04-02T12:50:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-04-02</time>
+        <a href="/2021/11/09/DynamicRec/" class="archive-article-date">
+  	<time datetime="2021-11-09T08:49:35.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-11-09</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>数据库助教工作需要讲解MySQL基本数据类型，以下为准备内容</p>
-<hr>
-<p>当我们学习一门程序语言时，首先可能是了解它的语法，接着就是学习它的数据类型了。而对于SQL这种用在以存储为主的数据库上的语言来说，了解它所支持的数据类型就更加重要了，而接下来我们就来学习一下MySQL数据表中支持的数据类型。</p>
-<h2 id="整数类型">整数类型</h2>
-整数类型由小到大可以分为tinyint、smallint、mediumint、int、bigint几类，默认表示有符号数。如果希望表示无符号数，可用关键字“unsigned”进行修饰。如： <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">score tinyint unsigned</span><br></pre></td></tr></table></figure> 各整数类型的字节数和取值范围如下图所示：
-<div data-align="center">
-<p><img src="/2021/04/02/mysql-datatype/整数类型.PNG" width="80%" alt="整数类型"></p>
-</div>
-我们有时会见到tinyint(1),int(4)这样的定义，实际上括号里表示的是显示宽度，与类型实际的字节数和表示范围并无关系。比如说定义了一个id为int(5),并指定zero fill，则十进制不到五位的数，前面会用0填充，超过五位的还是照常显示，不受影响（见下图）
-<div data-align="center">
-<p><img src="/2021/04/02/mysql-datatype/zerofill.jpg" width="80%" alt="zerofill"></p>
-</div>
-<h2 id="小数类型">小数类型</h2>
-<p>小数类型可以分为精确小数类型（decimal）和浮点数类型（单精度float、双精度double）。</p>
-<p>decimal(length,precision)用来表示精读确定的小数类型，其中length表示包括整数部分和小数部分的最大位数，precision表示精度（小数部分的位数）。其本质上是使用字符串来表示小数，因此数据库中存储的值就等于插入的值，不会像浮点数类型那样可能产生精读的丢失。</p>
-<p>decimal(5,2)表示小数的取值范围：-999.99 ~ 999.99 decimal(5,0)表示：-99999 ~ 99999的整数 值得注意的是，如果插入的数据小数部分超过精读限制会进行四舍五入截断，而整数部分超出限制的话会报错。</p>
-浮点数类型的字节数和取值范围如下表所示，其也可以使用decimal的表示方式，且由于存储时十进制向二进制转化的缘故，可能存在精读的丢失。
-<div data-align="center">
-<p><img src="/2021/04/02/mysql-datatype/float.PNG" width="80%" alt="浮点数类型"></p>
-</div>
-<p>至于为什么表示范围是这么大，可以去了解一下浮点数阶码和位数的表示方式。</p>
-<h2 id="字符串类型">字符串类型</h2>
-<p>字符串类型主要可以分为定长字符串类型char和变长字符串类型varchar和text，在数据外观上使用单引号括起来以区别其他数据类型。</p>
-<p>char(n)和varchar(n)在存储或检索过程中不进行大小写转换，检索时对大小写是不敏感的。这和表命名的问题是类似的，之所以使用下划线而不是驼峰命名法，是因为是否区分大小写是与操作系统有关的，Linux下默认区分大小写，而windows下不区分，所以使用驼峰命名会带来一些问题。</p>
-<p>char(n)的n最大为255，也就是最多能存储255个字符。 varchar(n)的n取值实际上是受限于MySQL一行数据的最大长度以及字符编码方式。MySQL规定一行数据不能超过64K，所以varchar的长度不能超过65535字节，减去1个字节表示是否为NULL，2个字节存储字符串长度，剩下65532字节存储实际字符串。对于gbk编码来说，一个字符最多占2个字节，因此n最大为65532/2；对于utf-8编码，一个字符最多占3个字节，n最大为65532/3。</p>
-<p>这里有必要说一下字符的编码方式问题。我们一般常说的Unicode码实际上是一个字符集。因为ASCII码最初设计的时候只使用1个字节表示英文字母和一些可打印字符等，在互联网普及的今天已经完全不够用。因此出现Unicode码来表示多国语言的字符和一些扩充符号，它使用两个字节表示基础的一些符号，包括不同国家语言常用的符号，也就是UCS-2。之后使用4个字节扩展了许多其他的符号，也就是UCS-4（目前只使用了3个字节）。而gbk、utf-8、utf-16这些是对Unicode的不同编码方式，gbk主要是对简体中文的编码方式，采用两个字节表示中文的Unicode码点；utf-8使用变长编码，1个字节表示英文字符，3个字节表示中文字符，对于英文的存储来说可以有效地节省存储空间；utf-16则是直接使用两个字节（大端或小端）来表示Unicode码点，与UCS-2对应，windows操作系统中所说的Unicode编码实际上就是指utf-16小端编码。</p>
-<p>varchar(255)如果使用gbk编码存储一个'中'字，那么varchar(255)只占用3字节，其中2个字节存储字符'中',一个字节记录长度。 char(255)就算只存储一个汉字也需要占用255个字符长度的存储空间。</p>
-<p>在插入尾部有空格的字符串的时候，char会将尾部空格去除，而varchar则不会。实际上char未填满的字符空间都会用空格填充，因此字符串尾部的空格无法被识别。MySQL中两种类型比较的时候会使用PADSPACE校对规则，忽略字段末尾的空格字符，如果希望区分需要用到length函数。</p>
-<p>总结一下，以下情况使用varchar比较合适：</p>
-<ul>
-<li>字符串列的最大长度比平均长度大很多</li>
-<li>列的更新次数少，碎片不成问题</li>
-<li>UTF-8这样复杂的变长编码，使用不同的字节数存储字符</li>
-</ul>
-<p>以下情况使用char合适：</p>
-<ul>
-<li>字符串非常短或者所有值都接近一个长度，如MD5</li>
-<li>经常变更的值，定长的char不容易产生碎片</li>
-<li>列非常短，char存储效率更高，如存储字符'Y'或'N'表示布尔类型</li>
-</ul>
-<p>另外如果是存储中文的话可以使用nvarchar(n)，它是使用Unicode编码（UTF-16），可以在不同的系统中都很好的显示。</p>
-<h2 id="日期类型">日期类型</h2>
-<p>date表示日期，默认格式为'YYYY-MM-DD'，在MySQL中分隔符可任意指定，如@、%；time表示时间，格式'HH:MM:SS',其中分隔符必须为':'；year表示年份datetime与timestamp是是日期与时间的混合类型，格式为'YYYY-MM-DD HH:MM:SS'，该类型理论上可以使用date加time代替。这些类型可以使用字符串或者数字进行赋值，如果要获取当前时间，可以使用函数now()。</p>
-<p>datetime（8字节）和timestamp（4字节）都是日期和时间的混合类型，他们的区别在于：</p>
-<ul>
-<li>datetime保存的时间范围较大，年的数字在1000 - 9999之间，timestamp保存的时间范围较小，年的数字在1970 - 2037之间</li>
-<li>NULL在插入timestamp字段后，实际的值是MySQL服务器当前的日期和时间，而在datetime中就是NULL</li>
-<li>同一个timestamp类型的日期或时间，在不同的时区显示的结果不同</li>
-</ul>
-<h2 id="复合类型">复合类型</h2>
-<p>MySQL 支持两种复合数据类型：enum枚举类型和set集合类型。enum类型的字段类似于单选按钮的功能，一个enum类型的数据最多可以包含65535个元素（1或2个字节）。set 类型的字段类似于复选框的功能，一个set类型的数据最多可以包含64个元素（1、2、4或8个字节）。</p>
-<p>enum和set实际是采用整数存储，编号从1开始，0表示无效的enum值。</p>
-<h2 id="二进制类型">二进制类型</h2>
-<p>前面介绍的都是一些有实际意义的数据类型，但有一些数据是单纯地由'0','1'组成的字符串，比如说视频、音频和可执行程序等，这些数据就需要用二进制类型来存储。它与字符串类型的不同在于：字符串是以字符为单位存储，通过特定的编码将二进制串解释为字符，而二进制类型是按字节为单位存储，存储处理最原始的字节数据。</p>
-<p>二进制类型可以类比字符串类型，主要有：binary、varbinary、bit、blob。其中blob用于存储二进制大对象，排序索引使用前max_short_length个字符，默认为1024K，可自行设置。可存储的最大值由类型确定，客户端和服务器之间可传递的最大值由内存和通信缓存区大小max_allowd_packet确定。</p>
-<h2 id="数据类型选择原则">数据类型选择原则</h2>
-<p>对于数据库设计来说，选择合适的数据类型，不仅可以节省储存空间，还可以有效地提升数据的计算性能。 通常遵循以下原则：</p>
-<ul>
-<li>越小越好：在符合应用要求（取值范围、精度）的前提下，尽量使用“短”数据类型</li>
-<li>简单就好：数据类型越简单越好</li>
-<li>在MySQL中，应该用内置的日期和时间数据类型，而不是用字符串来存储日期和时间</li>
-<li>尽量采用精确小数类型（例如decimal），而不采用浮点数类型</li>
-<li>尽量避免NULL字段，建议将字段指定为NOT NULL约束</li>
-<li>整型是最好的选择，位数据类型可以用整数代替</li>
-</ul>
-
+        Here's something encrypted, password is required to continue reading.
+        
+          <a class="article-more-a" href="/2021/11/09/DynamicRec/#more">more >></a>
+        
       
 
       
@@ -246,11 +184,15 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">数据库</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">论文</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">MySQL</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">推荐系统</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">增量推荐</a>
         		</li>
       		
 		</ul>
@@ -260,7 +202,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2021/04/02/mysql-datatype/">展开全文 >></a>
+          <a class="article-more-a" href="/2021/11/09/DynamicRec/">展开全文 >></a>
         </p>
       
 
@@ -290,511 +232,36 @@
 
 
   
-    <article id="post-存储引擎" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-KGRecPaper2" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/23/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/">存储引擎</a>
+      <a class="article-title" href="/2021/09/30/KGRecPaper2/">知识图谱推荐系统论文略读(二)</a>
     </h1>
   
 
         
-        <a href="/2021/03/23/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" class="archive-article-date">
-  	<time datetime="2021-03-23T15:16:26.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-23</time>
+        <a href="/2021/09/30/KGRecPaper2/" class="archive-article-date">
+  	<time datetime="2021-09-30T08:18:20.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-09-30</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        存储引擎是MySQL中重要的一环，其插件式的存储引擎为我们提供了很多选择，MySQL服务器的主要架构图如下：
-<center>
-<img src="/2021/03/23/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/mysql.png" width="60%" alt="MySQL架构">
-</center>
-<p>下面分别介绍一下几个常用的存储引擎的特点 ### MyISAM MySQL 5.5版本以前默认的存储引擎。其主要关注点在于性能，插入速度快、访问速度快。但是非常致命的是它不支持事务、不支持外键。采用的是表级锁，因此也不支持高并发。另外它采用的二进制层次式的文件，在不同操作系统间移植比较方便。</p>
-<h3 id="innodb">InnoDB</h3>
-<p>目前MySQL默认的存储引擎，支持事务、外键约束，采用行级锁，支持高并发。有独立的缓冲池，可以缓冲数据和索引。可以说是一个有着很多特性，均衡发展的存储引擎。但是插入查询速度比MyISAM而言较慢。</p>
-<h3 id="memory">Memory</h3>
-<p>该存储引擎将数据存储在RAM中，其优势自然是访问速度相当的快。但是服务器一旦出现断电之类的故障，存储在内存中的数据就玩完了。比较适合存储中间生成的表，或者是临时生成的用于计算的表。</p>
-<h3 id="archive">Archive</h3>
-<p>提供很高效的数据压缩，但是对查询更新的支持不好。适合用于存储大量不常用的历史归档数据。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">数据库</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">MySQL</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/23/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-服务器部署neo4j" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/">服务器部署neo4j</a>
-    </h1>
-  
-
-        
-        <a href="/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/" class="archive-article-date">
-  	<time datetime="2021-03-19T11:13:48.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-19</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>一年前国创项目因前端展示需要，在阿里云上购置了一台服务器，促销价一年还不到一百，前段时间到期了（<del>当时能够报销竟然只买了一年的</del>)，其续费要用原价，贵的要死（果然都是套路）。现在随着结项答辩的临近，只能自掏腰包重新促销价购买了一年新的服务器。并且重新部署了neo4j，在服务器跑上我们的程序，成功借助微信公众号作为前端展示。重新部署的过程中，很多坑踩了两次，在这里记录下来，也算是一个总结。</p>
-<h2 id="服务器的购置">服务器的购置</h2>
-<p>服务器我们是在三月采购季促销价在阿里云购置的，价格也还能接受。买之前我们也没有对比其他厂商，比如华为云，其广告打的挺多的，不知道价格怎么用。另外友情提醒，如果一年后还打算使用却又不想高价续费的，一定及时做好数据备份和迁移的准备。</p>
-<p>之后就是记录公网ip、重置密码什么的，这些都可以在阿里云的服务器控制台网页操作，另外网页还支持VNC对服务器便捷地连接。如果需要进行文件传输的话还可以下载MobaXterm、WinSCP等远程连接软件。</p>
-<h2 id="neo4j部署">Neo4j部署</h2>
-<p>Neo4j是基于Java的图形数据库，运行Neo4j需要启动JVM进程，因此必须安装JAVA SE的JDK，这里我们选择了JDK8安装。接着从官网下载Neo4j的安装包，解压安装。</p>
-安装好后按照我们的需要修改相应的配置，修改conf目录下的neo4j.conf文件如下： <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 修改54行，去掉该行的#，可以远程通过ip访问neo4j数据库  </span><br><span class="line">dbms.connectors.default_listen_address&#x3D;0.0.0.0  </span><br><span class="line"># 修改71行，去掉#，设置http端口为7687，端口可以自定义，只要不和其他端口冲突就行  </span><br><span class="line">dbms.connector.bolt.listen_address&#x3D;:7687  </span><br><span class="line"># 修改75行，去掉#，设置http端口为7474，端口可以自定义，只要不和其他端口冲突就行  </span><br><span class="line">dbms.connector.http.listen_address&#x3D;:7474 </span><br></pre></td></tr></table></figure> 为了使得Neo4j能够被正常连接，还要设置服务器的防火墙，打开相应端口。这里我们直接在阿里云的服务器控制台设置。
-<center>
-<img src="/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/aliyun.png" width="60%" alt="防火墙设置">
-</center>
-接着就可以在bin目录执行./neo4j start启动Neo4j
-<center>
-<img src="/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/neo4j.png" width="60%" alt="启动neo4j">
-</center>
-<h2 id="结果">结果</h2>
-在重新创建图数据库并配置好微信公众号作为前端展示方式后，我们的项目又能够正常使用啦！附两张使用图（C++问答）
-<center>
-<img src="/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/textQue.png" width="60%" alt="文字问答">
-</center>
-<center>
-<img src="/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/voiceQue.png" width="60%" alt="语音问答">
-</center>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">技术</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Neo4j</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/19/%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%A8%E7%BD%B2neo4j/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-LeakGAN" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/10/LeakGAN/">LeakGAN论文笔记</a>
-    </h1>
-  
-
-        
-        <a href="/2021/03/10/LeakGAN/" class="archive-article-date">
-  	<time datetime="2021-03-10T13:34:31.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-10</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <blockquote>
-<p>标题：Long Text Generation via Adversarial Training with Leaked Information<br>
-作者：Jiaxian Guo, Sidi Lu, etc.<br>
-发表：AAAI 2018</p>
-</blockquote>
-<p>将生成器视为强化学习过程，使用判别器指导生成器训练的GAN模型在文本生成上取得了不错的结果。但是，标量指导信号只有在整个文本生成完后才能由判别器给出，且信号信息量不大，缺少了生成过程中文本结构的中间信息。所以在生成较长的文本时（超过20个单词）效果并不好。该论文提出了一个新的架构 LeakGAN，来解决长文本生成的问题。LeakGAN 允许判别器向生成器泄露抽取到的高层次特征来帮助生成器的学习。在生成过程的每一步中，生成器通过 MANAGER 模型将当前文本抽取到的特征作为输入，输出一个隐藏向量来指导 WORKER 模型生成下一个单词。</p>
-<h2 id="leakgan">LeakGAN</h2>
-LeakGAN 用于解决指导信号（判别器给出的概率值）信息量不够以及稀疏的问题，其模型框架如下图所示：
-<center>
-<img src="/2021/03/10/LeakGAN/model.PNG" alt="模型框架">
-</center>
-<h3 id="判别器泄露特征">判别器泄露特征</h3>
-<p>不同于传统强化学习模型的奖励函数是一个黑盒，该模型使用判别器 <span class="math inline">\(D_{\phi}\)</span> 来学习奖励函数。因为 <span class="math inline">\(D_{\phi}\)</span> 本身是一个神经网络，可以被分解成一个特征提取器 <span class="math inline">\(\mathcal{F}\left(\cdot ; \phi_{f}\right)\)</span> 和一个最后带有权重向量 <span class="math inline">\(\phi_l\)</span> 的 sigmoid 分类层。对于输入 <span class="math inline">\(s\)</span>，则有： <span class="math display">\[
-D_{\phi}(s)=\operatorname{sigmoid}\left(\phi_{l}^{\top} \mathcal{F}\left(s ; \phi_{f}\right)\right)=\operatorname{sigmoid}\left(\phi_{l}^{\top} f\right)
-\]</span></p>
-<p>其中 <span class="math inline">\(\phi = (\phi_f,\phi_l)\)</span>，<span class="math inline">\(\operatorname{sigmoid}(z) = 1/(1+e^{-z})\)</span>。<span class="math inline">\(f=\mathcal{F}\left(s ; \phi_{f}\right)\)</span> 是判别器对输入 <span class="math inline">\(s\)</span> 提取的特征向量，将会被泄露给生成器 <span class="math inline">\(G_{\theta}\)</span>。对于给定的 <span class="math inline">\(D_{\phi}\)</span> 每个状态 <span class="math inline">\(s\)</span> 的奖励值主要取决于提取到的特征 <span class="math inline">\(f\)</span>。因此，从 <span class="math inline">\(D_{\phi}\)</span> 获取高的奖励值等价于从提取特征的空间 <span class="math inline">\(\mathcal{F}\left(\boldsymbol{S} ; \phi_{f}\right)=\left\{\mathcal{F}\left(s ; \phi_{f}\right)\right\}_{s \in \boldsymbol{S}}\)</span> 中寻找高奖励的区域。相较于标量信号 <span class="math inline">\(D_{\phi}(s)\)</span>，特征向量 <span class="math inline">\(f\)</span> 是一个更具特征的指导信号。</p>
-<h3 id="生成器的层级结构">生成器的层级结构</h3>
-<p>在生成过程的每一步 <span class="math inline">\(t\)</span> 中，为了利用从 <span class="math inline">\(D_{\phi}\)</span> 中泄露的信息 <span class="math inline">\(f_t\)</span>，生成器使用了层级的强化学习模型架构。具体的，包括 MANAGER 模型，一个以提取到的特征向量 <span class="math inline">\(f_t\)</span> 作为输入，输出目标向量 <span class="math inline">\(g_t\)</span> 的 LSTM 网络，和 WORKER 模型，接收目标函数 <span class="math inline">\(g_t\)</span> 指导下一个单词的生成。</p>
-<p>MANAGER 产生目标函数 <span class="math inline">\(g_t\)</span> 的方法为： <span class="math display">\[
-\begin{aligned}
-\hat{g}_{t}, h_{t}^{M} &amp;=\mathcal{M}\left(f_{t}, h_{t-1}^{M} ; \theta_{m}\right), \\
-g_{t} &amp;=\hat{g}_{t} /\left\|\hat{g}_{t}\right\|
-\end{aligned}
-\]</span></p>
-<p>其中 <span class="math inline">\(\mathcal{M}\left(\cdot; \theta_{m}\right)\)</span> 表示 LSTM 实现的 MANAGER 模型，<span class="math inline">\(h_{t}^{M}\)</span> 是 LSTM 的隐层向量。</p>
-<p>为了利用 MANAGER 产生的目标向量，会用权重矩阵 <span class="math inline">\(W_{\psi}\)</span> 对最近的 <span class="math inline">\(c\)</span> 个目标向量加权平均得到 <span class="math inline">\(k\)</span> 为的目标嵌入向量 <span class="math inline">\(w_t\)</span>： <span class="math display">\[
-w_{t}=\psi\left(\sum_{i=1}^{c} g_{t-i}\right)=W_{\psi}\left(\sum_{i=1}^{c} g_{t-i}\right)
-\]</span></p>
-<p>WORKER 模型会用当前单词 <span class="math inline">\(x_t\)</span> 作为输入，输出一个矩阵 <span class="math inline">\(O_t\)</span>，再与目标嵌入向量 <span class="math inline">\(w_t\)</span> 做矩阵乘法，使用 softmax 确定最终的动作分布空间： <span class="math display">\[
-\begin{aligned}
-O_{t}, h_{t}^{W} &amp;=\mathcal{W}\left(x_{t}, h_{t-1}^{W} ; \theta_{w}\right) \\
-G_{\theta}\left(\cdot \mid s_{t}\right) &amp;=\operatorname{softmax}\left(O_{t} \cdot w_{t} / \alpha\right)
-\end{aligned}
-\]</span></p>
-<h3 id="生成器的训练">生成器的训练</h3>
-<p>训练方法与 SeqGAN 类似，MANAGER 模型的梯度定义为： <span class="math display">\[
-\nabla_{\theta_{m}}^{\mathrm{adv}} g_{t}=-Q_{\mathcal{F}}\left(s_{t}, g_{t}\right) \nabla_{\theta_{m}} d_{\cos }\left(f_{t+c}-f_{t}, g_{t}\left(\theta_{m}\right)\right)
-\]</span></p>
-<p>其中<span class="math inline">\(Q_{\mathcal{F}}\left(s_{t}, g_{t}\right)=Q\left(\mathcal{F}\left(s_{t}\right), g_{t}\right)=Q\left(f_{t}, g_{t}\right)=\mathbb{E}\left[r_{t}\right]\)</span> 可通过蒙特卡洛搜索估计。<span class="math inline">\(d_{cos}\)</span> 代表特征表示的改变和 MANAGER 生成的目标向量间的余弦相似度，直觉上，损失函数要求在得到高奖励同时，目标向量匹配特征空间的转移。于此同时，WORKER使用 REINFORCE 算法最大化奖励： <span class="math display">\[
-\begin{aligned}
-&amp; \nabla_{\theta_{w}} \mathbb{E}_{s_{t-1} \sim G}\left[\sum_{x_{t}} r_{t}^{I} \mathcal{W}\left(x_{t} \mid s_{t-1} ; \theta_{w}\right)\right] \\
-=&amp; \mathbb{E}_{s_{t-1} \sim G, x_{t} \sim \mathcal{W}\left(x_{t} \mid s_{t-1}\right)}\left[r_{t}^{I} \nabla_{\theta_{w}} \log \mathcal{W}\left(x_{t} \mid s_{t-1} ; \theta_{w}\right)\right]
-\end{aligned}
-\]</span></p>
-<p>可以通过采样状态 <span class="math inline">\(s_{t-1}\)</span> 和动作 <span class="math inline">\(x_t\)</span> 来估计。由于 WORKER 受 MANAGER 产生的方向的指导，WORKER 本质的奖励定义为： <span class="math display">\[
-r_{t}^{I}=\frac{1}{c} \sum_{i=1}^{c} d_{\cos }\left(f_{t}-f_{t-i}, g_{t-i}\right)
-\]</span></p>
-<p>在实际训练前，会先对生成器 <span class="math inline">\(G_{\theta}\)</span> 进行预训练。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">论文笔记</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">GAN</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/10/LeakGAN/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-MaskGAN" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/09/MaskGAN/">MaskGAN论文笔记</a>
-    </h1>
-  
-
-        
-        <a href="/2021/03/09/MaskGAN/" class="archive-article-date">
-  	<time datetime="2021-03-09T14:15:21.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-09</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <blockquote>
-<p>标题：MaskGAN: Better Text Generation via Filling in the______<br>
-作者：William Fedus, Ian Goodfellow, Andrew M. Dai<br>
-发表：ICLR 2018</p>
-</blockquote>
-<p>文本生成的神经模型常常是自回归语言模型或者seq2seq模型，这些模型通过序列采样单词生成文本，每个词的生成受之前产生词的影响。虽然这些方法在一些 benchmark 上有比较好的结果，比较适合优化 perplexity，但常会因为前段序列产生了训练数据中未出现过的单词而导致错误累计（exposure bias），产生很差的结果。而 GAN 模型解决了以上问题却对离散数据生成有着难以计算梯度的问题，因此论文提出了一个 actor-critic conditional GAN，MaskGAN，通过周围的语境填充缺失的文本进行训练，在条件和非条件的 text samples 中有着很好的效果。</p>
-<h2 id="maskgan">MaskGAN</h2>
-<p>用 <span class="math inline">\((x_t,y_t)\)</span> 表示输入和目标 tokens 对，&lt; m &gt; 表示用于遮住的 token（替代原 token），<span class="math inline">\(\hat{x_t}\)</span> 表示被遮住的原始的 token，<span class="math inline">\(\tilde{x_t}\)</span>表示填写的 token，它会被传递给判别器来判断真假。</p>
-<p>填写缺失的 tokens 需要结合之前和之后的信息，为此选择了 seq2seq 架构。生成器由编码模型和解码模型构成。对于一个离散的序列 <span class="math inline">\(\boldsymbol{x}=\left(x_{1}, \cdots, x_{T}\right)\)</span>，会随机或确定地生成一个相同长度的二元 mask，<span class="math inline">\(\boldsymbol{m}=\left(m_{1}, \cdots, m_{T}\right)\)</span>，其中 <span class="math inline">\(m_t \in \{0,1\}\)</span>，用于选择保留哪些 tokens。编码器会读入遮住后的序列，表示为 <span class="math inline">\(\boldsymbol{m}(\boldsymbol{x})\)</span>。</p>
-<p>在标准的语言模型中，解码器自回归地填充弄缺失的 tokens，但是现在这同时依赖于被遮住的文本 <span class="math inline">\(\boldsymbol{m}(\boldsymbol{x})\)</span> 和目前为止已填写的 tokens。生成器将序列的分布分解为顺序的条件序列<span class="math inline">\(P\left(\hat{x}_{1}, \cdots, \hat{x}_{T} \mid \boldsymbol{m}(\boldsymbol{x})\right)=\prod_{t=1}^{T} P\left(\hat{x}_{t} \mid \hat{x}_{1}, \cdots, \hat{x}_{t-1}, \boldsymbol{m}(\boldsymbol{x})\right)\)</span>，这样的话生成一个 token 的概率可以表示为： <span class="math display">\[
-G\left(x_{t}\right) \equiv P\left(\hat{x}_{t} \mid \hat{x}_{1}, \cdots, \hat{x}_{t-1}, \boldsymbol{m}(\boldsymbol{x})\right)
-\]</span></p>
-<center>
-<img src="/2021/03/09/MaskGAN/generator.PNG" alt="生成器模型">
-</center>
-<p>判别器与生成器有着相同的架构，但输出是每一时刻的属于真实数据的概率标量，而不是词汇表大小的分布。判别器接收生成器填充好的序列，同时还会接收原始遮住后的序列 <span class="math inline">\(\boldsymbol{m}(\boldsymbol{x})\)</span> 以帮助判别器做更好的判断。 <span class="math display">\[
-D_{\phi}\left(\tilde{x}_{t} \mid \tilde{x}_{0: T}, \boldsymbol{m}(\boldsymbol{x})\right)=P\left(\tilde{x}_{t}=x_{t}^{\mathrm{real}} \mid \tilde{x}_{0: T}, \boldsymbol{m}(\boldsymbol{x})\right)
-\]</span></p>
-<p>判别器估计概率的 log 值会作为奖励： <span class="math display">\[
-r_{t} \equiv \log D_{\phi}\left(\tilde{x}_{t} \mid \tilde{x}_{0: T}, \boldsymbol{m}(\boldsymbol{x})\right)
-\]</span></p>
-<p>模型中第三个网络是 critic network，作为判别器的补充。它用于估计 value function，是填充序列总的折扣奖励 <span class="math inline">\(R_{t}=\sum_{s=t}^{T} \gamma^{s} r_{s}\)</span>，其中 <span class="math inline">\(\gamma\)</span> 是序列中每个位置的折扣因子。</p>
-<h3 id="训练">训练</h3>
-<p>由于模型本身根据生成器的概率分布采样下一个 tokens 这一操作时不可微的，所以为了训练生成器，采用了策略梯度的方法，最大化累计奖励 <span class="math inline">\(R=\sum_{t=1}^{T} R_{t}\)</span>。 通过对<span class="math inline">\(\mathbb{E}_{G(\theta)}[R]\)</span> 执行梯度上升优化生成器的参数。可得其无偏估计 <span class="math inline">\(\nabla_{\theta} \mathbb{E}_{G}\left[R_{t}\right]=R_{t} \nabla_{\theta} \log G_{\theta}\left(\hat{x}_{t}\right)\)</span>，使用 critic 学习得到的 value function 作为baseline <span class="math inline">\(b_t = V^G(x_{1:t})\)</span> 进行简化得到生成器单个 token 的梯度贡献： <span class="math display">\[
-\nabla_{\theta} \mathbb{E}_{G}\left[R_{t}\right]=\left(R_{t}-b_{t}\right) \nabla_{\theta} \log G_{\theta}\left(\hat{x}_{t}\right)
-\]</span></p>
-<p>总的生成器梯度为 <span class="math display">\[
-\begin{aligned}
-\nabla_{\theta} \mathbb{E}[R] &amp;=\mathbb{E}_{\hat{x}_{t} \sim G}\left[\sum_{t=1}^{T}\left(R_{t}-b_{t}\right) \nabla_{\theta} \log \left(G_{\theta}\left(\hat{x}_{t}\right)\right)\right] \\
-&amp;=\mathbb{E}_{\hat{x}_{t} \sim G}\left[\sum_{t=1}^{T}\left(\sum_{s=t}^{T} \gamma^{s} r_{s}-b_{t}\right) \nabla_{\theta} \log \left(G_{\theta}\left(\hat{x}_{t}\right)\right)\right]
-\end{aligned}
-\]</span></p>
-<p>与传统GAN训练一样，判别器会根据以下梯度更新： <span class="math display">\[
-\nabla_{\phi} \frac{1}{m} \sum_{i=1}^{m}\left[\log D\left(x^{(i)}\right)\right]+\log \left(1-D\left(G\left(z^{(i)}\right)\right]\right.
-\]</span></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">论文笔记</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">GAN</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/09/MaskGAN/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-SeqGAN" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/09/SeqGAN/">SeqGAN论文笔记</a>
-    </h1>
-  
-
-        
-        <a href="/2021/03/09/SeqGAN/" class="archive-article-date">
-  	<time datetime="2021-03-09T14:15:02.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-09</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <blockquote>
-<p>标题：SeqGAN: Sequence Generative Adversarial Nets with Policy Gradient<br>
-作者：Lantao Yu, Weinan Zhang, Jun Wang, Yong Yu<br>
-发表：AAAI 2017</p>
-</blockquote>
-<p>GAN模型在生成由离散 token 组成的句子时，判别器难以将梯度创给生成器更新参数，另外判别器只能评判整个句子，而对于生成句子的一部分，很难平衡当前分数和未来生成的句子的分数。这篇文章提出了 SeqGAN 来解决这些问题。该模型将生成器看成是强化学习中的随机策略，通过直接执行梯度策略（gradient policy）更新来绕过生成器的微分问题。模型使用GAN中判别器对整个句子评判的结果作为强化学习中的奖励信号，并用蒙特卡洛搜索将其传递给中间步的状态动作。</p>
-<h2 id="seqgan">SeqGAN</h2>
-<p>序列生成任务定义如下。给定真实世界的一个结构化序列数据集，训练一个以 <span class="math inline">\(\theta\)</span> 为参数的生成模型 <span class="math inline">\(G_{\theta}\)</span> 来生成一个序列 <span class="math inline">\(Y_{1: T}=\left(y_{1}, \ldots, y_{t}, \ldots, y_{T}\right), y_{t} \in \mathcal{Y}\)</span>，其中 <span class="math inline">\(\mathcal{Y}\)</span> 是候选 tokens 的词汇表。论文将该问题视为强化学习任务：在时间步 <span class="math inline">\(t\)</span> ，状态 <span class="math inline">\(s\)</span> 是当前已产生的 tokens <span class="math inline">\((y_{1}, \ldots, y_{t-1})\)</span>，动作 <span class="math inline">\(a\)</span> 是下一个要选择的 token <span class="math inline">\(y_t\)</span>，因此策略模型 <span class="math inline">\(G_{\theta}\left(y_{t} \mid Y_{1: t-1}\right)\)</span> 是随机的，尽管在动作选择后状态的迁移是确定的。</p>
-另外，论文也训练了一个以 <span class="math inline">\(\phi\)</span> 为参数的判别模型 <span class="math inline">\(D_{\phi}\)</span> 来提供改进生成器 <span class="math inline">\(G_{\theta}\)</span> 的指导。<span class="math inline">\(D_{\phi}(Y_{1:T})\)</span> 表示序列 <span class="math inline">\(Y_{1:T}\)</span> 有多大的概率来自真实的序列数据。如下图所示，判别器 <span class="math inline">\(D_{\phi}\)</span> 使用真实序列数据作为正样本，生成器 <span class="math inline">\(G_{\theta}\)</span> 生成的序列作为负样本进行训练。于此同时，生成器 <span class="math inline">\(G_{\theta}\)</span> 依据判别器 <span class="math inline">\(D_{\phi}\)</span> 给出的最终期待奖励值，使用策略梯度和蒙特卡洛搜索进行更新。
-<center>
-<img src="/2021/03/09/SeqGAN/model.PNG" alt="model">
-</center>
-<h3 id="策略梯度policy-gradient">策略梯度（Policy Gradient）</h3>
-<p>当不存在中间奖励时，生产模型 <span class="math inline">\(G_{\theta}\left(y_{t} \mid Y_{1: t-1}\right)\)</span> 的目标就是生成从开始状态 <span class="math inline">\(s_0\)</span> 起，最大化最终期望奖励的序列： <span class="math display">\[
-J(\theta)=\mathbb{E}\left[R_{T} \mid s_{0}, \theta\right]=\sum_{y_{1} \in \mathcal{Y}} G_{\theta}\left(y_{1} \mid s_{0}\right) \cdot Q_{D_{\phi}}^{G_{\theta}}\left(s_{0}, y_{1}\right)
-\]</span></p>
-<p>其中 <span class="math inline">\(R_{T}\)</span> 是完整序列的奖励，来自判别器 <span class="math inline">\(D_{\phi}\)</span>。<span class="math inline">\(Q_{D_{\phi}}^{G_{\theta}}\left(s_{0}, y_{1}\right)\)</span> 是序列的 action-value 函数，即从状态 <span class="math inline">\(s\)</span>，采取动作 <span class="math inline">\(a\)</span>，使用策略 <span class="math inline">\(G_{\theta}\)</span>的期望累计奖励值。这与生成器想要判别器认为生成的序列是真实的这一目标一致。</p>
-<p>所以接下来的问题就是如何估计 action-value 函数。首先，论文将判别器判断序列为真的概率 <span class="math inline">\(D_{\phi}(Y_{1:T})\)</span> 作为奖励值，则： <span class="math display">\[
-Q_{D_{\phi}}^{G_{\theta}}\left(a=y_{T}, s=Y_{1: T-1}\right)=D_{\phi}\left(Y_{1: T}\right)
-\]</span></p>
-<p>但是判别器只能为最终的句子提供一个奖励值，而对于每个时间步产生的句子的一部分，我们不仅应该考虑句子本身，还需要考虑未来输出的结果。就好像围棋和象棋，玩家有时会牺牲中间短暂的利益来换取长期的胜利。所以为了评估中间状态的 action-value，论文使用了带有 roll-out 策略（在论文中与生成器相同） <span class="math inline">\(G_{\beta}\)</span> 的蒙特卡洛搜索（Monte Carlo search）来采样后半部分未知的 <span class="math inline">\(T - t\)</span> 个 tokens。将 <span class="math inline">\(N\)</span> 次的蒙特卡洛搜索表示为： <span class="math display">\[
-\left\{Y_{1: T}^{1}, \ldots, Y_{1: T}^{N}\right\}=\mathrm{MC}^{G_{\beta}}\left(Y_{1: t} ; N\right)
-\]</span></p>
+        <h2 id="ackrec">ACKRec</h2>
 <blockquote>
-<p>roll-out 算法是对于当前状态，从每一个可能的动作开始，之后根据给定的策略进行路径采样，根据多次采样的奖励总和来对当前状态的行动值进行估计。当目前的估计值基本收敛时，会根据行动值最大的原则选择动作进入下一个状态再重复上述过程。在蒙特卡洛控制中，采样的目的是估计一个完整的，最优价值函数，但是roll-out中的采样目的只是为了计算当前状态的行动值以便进入下一个状态，而且这些估计的行动值并不会被保留。在roll-out中采用的策略往往比较简单被称作 roll-out 策略 (roll-out policy)。</p>
+<p>标题：Attentional Graph Convolutional Networks for Knowledge Concept Recommendation in MOOCs in a Heterogeneous View<br>
+作者：Jibing Gong, Shen Wang, Jie Tang, etc.<br>
+发表：SIGIR 2020</p>
 </blockquote>
-<blockquote>
-<p>蒙特卡洛树搜索是上面提到的 roll-out 算法的拓展版，在于它会记录搜索过程中的行动值变化以便更好的采样，完整的步骤有以下四步：<br>
-1、选择：从根节点出发，根据树策略(tree policy)选择一个叶节点<br>
-2、拓展：有一定概率发生，从选择的叶节点中执行一个未执行过的行动来增加一个子节点<br>
-3、模拟：从当前叶节点开始，根据 roll-out 策略执行动作直到终止时间<br>
-4、回溯：利用本次模拟中得到的奖励和逐层更新所使用到的树内节点<br>
-<img src="/2021/03/09/SeqGAN/MC.jpg" alt="蒙特卡洛树搜索"></p>
-</blockquote>
-<p>使用 <span class="math inline">\(N\)</span> 次 roll-out 策略后，会得到一批输出样。因此有： <span class="math display">\[
-\begin{array}{ll}
-Q_{D_{\phi}}^{G_{\theta}}\left(s=Y_{1: t-1}, a=y_{t}\right)= 
-\left\{\begin{array}{ll}
-\frac{1}{N} \sum_{n=1}^{N} D_{\phi}\left(Y_{1: T}^{n}\right), Y_{1: T}^{n} \in \mathrm{MC}^{G_{\beta}}\left(Y_{1: t} ; N\right) &amp; \text { for } t&lt;T \\
-D_{\phi}\left(Y_{1: t}\right) &amp; \text { for } t=T
-\end{array}\right.
-\end{array}
-\]</span></p>
-<p>使用判别器 <span class="math inline">\(D_{\phi}\)</span> 作为奖励函数的好处是它可以动态地更新以进一步迭代地改善生成器。如果生成了一批更加真实的序列，应该重新训练生成器： <span class="math display">\[
-\min _{\phi}-\mathbb{E}_{Y \sim p_{\text {data }}}\left[\log D_{\phi}(Y)\right]-\mathbb{E}_{Y \sim G_{\theta}}\left[\log \left(1-D_{\phi}(Y)\right)\right]
-\]</span></p>
-<p>有了新的判别器后，就可以更新生成器，基于策略的方法通过直接最大化长期的奖励来优化参数。生成器目标函数 <span class="math inline">\(J(\theta)\)</span> 对参数 <span class="math inline">\(\theta\)</span> 的梯度可以推导为：<span class="math display">\[
-\nabla_{\theta} J(\theta)=\sum_{t=1}^{T} \mathbb{E}_{Y_{1: t-1} \sim G_{\theta}}\left[\sum_{y_{t} \in \mathcal{Y}} \nabla_{\theta} G_{\theta}\left(y_{t} \mid Y_{1: t-1}\right) \cdot Q_{D_{\phi}}^{G_{\theta}}\left(Y_{1: t-1}, y_{t}\right)\right]
-\]</span></p>
-<p>对上市构建一个无偏估计： <span class="math display">\[
-\begin{array}{l}
-\nabla_{\theta} J(\theta) \simeq \sum_{t=1}^{T} \sum_{y_{t} \in \mathcal{Y}} \nabla_{\theta} G_{\theta}\left(y_{t} \mid Y_{1: t-1}\right) \cdot Q_{D_{\phi}}^{G_{\theta}}\left(Y_{1: t-1}, y_{t}\right) \\
-=\sum_{t=1}^{T} \sum_{y_{t} \in \mathcal{Y}} G_{\theta}\left(y_{t} \mid Y_{1: t-1}\right) \nabla_{\theta} \log G_{\theta}\left(y_{t} \mid Y_{1: t-1}\right) \cdot Q_{D_{\phi}}^{G_{\theta}}\left(Y_{1: t-1}, y_{t}\right) \\
-=\sum_{t=1}^{T} \mathbb{E}_{y_{t} \sim G_{\theta}\left(y_{t} \mid Y_{1: t-1}\right)}\left[\nabla_{\theta} \log G_{\theta}\left(y_{t} \mid Y_{1: t-1}\right) \cdot Q_{D_{\phi}}^{G_{\theta}}\left(Y_{1: t-1}, y_{t}\right)\right]
-\end{array}
-\]</span> 其中 $ Y_{1: t-1}$ 是从 <span class="math inline">\(G_{\theta}\)</span> 中采样观察到的中间状态，期望 <span class="math inline">\(\mathbb{E}[\cdot]\)</span> 可以通过采样方法估计，然后就可以更新生成器的参数了： <span class="math display">\[
-\theta \leftarrow \theta+\alpha_{h} \nabla_{\theta} J(\theta),
-\]</span></p>
-<h3 id="算法">算法</h3>
-<p><img src="/2021/03/09/SeqGAN/algorithm.PNG"></p>
-
+<p>MOOCs场景下直接推荐课程忽视了知识概念的推荐。论文提出了一个基于图神经网络的端到端的方法，注意力的异质图卷积深度知识推荐（ACKRec）来进行MOOCs中知识概念的推荐。使用内容信息和上下文信息，通过图卷积网络学习实体的表征。除了学生和知识概念，还考虑课程、视频、老师等其他类型的实体来构建异质信息网络来捕获丰富的语义信息并将其结合到表征学习的过程。同时还使用元路径来指导用户偏好的传播，利用注意力机制结合不同元路径的上下文信息。使用扩展的矩阵分解（MF）方法付来学习模型参数。</p>
+        
+          <a class="article-more-a" href="/2021/09/30/KGRecPaper2/#more">more >></a>
+        
       
 
       
@@ -806,415 +273,17 @@ D_{\phi}\left(Y_{1: t}\right) &amp; \text { for } t=T
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">论文笔记</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">GAN</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/09/SeqGAN/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-TextGAN" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/08/TextGAN/">TextGAN论文笔记</a>
-    </h1>
-  
-
-        
-        <a href="/2021/03/08/TextGAN/" class="archive-article-date">
-  	<time datetime="2021-03-08T13:52:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-08</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <blockquote>
-<p>标题：Generating Text via Adversarial Training<br>
-作者：Yizhe Zhang, Zhe Gan, Lawrence Carin<br>
-发表：NIPS 2016</p>
-</blockquote>
-<p>论文使用LSTM作为生成器，CNN作为判别器来进行对抗训练生成文本，在训练生成器时，使用匹配特征分布的方法。另外，论文还使用了多种预训练的方法并解决了离散变量的问题。</p>
-<p>文本生成一个简单的方法就是通过基于 RNN 的 encoder-decoder 学习表示句子的隐藏空间，然后通过解码隐藏空间的随机样本来生成句子。但是用autoencoder将句子映射到潜在向量空间时，映射往往只会覆盖很小的结构性的区域，所以如果选择嵌入空间的任意向量的话，解码很可能得到无意义的句子。另外一个不足是因为RNN的结构很可能导致错误的累计，就致使句子的前半部分较合理但后半部分偏差就比较大。而用GAN模型就能很好解决以上问题。</p>
-<h2 id="textgan">TextGAN</h2>
-给定语料库 <span class="math inline">\(S = \{s_1,···,s_n\}\)</span>，其中 <span class="math inline">\(n\)</span> 是句子的总数。令 <span class="math inline">\(w^t\)</span> 表示句子 <span class="math inline">\(s\)</span> 中的第 <span class="math inline">\(t\)</span> 个词，每个词 <span class="math inline">\(w^t\)</span> 使用 <span class="math inline">\(k\)</span> 维的词向量 <span class="math inline">\(\mathbf{x}_t = \mathbf{W}_e[w^t]\)</span> 嵌入表示，其中 <span class="math inline">\(\mathbf{W}_e \in \mathbb{R}^{k \times V}\)</span> 是需要学习的词嵌入矩阵，<span class="math inline">\(V\)</span> 是词典大小，符号 <span class="math inline">\([v]\)</span> 表示矩阵的第 <span class="math inline">\(v\)</span> 列。
-<center>
-<img src="/2021/03/08/TextGAN/model.PNG" alt="model">
-</center>
-<h3 id="cnn判别器">CNN判别器</h3>
-<p>CNN架构由卷积层和最大池化操作组成。一个长度为 <span class="math inline">\(T\)</span> 的句子可以通过连接词嵌入向量作为每一列，表示为矩阵 <span class="math inline">\(\mathbf{X} \in \mathbb{R}^{T-h+1}\)</span>，即 <span class="math inline">\(\mathbf{X}\)</span> 的第 <span class="math inline">\(t\)</span> 列为 <span class="math inline">\(x_t\)</span>。</p>
-<p>卷积操作使用卷积核 <span class="math inline">\(\mathbf{W}_c \in \mathbb{R}^{k \times h}\)</span>，应用到相邻 <span class="math inline">\(h\)</span> 个词汇产生特征。据此可以产生feature map <span class="math inline">\(\boldsymbol{c}=f\left(\mathbf{X} * \mathbf{W}_{c}+\boldsymbol{b}\right) \in \mathbb{R}^{T-h+1}\)</span>，其中 <span class="math inline">\(f(·)\)</span> 是非线性激活函数，<span class="math inline">\(\boldsymbol{b} \in \mathbb{R}^{T-h+1}\)</span> 是偏置向量。之后对feature map做max-over-time池化操作，即 <span class="math inline">\(\hat{c} = max\{\boldsymbol{c}\}\)</span>，该操作提取出重要信息且保证提取特征与输入句子长度无关。</p>
-在模型中会使用不同窗口大小的多个卷积核，在提取出来的向量特征层上会使用一个softmax层来将输入的句子映射到输出 <span class="math inline">\(D(\mathbf{X}) \in [0,1]\)</span>，表示 <span class="math inline">\(\mathbf{X}\)</span> 属于真实数据分布的概率。
-<center>
-<img src="/2021/03/08/TextGAN/CNN.PNG" alt="CNN判别器">
-</center>
-<h3 id="lstm生成器">LSTM生成器</h3>
-<p>LSTM解码器由于将特征向量 <span class="math inline">\(z\)</span> 转化成生成语句 <span class="math inline">\(\tilde{s}\)</span>。给定特征向量 <span class="math inline">\(z\)</span>，生成长度为 <span class="math inline">\(T\)</span> 的句子 <span class="math inline">\(\tilde{s}\)</span> 的概率为： <span class="math display">\[
-p(\tilde{s} \mid \boldsymbol{z})=p\left(w^{1} \mid \boldsymbol{z}\right) \prod_{t=2}^{T} p\left(w^{t} \mid w^{&lt;t}, \boldsymbol{z}\right)
-\]</span></p>
-<p>特别的，<span class="math inline">\(p\left(w^{1} \mid \boldsymbol{z}\right) = \operatorname{argmax}(\mathbf{V}h_1)\)</span>，其中 <span class="math inline">\(h_1 = \tanh(\mathbf{C}\boldsymbol{z})\)</span>，<span class="math inline">\(\mathbf{V}\)</span> 是一个用来计算词分布的权重矩阵。LSTM第 <span class="math inline">\(t\)</span> 步的输入 <span class="math inline">\(\boldsymbol{y}_{t-1}\)</span>是最大化 <span class="math inline">\(w^{t-1}\)</span> 的上一个单词的嵌入向量： <span class="math display">\[\boldsymbol{y}_{t-1} = \mathbf{W}_e[w^{t-1}] \tag{1}\]</span> 则生成的句子 <span class="math inline">\(s=\left[\operatorname{argmax}\left(w^{1}\right), \cdots, \operatorname{argmax}\left(w^{L}\right)\right]\)</span>。</p>
-<h3 id="训练技术">训练技术</h3>
-<p><strong>训练目标</strong>   不使用原始GAN模型目标函数，而是采用类似于特征匹配的方法，分两步进行迭代优化： <span class="math display">\[
-\text { minimizing: } L_{D}=-\mathbb{E}_{s \sim \mathcal{S}} \log D(s)-\mathbb{E}_{z \sim p_{z}(z)} \log [1-D(G(z))]
-\]</span></p>
-<p><span class="math display">\[
-\text { minimizing: } L_{G}=\operatorname{tr}\left(\boldsymbol{\Sigma}_{s}^{-1} \boldsymbol{\Sigma}_{r}+\boldsymbol{\Sigma}_{r}^{-1} \boldsymbol{\Sigma}_{s}\right)+\left(\boldsymbol{\mu}_{s}-\boldsymbol{\mu}_{r}\right)^{T}\left(\boldsymbol{\Sigma}_{s}^{-1}+\boldsymbol{\Sigma}_{r}^{-1}\right)\left(\boldsymbol{\mu}_{s}-\boldsymbol{\mu}_{r}\right)
-\]</span></p>
-<p>其中 <span class="math inline">\(\boldsymbol{\Sigma}_{s}\)</span>，<span class="math inline">\(\boldsymbol{\Sigma}_{r}\)</span>分别表示合成的和真实的句子特征向量 <span class="math inline">\(\boldsymbol{f}_{s}\)</span>，<span class="math inline">\(\boldsymbol{f}_{r}\)</span> 的协方差矩阵，<span class="math inline">\(\boldsymbol{\mu}_{s}\)</span>，<span class="math inline">\(\boldsymbol{\mu}_{r}\)</span> 表示 <span class="math inline">\(\boldsymbol{f}_{s}\)</span>，<span class="math inline">\(\boldsymbol{f}_{r}\)</span> 的平均向量，他们都是从批样本中经验性地估计得来。损失函数 <span class="math inline">\(L_G\)</span> 实际上是两个多变量高斯分布 <span class="math inline">\(\mathcal{N}(\boldsymbol{\mu}_{r},\boldsymbol{\Sigma}_{r})\)</span> 和 <span class="math inline">\(\mathcal{N}(\boldsymbol{\mu}_{s},\boldsymbol{\Sigma}_{s})\)</span> 的 JS 散度。</p>
-<p><strong>离散近似</strong>   训练的生成器 <span class="math inline">\(G\)</span> 中包含离散变量，无法直接使用梯度。基于得分函数的方法，例如 REINFORCE 算法，通过蒙特卡洛估计获得无偏的梯度估计。但是梯度估计的方差会比较大。在这里使用一个 soft-argmax 函数进行估计： <span class="math display">\[
-\boldsymbol{y}_{t-1}=\mathbf{W}_{e} \operatorname{softmax}\left(\mathbf{V} \boldsymbol{h}_{t-1} \odot L\right)
-\]</span></p>
-<p>其中 <span class="math inline">\(\odot\)</span> 表示 element-wise 乘积，当 <span class="math inline">\(L \to \infty\)</span> 时，其估计将会变成 <span class="math inline">\((1)\)</span>。</p>
-<p><strong>特征学习的混合预训练</strong>   GAN模型训练时有难以收敛的问题，通过预训练一个标准的自编码LSTM模型来初始化LSTM参数。对于判别器，随机交换语料库句子中的两个单词来构建 tweaked sentences，判别器预训练分辨真实的和tweaked sentence。 <br></p>
-<blockquote>
-<p>标题：Adversarial Feature Matching for Text Generation<br>
-作者：Yizhe Zhang, Zhe Gan, etc.<br>
-发表：ICML 2017</p>
-</blockquote>
-<p>这篇论文是上面的续作，同样使用 LSTM 作为生成器，CNN 作为判别器，通过 kernelized discrepancy metric 来匹配真实句子和合成句子的高维隐藏特征分布。这种方法可以解决对抗训练中的模式崩溃问题。</p>
-<blockquote>
-什么是模式崩溃（mode collapse）？<br>
-真实世界中的数据分布可能会有多个样本集中的“波峰”。例如，假设有一个数据集，其中包含澳大利亚中部爱丽丝泉（通常非常热）和南极南极（通常非常寒冷）的夏日温度的混合数据。数据的分布是双峰的 - 两个地区的平均温度存在峰值，两者之间存在差距。如下图。
-<center>
-<img src="/2021/03/08/TextGAN/temperature.jpg" alt="温度图">
-</center>
-<p>现在我们想训练一个产生合理温度值的 GAN。直观地说，我们希望生成器学会以几乎相等的概率产生热和冷的温度。然而，通常遇到的问题是模式崩溃，导致生成器仅从单一模式输出样本（例如，仅低温）。为什么会这样？可以考虑以下情形：<br>
-1、生成器学习到它可以通过产生接近南极温度的值来欺骗判别器认为它正在输出实际温度。<br>
-2、判别器通过了解所有澳大利亚温度都是真实的（不是由生成器产生的）而对生成器进行反驳，并且猜测南极温度是真实的还是虚假的，因为它们无法区分。<br>
-3、该生成器切换模式使得产生的值接近澳大利亚的温度来欺骗判别器，放弃南极模式。<br>
-4、判别器现在假设澳大利亚所有的温度都是假的，而南极的温度是真实的。<br>
-5、返回到第1步。<br>
-这种猫捉老鼠的游戏总是重复让人厌烦，生成器也从未被直接激励来覆盖这两种模式。在这种情况下，生成器在生成的样本中将表现出非常差的多样性，这限制了 GAN 的使用。</p>
-</blockquote>
-<p>同时，模型还在Reproducing Kernel Hilbert Space（RKHS）上使用基于核的矩匹配（moment-matching），来使得真实句子和合成句子的经验分布在隐藏特征空间中有匹配的矩。</p>
-<h2 id="textgan-1">TextGAN</h2>
-<p>给定句子语料库 <span class="math inline">\(\mathcal{S}\)</span>，使用类似于特征匹配模式替代标准GAN模型中的目标函数： <span class="math display">\[
-\begin{aligned}
-\mathcal{L}_{D} &amp;=\mathcal{L}_{G A N}-\lambda_{r} \mathcal{L}_{r e c o n}+\lambda_{m} \mathcal{L}_{M M D^{2}} \\
-\mathcal{L}_{G} &amp;=\mathcal{L}_{M M D^{2}} \\
-\mathcal{L}_{G A N} &amp;=\mathbb{E}_{s \sim \mathcal{S}} \log D(s)+\mathbb{E}_{z \sim p_{z}} \log [1-D(G(z))] \\
-\mathcal{L}_{\text {recon }} &amp;=\|\hat{z}-z\|^{2},
-\end{aligned}
-\]</span></p>
-<p>其中判别器最大化 <span class="math inline">\(\mathcal{L}_D\)</span>，生成器最小化 <span class="math inline">\(\mathcal{L}_G\)</span>。 <span class="math inline">\(\mathcal{L}_{GAN}\)</span> 是GAN中标准的目标函数。<span class="math inline">\(\mathcal{L}_{recon}\)</span> 是原始编码和重构的隐藏编码之间的欧氏距离，<span class="math inline">\(z\)</span> 来自先验分布 <span class="math inline">\(p_z(·)\)</span>。<span class="math inline">\(\mathcal{L}_{M M D^{2}}\)</span> 表示生成数据 <span class="math inline">\(\tilde{\boldsymbol{f}}\)</span> 和真实数据句子嵌入 <span class="math inline">\(\boldsymbol{f}\)</span> 经验分布之间的最大平均差（Maximum Mean Discrepancy）。</p>
-<blockquote>
-<p>MMD：maximum mean discrepancy。最大平均差异。最先提出的时候用于双样本的检测（two-sample test）问题，用于判断两个分布p和q是否相同。它的基本假设是：如果对于所有以分布生成的样本空间为输入的函数f，如果两个分布生成的足够多的样本在f上的对应的像的均值都相等，那么那么可以认为这两个分布是同一个分布。现在一般用于度量两个分布之间的相似性。</p>
-</blockquote>
-<p>MMD度量值刻画了样本集合 <span class="math inline">\(\mathcal{X}\)</span> 和 <span class="math inline">\(\mathcal{Y}\)</span> 在Reproducing Kernel Hilbert Space (RKHS)，<span class="math inline">\(\mathcal{H}\)</span> 上关于核函数 <span class="math inline">\(k(\cdot): \mathbb{R}^{d} \times \mathbb{R}^{d} \mapsto \mathbb{R}\)</span> 的差别。用数学公式表示为： <span class="math display">\[
-\begin{aligned}
-\mathcal{L}_{M M D^{2}} &amp;=\left\|\mathbb{E}_{x \sim \mathcal{X}} \phi(x)-\mathbb{E}_{y \sim \mathcal{Y}} \boldsymbol{\phi}(y)\right\|_{\mathcal{H}}^{2} \\
-&amp;=\mathbb{E}_{x \sim \mathcal{X}} \mathbb{E}_{x^{\prime} \sim \mathcal{X}}\left[k\left(x, x^{\prime}\right)\right] \\
-&amp;+\mathbb{E}_{y \sim \mathcal{Y}} \mathbb{E}_{y^{\prime} \sim \mathcal{Y}}\left[k\left(y, y^{\prime}\right)\right]-2 \mathbb{E}_{x \sim \mathcal{X}} \mathbb{E}_{y \sim \mathcal{Y}}[k(x, y)]
-\end{aligned} \tag{4}
-\]</span></p>
-模型框架图如下：
-<center>
-<img src="/2021/03/08/TextGAN/framework.PNG" alt="模型框架图">
-</center>
-<p>在判别器的目标函数中，（1）<span class="math inline">\(\mathcal{L}_{GAN}\)</span> 要求 <span class="math inline">\(\tilde{\boldsymbol{f}}\)</span> 和 <span class="math inline">\(\boldsymbol{f}\)</span> 尽量有区别；（2）<span class="math inline">\(\mathcal{L}_{recon}\)</span>要求 <span class="math inline">\(\tilde{\boldsymbol{f}}\)</span> 和 <span class="math inline">\(\boldsymbol{f}\)</span> 尽量保留用于生成句子的隐藏编码 <span class="math inline">\(z\)</span> 的重构信息；（3）<span class="math inline">\(\mathcal{L}_{MMD^2}\)</span> 要求判别器 <span class="math inline">\(D(\cdot)\)</span> 选择最具有挑战性特征让生成器去匹配。这三个部分时段判别器可以生成有区分度、有代表性、有挑战性的句子特征。</p>
-<p>MMD的使用，使得生成器尽量产生多样性的句子来匹配真实句子的变化，这一定程度上解决了模式崩溃问题。另外，GAN在训练过程中还存在收敛问题，当真实数据和生成数据相距很远时，JS散度只能产生很弱的梯度信号。在 <span class="math inline">\((4)\)</span> 中，本质上是通过高斯核使用了神经网络嵌入来匹配句子 <span class="math inline">\(s\)</span> 和 <span class="math inline">\(\tilde{s}\)</span>。当和函数是共用的时，MMD metric能比较好的解决梯度消失问题。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">论文笔记</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">GAN</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/08/TextGAN/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-GAN-with-Gumbel" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/07/GAN-with-Gumbel/">GAN with Gumbel论文笔记</a>
-    </h1>
-  
-
-        
-        <a href="/2021/03/07/GAN-with-Gumbel/" class="archive-article-date">
-  	<time datetime="2021-03-07T13:59:58.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-07</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <blockquote>
-<p>标题：GANS for Sequences of Discrete Elements with the Gumbel-softmax Distribution<br>
-作者：Matt J. Kusner, José Miguel Hernández-Lobato<br>
-发表：2016</p>
-</blockquote>
-<p>GAN在生成文本等离散元素序列时有着局限性，因为从如多项式这样的离散分布中取样是无法对参数求导的。对此，论文提出了使用Gumbel-softmax分布来对多项式分布作连续的拟合。</p>
-<h2 id="gumbel-softmax分布">Gumbel-softmax分布</h2>
-<p>用one-hot编码的离散数据，可以从以softmax函数输出作为概率的多项式分布中取样得来。对 <span class="math inline">\(d\)</span> 维one-hot编码向量 <span class="math inline">\(\mathbf{y}\)</span>，可以用连续的 <span class="math inline">\(d\)</span> 维向量 <span class="math inline">\(\mathbf{h}\)</span>，通过softmax函数得到表示多项式分布 <span class="math inline">\(\mathbf{y}\)</span> 概率的向量 <span class="math inline">\(\mathbf{p}\)</span>，其中 <span class="math inline">\(p_i = p(y_i = 1),i = 1,...,d.\)</span>，即： <span class="math display">\[\mathbf{p} = softmax(\mathbf{h}) \tag{1}\]</span></p>
-<p>这里softmax(·)使用softmax函数返回一个 <span class="math inline">\(d\)</span> 维向量： <span class="math display">\[
-[\operatorname{softmax}(\mathbf{h})]_{i}=\frac{\exp \left(\mathbf{h}_{i}\right)}{\sum_{j=1}^{K} \exp \left(\mathbf{h}_{j}\right)}, \quad \text { for } \quad i=1, \ldots, d \tag{2}
-\]</span> 可以证明从 <span class="math inline">\((1)\)</span> 中概率表示的多项式中采样 <span class="math inline">\(\mathbf{y}\)</span> 等价于从以下公式中取样 <span class="math inline">\(\mathbf{y}\)</span>： <span class="math display">\[
-\mathbf{y}=\text { one_hot }(\underset{i}{\arg \max }(h_{i}+g_{i})) \tag{3},
-\]</span></p>
-<p>其中 <span class="math inline">\(g_i\)</span> 独立服从 <span class="math inline">\(\mu = 0, \beta = 1\)</span> 的Gumbel分布。</p>
-<p>从 <span class="math inline">\((3)\)</span> 中取得的样本对 <span class="math inline">\(\mathbf{h}\)</span> 的梯度为0，因为 <span class="math inline">\(\text { one_hot }(\underset{i}{\arg \max(·)) }\)</span> 不可微。因此论文提出通过soft-max变换，用一个可微的函数来替换，具体的，使用： <span class="math display">\[ \mathbf{y}=softmax(1/\tau(\mathbf{h}+\mathbf{g})) \tag{4}\]</span></p>
-<p>其中 <span class="math inline">\(\tau\)</span> 是一个inverse temperature参数，当 <span class="math inline">\(\tau \to 0\)</span> 时，由 <span class="math inline">\((4)\)</span> 产生的样本和 <span class="math inline">\((3)\)</span> 有着相同的分布；当 <span class="math inline">\(\tau \to \infty\)</span> 时，样本是从均匀分布中得来；当 <span class="math inline">\(\tau\)</span> 取正值时，由 <span class="math inline">\((4)\)</span> 产生的样本是与 <span class="math inline">\(\mathbf{h}\)</span> 有关的光滑可导的分布。</p>
-<p><span class="math inline">\((4)\)</span> 表示的概率分布就叫做Gumbel-softmax分布，包含参数 <span class="math inline">\(\tau\)</span> 和 <span class="math inline">\(\mathbf{h}\)</span>。用于生成离散数据的GAN模型可以使用该分布进行训练，初始设定较大的 <span class="math inline">\(\tau\)</span> 值，在训练过程中逐步减小到0。</p>
-<h2 id="lstm生成模型">LSTM生成模型</h2>
-<center>
-<img src="/2021/03/07/GAN-with-Gumbel/generator.PNG" alt="生成器">
-</center>
-<center>
-<img src="/2021/03/07/GAN-with-Gumbel/discriminator.PNG" alt="判别器">
-</center>
-<h3 id="使用gumbel-softmax分布">使用Gumbel-softmax分布</h3>
-<p>生成器 <span class="math inline">\(G\)</span> 和判别器 <span class="math inline">\(D\)</span> 都是LSTM网络，分别有参数 <span class="math inline">\(\Theta\)</span> 和 <span class="math inline">\(\Phi\)</span>。训练目标是通过取样输入 <span class="math inline">\(\mathbf{x}\)</span> 和生成的数据 <span class="math inline">\(\mathbf{z}\)</span> 来学习 <span class="math inline">\(G\)</span> 和 <span class="math inline">\(D\)</span>，最小化 <span class="math inline">\(G\)</span> 和 <span class="math inline">\(D\)</span> 的损失函数来更新 <span class="math inline">\(\Theta\)</span> 和 <span class="math inline">\(\Phi\)</span>。但是从softmax分布中取样的数据 <span class="math inline">\(\mathbf{z}\)</span> 是不可导的，也就无法更新参数。在这里使用上文介绍的Gumbel-softmax分布进行替换，就可以使用梯度方法更新参数。</p>
-<h2 id="算法">算法</h2>
-<center>
-<img src="/2021/03/07/GAN-with-Gumbel/algorithm.PNG" alt="算法">
-</center>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">论文笔记</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">GAN</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/07/GAN-with-Gumbel/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-知识图谱综述" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/05/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E7%BB%BC%E8%BF%B0/">知识图谱综述</a>
-    </h1>
-  
-
-        
-        <a href="/2021/03/05/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E7%BB%BC%E8%BF%B0/" class="archive-article-date">
-  	<time datetime="2021-03-05T12:45:38.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-05</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <blockquote>
-<p>最近一周时间都在肝国创论文，因为国创做的东西也比较简单，一时之间不知道论文写些什么，想了想，还是写篇综述吧，<del>水一点好凑字数</del>能够对知识有全局的总结。于是就写了一篇关于知识图谱技术的综述，在这里选取一些有用的内容记录一下。</p>
-</blockquote>
-<h2 id="知识图谱的定义与构成">知识图谱的定义与构成</h2>
-<h3 id="知识图谱的定义">知识图谱的定义</h3>
-<p>知识图谱是结构化的语义知识库，由相互连接的实体以及实体的属性构成，实体与实体的连接即代表了他们之间的关系，形成网状的知识结构，可以有效地描述物理世界中的概念及其相互关系。知识图谱由一条条知识组成，一般采用三元组的形式来描述，所使用的描述语言有RDFS、OWL等。其基本组成单位是“实体-关系-实体”三元组，以及实体及其相关属性-值对。</p>
-<p>从覆盖范围来看，知识图谱可以分为通用知识图谱和领域知识图谱。通用知识图谱覆盖范围较广，注重与通用的常识性知识，强调知识的数量和全面性，主要用于语义搜索，与领域知识图谱相比准确度不高。并且由于其要获取大范围的知识，构建知识图谱时很难建立规范的实体、属性与关系。而领域知识图谱则是面对特定的行业和领域，对内容的专业性与搜索的准确度要求较高。这就需要比较规范的结构，往往会有专业人士参与知识图谱的构建，并且会采用领域内专业而详细的数据，构建出具有丰富实体属性与实体间关系的知识图谱，以适应各种不同的使用场景和业务需求。一般而言，通用知识图谱可以作为领域知识图谱的构建基础，而领域知识图谱在构建完成后也可以融入到通用知识图谱之中，两者分工不同但可以互相促进。</p>
-<h3 id="知识图谱的构成">知识图谱的构成</h3>
-<p>知识图谱由数据层和模式层两个层次构成，在数据层，知识以事实为单位进行存储，以“实体-关系-实体”及“实体-属性-属性值”三元组来表示，形成一个知识图网络。实体通常指一些具体的人名、地名、组织名等事物，关系则代表实体间的语义联系，属性则表示实体到属性值的映射关系，可理解为事物所具有的性质。在数据层之上是模式层，它是知识图谱的概念模型，通常采用本体库来管理，借助定义的规则和公理来对数据层的知识进行约束，从而减少知识库中数据的冗余。以图的形式来描述的话，在模式层，节点就是概念，边就是概念间的联系；在数据层，节点就是实体，边就是实体间的关系或实体的属性。</p>
-<h2 id="知识图谱的构建">知识图谱的构建</h2>
-<p>知识图谱的构建主要有自顶向下和自底向上两种。自顶向下的方法首先要为知识图谱构建好模式层，确定好本体概念和数据模式，这一过程通常需要结构化的知识库来协助或者人工参与。有了模式层的本体后，则可从数据源中抽取出实体填充到相应的本体上作为知识实例，这样抽取的精度相对较高。自底向上的过程则是直接从开放的数据源中抽取出置信度较高的实体、关系和属性作为数据层的知识，将这些知识进行归纳总结后构建出本体，形成模式层。自底向上的学习方式依赖强大的机器学习算法，实现知识图谱的自动化构建。另外还有自顶向下和自底向上相结合的混合模式，这种方法在构建出模式层本体，抽取得到实体、关系、属性后，会利用得到的知识迭代地更新上层的本体，以达到更优的结构和抽取结果。</p>
-<p>不管是采用哪种构建方法，构建知识图谱过程中的主要步骤都不外乎知识抽取、知识融合、知识加工、知识更新这几个部分。</p>
-<h3 id="知识抽取">知识抽取</h3>
-<p>知识抽取是从开放的数据源中利用自动化的技术提取出知识图谱中实体、关系、属性这重要的三个元素。并将抽取得到的内容用事实表示出来，如三元组的形式，形成知识图谱最基础的数据层知识内容。</p>
-<h4 id="实体抽取">实体抽取</h4>
-<p>实体抽取又被称为命名实体识别（named entity recognition），是从文本中提取出命名实体的技术，也是构建知识图谱非常关键的一步。</p>
-<p>最早的实体抽取采用的是基于规则的方法，利用定义好的规则进行实体抽取。虽然基于规则的方法在特定的领域上可以取得很好的效果，但是规则的制定需要消耗大量的人力，简单的规则也无法全面地抽取出实体，显得十分笨重。并且制定的规则往往针对特定领域，可移植性较差。</p>
-<p>接着命名实体抽取转向了基于统计机器学习的方法，基于统计机器学习的方法主要包括：隐马尔可夫模型(HiddenMarkovMode，HMM)、最大熵(MaxmiumEntropy，ME)、支持向量机(Support VectorMachine，SVM)、条件随机场(ConditionalRandom Fields，CRF)等。基于统计机器学习的方法对特征选取的要求较高，需要从文本中得到对训练有帮助的局部特征和全局特征，常见的有形态、本地词汇和句法信息。除了文本中本身所包含的特征，还可以利用外部知识，如人名词典、地名词典等，来提高抽取性能。</p>
-<p>最近深度学习的方法成为研究热点，也被广泛地应用于各个任务，包括实体抽取。在该方法下，使用词向量来表示词语成为主流，词向量可以在统一的向量空间下更好的表示出词语的特征，相较于人工选取特征，效果更好且节省时间。相似的，还有使用字符向量来表示单个字符的，他可以学习到单个字符的前缀后缀等特征，还可以推断未出现过的词汇，作为补充信息。有了向量表示的词汇作为输入，之后采用深度学习模型对其进行编码，如卷积神经网络、循环神经网络（Recurrent Neural Networks）、递归神经网络（Recursive Neural Networks）和最近热门的Deep Transformer。最后实体标签的获取一般采用多层感知机加Softmax或者条件随机场等。</p>
-<h4 id="关系抽取">关系抽取</h4>
-<p>关系抽取，顾名思义就是抽取实体间的语义关系。关系抽取早期也使用基于规则的关系抽取方法，需要运用语言学知识预先构建好实体关系的结构性规则，将预处理的语句片段和模式进行匹配，抽取出关系。</p>
-<p>基于传统机器学习的抽取方法以统计语言模型为基础。其中有基于特征向量的抽取方法，从关系实例中提取出一系列特征向量，以此来建立不同的分类模型。</p>
-<p>最新的有基于深度学习关系抽取方法。可以通过训练大量数据自动获取模型，不需要人工提取特征。</p>
-<h4 id="属性抽取">属性抽取</h4>
-<p>属性抽取是针对实体，抽取出实体的属性和对应的属性值。事实上，属性和关系都可以使用三元组来表示，属性可以看作是实体到属性值的映射关系，与关系的概念类似。所以属性抽取的问题可以转换为关系抽取问题。</p>
-<h3 id="知识融合">知识融合</h3>
-<p>在知识抽取过后，知识图谱数据层将得到许多基础的知识。但是这些知识可能来自于多个数据源，质量难以得到保证，可能会产生知识的重叠和冲突，如果直接使用这些知识构建最终的知识图谱，肯定会因噪声影响检索的效果，是不可行的。所以需要通过一些特定的步骤消除知识中的噪声，统一结构和组织形式，得到更高质量的知识，这就是知识融合。本节将从实体消歧、实体对齐和知识合并这几个方面对知识融合进行综述。</p>
-<h4 id="实体消歧">实体消歧</h4>
-<p>命名实体本身是存在歧义的，一个实体指称项可以对应真实世界的多个实体，比如说“苹果”可能指的是一种水果，也可能指的是一家科技公司。实体消歧旨在解决这类问题，确定命名实体具体指向真实世界的哪个实体。常用的方法可以分为基于聚类的实体消歧和基于实体链接的实体消歧。</p>
-<p>基于聚类的方法思想是将具有相同指向的命名实体聚为一类，不同类指向不同实体以消除歧义。其关键问题就是用何种特征对命名实体进行表示并聚类。</p>
-<p>基于实体链接方法是将给定的实体指称项链接到目标知识库的相应实体上。具体的又分为从知识库中选出候选的实体与实体链接两步。</p>
-<h4 id="实体对齐">实体对齐</h4>
-<p>实体对齐（entity alignment）又可称为实体匹配（entity matching）或实体解析（entity resolution）。在实际生活中，常有多个命名实体指代真实世界的同一个实体，比如说“中国”和“中华人民共和国”。实体对齐就是用于判断这些命名实体是否指向同一客观事物，解决实体不一致性问题</p>
-<p>实体对齐的算法可分为成对实体对齐和集体实体对齐两类。所谓成对实体对齐，是指将实体对齐问题看作是根据实体属性相似度评分判断是否匹配的分类问题。集体对齐又可以分为局部集体实体对齐和全局集体实体对齐，局部集体实体对齐会将与实体相关联的实体属性作为比较计算的一部分，全局集体实体对齐通过不同匹配决策之间的相互影响调整实体间的相似度。</p>
-<h4 id="知识合并">知识合并</h4>
-<p>在构建知识图谱过程中，很重要一部分知识来源是一些结构化数据和第三方知识库，比如说企业或者某些领域的关系型数据库。这些知识符合规范，实用度高，可以作为高质量的知识来源。知识合并就是整合现有的知识库和知识图谱来扩大知识图谱的规模。在实际合并的过程中，由于知识的多样性和异构性，可能会出现知识的重复和冲突，需要进行一定的处理。</p>
-<h3 id="知识加工">知识加工</h3>
-<p>在知识抽取和知识融合后，得到了一些基本的事实表示。但是事实并不等同于知识。想要形成高质量结构化的知识，还要经过知识加工。具体可分为本体构建、知识推理、质量评估三个方面。</p>
-<h4 id="本体构建">本体构建</h4>
-<p>本体是对概念进行建模的规范，是同一领域内的不同主体之间进行交流的语义基础。它整体上呈现树状结构，相邻层之间的节点满足“IsA”的关系，同一层之间的实体属于并列关系。这样清晰的层次结构有助于对概念进行明确是界定。通常来说，本体构建有人工构建和自动化构建的方式。对于一些专业的领域，可以采用专家人工构建本体的方法，会有较高的质量和准确度。但是对于规模较大的知识图谱，采用人工构建的方法会消耗大量人力，因此大多采用从特定领域现有的本体库出发，使用自动化构建技术逐步扩展得到。</p>
-<p>自动化本体构建过程包含实体并列关系相似度计算、实体上下位关系抽取和本体的生成3个阶段。实体并列关系相似度是用于评判两个实体有多大可能性属于同一概念类别。实体上下位关系用来确定概念间的隶属（IsA）关系。本体生成是对各层次的概念进行聚类和语义类的标定。</p>
-<h4 id="知识推理">知识推理</h4>
-<p>知识推理是利用已经得到的知识，通过推理，得到新知识的过程。对于知识图谱，可以对实体、实体间的关系、实体属性以及本体概念的层次结构进行推理，进一步挖掘知识，丰富已有内容。例如由（张三，出生地，北京）可以推断出（张三，国籍，中国）。</p>
-<p>知识推理根据推理类型可分为单步推理和多步推理两大类。每类又包括基于规则的推理、基于分布式表示的推理、基于神经网络的推理以及混合推理。单步推理是指用直接关系即知识图谱中的事实元组进行学习和推理，多步推理是在单步推理建模直接关系的基础上进一步建模间接关系,即多步关系。</p>
-<h4 id="质量评估">质量评估</h4>
-<p>开放域中抽取的知识质量参差不齐，可能会存在错误的事实表示，如错误的实体间关系，错误的实体属性值等。同样的，知识推理得到的知识也不完全可靠。质量评估的目的就是评判知识的可信程度，置信度低的知识会被舍弃以提高知识库的质量。</p>
-<h3 id="知识更新">知识更新</h3>
-<p>知识不是一成不变的，随着时间的推移，人的认知水平、事物本身的变化都会导致知识的变化。为了保证知识库的正确性与实效性，需要对其中的知识定时更新，扩充新的知识，删除已经过时的知识。</p>
-<p>从逻辑上来看，知识更新分为模式层的更新和数据层的更新。模式层的修改包括对本体概念、概念间的关系、概念的属性进行增加、修改、删除。这些操作会涉及到整个知识图谱的架构，往往需要人工的干预来制定规则、消除冲突，实现起来复杂度较高。数据层的更新是对实体、实体间的关系、实体的属性进行更新，这些操作应用于局部，对整体影响较小，可以通过对新的数据源抽取来自动化更新。</p>
-<p>从更新的方式上看，知识更新可分为全量更新和增量更新。全量更新是从头开始，用新的数据源重新抽取知识并构建知识图谱。这种方式想法简单，可以很好的保障知识图谱概念的一致性和结构的完整性，但是更新时间太长，无法保证知识图谱的实效性。增量更新是仅抽取与当前知识图谱相比增加或发生变化的知识，增量地融入到当前知识图谱中。这种方法计算量较小，更新所用时间短，使用于时常变动的知识，能很好保证时效性。但是对于变动的模式层而言，更新的复杂性较高 ，可能需要人工干预。</p>
-<h2 id="问题与挑战">问题与挑战</h2>
-<p>知识图谱自提出至今已经经历了较长时间的发展，并且在各个领域中有了广泛的应用。但这并不是说知识图谱的相关技术已经十分完善，相反，在知识图谱的构建和应用中有许多问题与挑战是我们不能忽视的。</p>
-<p>在知识图谱的知识表示方面，多模态和个性化表示是重要挑战，单纯通过文本符号去理解知识是十分有限的，还需要将多模态（图片、音频、视频）化的认知体验与相应的符号关联，实现大规模的符号连接，并与知识图谱中的实体和概念连接。人的认知也是有主观性的，人多事物的认识和看法往往不同，故要针对不同角色定制不同的知识图谱，考虑到知识图谱的普适性，可以用权重来体现。在知识抽取方面，对结构化和半结构化的知识抽取技术已经比较完善，但是面向开放域的知识抽取的效果却还不尽如人意，抽取到的知识存在较多噪声，在准确率和召回率上有待提高，如何低成本、多粒度、大规模地抽取知识有待研究。在知识融合上，如何在上下文信息受限的情况下正确对实体进行链接、针对多语言实体对齐和消歧仍是一些挑战。知识推理是知识图谱中非常有特色的技术，多跳推理与深度推理是其中的难点。同时人类只需要少量样本学习即可完成知识的推理，如何让计算机像人一样在少样本甚至是零样本下实现推理也是一大挑战。知识图谱的不完整性是其缺陷之一，因此知识图谱是需要不断的更新。而在主流的增量更新过程中，经常需要人工的参与和修正，所以减少人工的参与，使得知识图谱高效自动化的更新是必然目标。</p>
-<p>当前的知识图谱面临着越来越复杂的应用场景，计算机无法使用通用的模型解决不同场景下知识图谱的构建问题。同时在许多应用场景下，如医疗诊断、司法研判，靠简单的堆砌同质化的数据已经无法满足需求，而是需要知识的深度应用，这也就对知识图谱的应用方式提出了更高的要求。深度学习的应用、符号知识的指导，能否通过这些方式实现可解释的人工智能以及知识图谱的透明化应用还是一个问题。</p>
-<blockquote>
-<p>参考文献在这里就不列举了</p>
-</blockquote>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">技术</a>
-        		</li>
-      		 
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">知识图谱</a>
         		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">论文</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">推荐系统</a>
+        		</li>
       		
 		</ul>
 	</div>
@@ -1223,7 +292,7 @@ p(\tilde{s} \mid \boldsymbol{z})=p\left(w^{1} \mid \boldsymbol{z}\right) \prod_{
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2021/03/05/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E7%BB%BC%E8%BF%B0/">展开全文 >></a>
+          <a class="article-more-a" href="/2021/09/30/KGRecPaper2/">展开全文 >></a>
         </p>
       
 
@@ -1253,34 +322,223 @@ p(\tilde{s} \mid \boldsymbol{z})=p\left(w^{1} \mid \boldsymbol{z}\right) \prod_{
 
 
   
-    <article id="post-博客坑" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-KGRecPaper1" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2021/02/25/%E5%8D%9A%E5%AE%A2%E5%9D%91/">写博客遇到的坑</a>
+      <a class="article-title" href="/2021/09/26/KGRecPaper1/">知识图谱推荐系统论文略读(一)</a>
     </h1>
   
 
         
-        <a href="/2021/02/25/%E5%8D%9A%E5%AE%A2%E5%9D%91/" class="archive-article-date">
-  	<time datetime="2021-02-25T07:07:14.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-02-25</time>
+        <a href="/2021/09/26/KGRecPaper1/" class="archive-article-date">
+  	<time datetime="2021-09-26T11:03:37.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-09-26</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>第一篇关于GAN的论文笔记博客磕磕绊绊地写完了。在此期间，不仅论文看得我头疼，初次使用Markdown写文章与部署博客也遇到了许多问题，让我抓耳挠腮，现在做个简单的总结。</p>
-<h2 id="数学公式">数学公式</h2>
-<p>用HEXO搭建的这个博客本身是支持MathJax公式的，但是由于其渲染器设计得有点问题，导致稍微复杂的公式无法正常渲染。之后<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/35988761">更换Markdown引擎</a>解决了该问题。</p>
-<h2 id="插入图片">插入图片</h2>
-<p>在博客中插入图片主要有两种方法，一种是将图片上传到图床，使用图床的链接进行引用，第二种是直接将图片存储在本地，引用时使用本地的链接。虽然前者可能在加载网页时有更快的速度，但是我想着也不会有太多图片，为了简单起见就直接放本地了，<a target="_blank" rel="noopener" href="https://blog.csdn.net/Strong997/article/details/97767929">本地方法</a>需要修改配置，安装插件，插件容易搞错，需要注意。</p>
-<p>在实际插入图片时，Markdown语言不能控制图片的大小和位置，可以采用内嵌HTML标签来实现。</p>
-<h2 id="图片后缀坑">图片后缀（坑）</h2>
-<p>插入图片后在本地预览能够正常显示，但是部署到github上后却一直404找不到文件无法显示，搜索和尝试了几乎所有可能的方法都不管用。到最后发现我使用截图工具得到的图片后缀名是“.PNG”（大写），而引用时使用的是小写后缀名，虽然在本地能够正常引用，github上却是区分的。最后无语凝噎自是不必言说……</p>
+        <p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/67287992">推荐系统中常用的评价指标</a></p>
+<h2 id="mcrec">MCRec</h2>
+<blockquote>
+<p>标题：Leveraging Meta-path based Context for Top-N Recommendation with A Neural Co-Attention Model<br>
+作者：Binbin Hu, Chuan Shi, etc.<br>
+发表：KDD 2018</p>
+</blockquote>
+<p>异质信息网络（HIN）被广泛应用于推荐系统，但是由两个主要的不足：模型很少学习到推荐任务中路径或者元路径的显式表征；模型没有考虑交互中元路径与涉及到的用户-物品对间的相互影响。为此，论文提出了一个带有 co-attention 机制的深度神经网络来利用丰富的基于元路径的上下文来进行 top-N 推荐。</p>
+        
+          <a class="article-more-a" href="/2021/09/26/KGRecPaper1/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">知识图谱</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">论文</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">推荐系统</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/09/26/KGRecPaper1/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-KGRecommender" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/09/23/KGRecommender/">基于知识图谱的推荐系统</a>
+    </h1>
+  
+
+        
+        <a href="/2021/09/23/KGRecommender/" class="archive-article-date">
+  	<time datetime="2021-09-23T01:47:14.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-09-23</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>标题：基于知识图谱的推荐系统研究综述 作者：秦川, 祝恒书等 发表：中国科学：信息科学</p>
+</blockquote>
+<p>推荐系统是一种有效解决信息泛滥的方法。其核心目标是通过分析用户行为、兴趣、需求等信息, 在海量的数据中挖掘用户感兴趣的信息, 如商品、新闻、POI (point of interest) 和试题等。主要可以分为基于内容的推荐算法、基于协同过滤的推荐算法和混合推荐算法。知识图谱作为混合推荐系统中国一类有效的辅助信息，蕴含了推荐系统中对于物品的大量背景信息，以及物品之间的关系，补充了用户与物品交互数据，可以更进一步提升推荐效果。另外，基于知识图谱的推荐方法为构建可解释推荐系统提供了一些新的思路。</p>
+<h3 id="推荐系统">推荐系统</h3>
+<p>推荐系统的形式化定义如下：给定用户集合 <span class="math inline">\(U\)</span>，物品集合 <span class="math inline">\(V\)</span>，并用 <span class="math inline">\(R_{i,j}\)</span> 表示用户 <span class="math inline">\(U_i\)</span> 对 <span class="math inline">\(V_j\)</span> 的喜好程度，<span class="math inline">\(R \in \mathbb{R}^{|U| \times|V|}\)</span>。随后定义一个效用函数 <span class="math inline">\(f: U \times V \rightarrow R\)</span>，则推荐系统所研究的问题是给定任意一个用户 <span class="math inline">\(U_i\)</span>，希望找到其喜好程度最大的物品 <span class="math inline">\(V_k\)</span>，即 <span class="math display">\[\forall U_{i} \in U, \quad V_{k}=\underset{V_{j} \in V}{\arg \max } f\left(U_{i}, V_{j}\right)\]</span> 在真实的推荐场景中 <span class="math inline">\(|U|\)</span> 和 <span class="math inline">\(|V|\)</span> 的量级往往是非常大的，如淘宝网的日活跃用户上千万, 每天在线商品上亿, 但是我们可以观测的 <span class="math inline">\(R\)</span> 却极其稀疏, 因此给研究推荐系统带来了极大的挑战。</p>
+<p>推荐系统中的推荐算法可分为基于内容的推荐算法、基于协同过滤的推荐算法和混合推荐算法3类。</p>
+        
+          <a class="article-more-a" href="/2021/09/23/KGRecommender/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">论文笔记</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">推荐系统</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/09/23/KGRecommender/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-Tinykv-Project3" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/09/16/Tinykv-Project3/">Tinykv Project3 MultiRaft</a>
+    </h1>
+  
+
+        
+        <a href="/2021/09/16/Tinykv-Project3/" class="archive-article-date">
+  	<time datetime="2021-09-16T07:09:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-09-16</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在 Project2 中，我们已经基于Raft构建了一个高可用的键值服务器，但是我们假设的是每个store中都只有一个Region，也就是服务器中总共只有一个raft group，这样的话每个写操作都需要访问同一个Leader，等待命令被提交并串行执行，这样虽然保证了各个节点的数据一致性，但却严重影响了执行效率，无法提供高性能的服务。</p>
+<p>在 Project3 中，我们要实现一个带有平衡调度器的多 Region 键值服务器，每个 Region 代表键在某一个范围内的数据。新的结构如下图所示，具体的操作请求会被判断位于哪一个Region，从而访问对应Raft group中的Leader。这样使得对不同Region的操作可以并发执行，提高了执行效率。</p>
+<center>
+<img src="/2021/09/16/Tinykv-Project3/multiraft.png" alt="MultiRaftKV架构图">
+</center>
+<p>该Project包含了三个部分，分别是：</p>
+<ul>
+<li>在 Raft 算法中实现成员变更和领导人变更</li>
+<li>实现raftstore中的配置更改和region分裂</li>
+<li>引进调度器</li>
+</ul>
+<h2 id="part-a">Part A</h2>
+<p>在这一部分需要实现成员变更和领导人变更的基础raft算法。成员变更，也就是配置更改，可以为raft集群增加或者移除节点；领导人变更用于将Leader转移给其他节点，在调度中很有用。</p>
+<h3 id="领导人变更">领导人变更</h3>
+<p>要实现领导人变更，引入了 <code>MsgTransferLeader</code> 和 <code>MsgTimeoutNow</code> 两类消息类型，在进行领导人转化时，需要在当前领导人上调用 <code>raft.Raft.Step</code> 处理 <code>MsgTransferLeader</code> 消息，而消息中的 <code>from</code> 就是需要转移的目标节点。为了保证能够成功转移领导人并保证数据的一致性不被破坏，当前领导人需要检查目标节点是否有最新的日志，是否符合成为领导人的条件。如果不符合条件，当前领导人会停止接收新的 proposal 请求，并向目标节点发送 <code>MsgAppend</code>，使其日志达到同步的最新状态。符合要求后，当前领导人会向目标节点发送 <code>MsgTimeoutNow</code> 消息，目标节点在收到该消息后会使用更高的 Term 立刻开启一个新的选举，这样将有很大机会成为新的领导人节点。</p>
+<p>对 <code>MsgTransferLeader</code> 消息的处理函数如下，需要判断目标节点状态，日志信息等。 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Raft)</span> <span class="title">handleTransferLeader</span><span class="params">(m pb.Message)</span></span> &#123;</span><br><span class="line">	<span class="comment">// already leader</span></span><br><span class="line">	<span class="keyword">if</span> m.From == r.id &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// under transfering</span></span><br><span class="line">	<span class="keyword">if</span> r.leadTransferee != None &amp;&amp; r.leadTransferee == m.From &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// The transferee dosen&#x27;t exist</span></span><br><span class="line">	<span class="keyword">if</span> _, ok := r.Prs[m.From]; !ok &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	r.leadTransferee = m.From</span><br><span class="line">	r.transferElapsed = <span class="number">0</span></span><br><span class="line">	<span class="comment">// check transferee&#x27;s log</span></span><br><span class="line">	<span class="keyword">if</span> r.Prs[m.From].Match == r.RaftLog.LastIndex() &#123;</span><br><span class="line">		r.sendTimeoutNow(m.From)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		r.sendAppend(m.From)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure> 而对于 <code>MsgTimeoutNow</code> 消息，直接调用 <code>requestElection</code> 发起选举即可。当领导人变更正在进行，即 <code>leadTransferee</code> 不为空时，不处理 <code>MsgPropose</code> 消息。</p>
+<h3 id="成员配置变更">成员配置变更</h3>
+<p>在该系统中没有像 Raft 论文中那样实现一次性添加或移除任意多个节点，而是每次增加或删除一个节点，这样实现起来更加简单。成员变更开始于调用Leader的 <code>raft.RawNode.ProposeConfChange</code>，它会 propose 一个类型为 <code>EntryConfChange</code> 的实体，将 <code>pb.ConfChange</code> 写入实体的 data，当该实体被提交后，通过 <code>RawNode.ApplyConfChange</code> 将该配置应用，然后可以通过 <code>raft.Raft.addNode</code> 和 <code>raft.Raft.removeNode</code> 执行对应的增加或删除节点的操作。</p>
+<p>增加或删除节点的代码如下所示：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// addNode add a new node to raft group</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Raft)</span> <span class="title">addNode</span><span class="params">(id <span class="keyword">uint64</span>)</span></span> &#123;</span><br><span class="line">	<span class="comment">// Your Code Here (3A).</span></span><br><span class="line">	<span class="keyword">if</span> _, ok := r.Prs[id]; ok &#123;</span><br><span class="line">		r.Prs[id] = &amp;Progress&#123;Next:  <span class="number">1</span>&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	r.PendingConfIndex = None</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// removeNode remove a node from raft group</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Raft)</span> <span class="title">removeNode</span><span class="params">(id <span class="keyword">uint64</span>)</span></span> &#123;</span><br><span class="line">	<span class="comment">// Your Code Here (3A).</span></span><br><span class="line">	<span class="keyword">if</span> _, ok := r.Prs[id]; ok &#123;</span><br><span class="line">		<span class="built_in">delete</span>(r.Prs, id)</span><br><span class="line">		<span class="keyword">if</span> r.State == StateLeader &#123;</span><br><span class="line">			r.detectCommit()</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	r.PendingConfIndex = None</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
       
 
@@ -1294,7 +552,7 @@ p(\tilde{s} \mid \boldsymbol{z})=p\left(w^{1} \mid \boldsymbol{z}\right) \prod_{
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">技术</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">TinyKV</a>
         		</li>
       		
 		</ul>
@@ -1304,7 +562,448 @@ p(\tilde{s} \mid \boldsymbol{z})=p\left(w^{1} \mid \boldsymbol{z}\right) \prod_{
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2021/02/25/%E5%8D%9A%E5%AE%A2%E5%9D%91/">展开全文 >></a>
+          <a class="article-more-a" href="/2021/09/16/Tinykv-Project3/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-TinyKV-Project2" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/08/04/TinyKV-Project2/">TinyKV Project2 RaftKV</a>
+    </h1>
+  
+
+        
+        <a href="/2021/08/04/TinyKV-Project2/" class="archive-article-date">
+  	<time datetime="2021-08-04T08:34:53.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-08-04</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>要实现一个分布式的KV数据库，那么保证各数据库中数据的一致性就非常重要了。Project2主要就是使用一致性算法<a target="_blank" rel="noopener" href="https://github.com/maemual/raft-zh_cn/blob/master/raft-zh_cn.md">Raft</a>实现一个高可用的KV server，主要分为三个部分：</p>
+<ul>
+<li>实现基础的Raft算法</li>
+<li>在Raft的基础上构建一个容错的KV server</li>
+<li>支持raftlog的垃圾回收和快照</li>
+</ul>
+<h2 id="part-a">Part A</h2>
+<p>Part A实现基础的raft算法，需要补充的代码位于<code>raft/</code>，这一部分同样可以拆分为三个部分：</p>
+<ul>
+<li>Leader选举</li>
+<li>日志复制</li>
+<li>Raw node接口</li>
+</ul>
+        
+          <a class="article-more-a" href="/2021/08/04/TinyKV-Project2/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">TinyKV</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/08/04/TinyKV-Project2/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-TinyKV-Project1" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/07/04/TinyKV-Project1/">TinyKV Project1 StandaloneKV</a>
+    </h1>
+  
+
+        
+        <a href="/2021/07/04/TinyKV-Project1/" class="archive-article-date">
+  	<time datetime="2021-07-04T08:27:55.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-07-04</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在 <a target="_blank" rel="noopener" href="https://github.com/tidb-incubator/tinykv/blob/course/doc/project1-StandaloneKV.md">Project1</a> 中，需要构建一个单机键值存储的 <a target="_blank" rel="noopener" href="https://grpc.io/docs/guides/">gRPC</a> 服务器，并且支持 column familly(CF)，CF 类似于一个命名空间，不同 CF 中的同名的键是不同的，可以简单的将不同的CF理解成不同的mini databases。</p>
+<h2 id="目标与层次结构">目标与层次结构</h2>
+<p>Project1主要是实现<code>kv</code>中的部分代码来完成单机KV数据库服务器<code>Server</code>。它的层次结构如下图所示：</p>
+<center>
+<img src="/2021/07/04/TinyKV-Project1/server.png" width="40%" alt="Server层次结构">
+</center>
+        
+          <a class="article-more-a" href="/2021/07/04/TinyKV-Project1/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">TinyKV</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">数据库</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/07/04/TinyKV-Project1/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-Pytorch" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/06/17/Pytorch/">Pytorch</a>
+    </h1>
+  
+
+        
+        <a href="/2021/06/17/Pytorch/" class="archive-article-date">
+  	<time datetime="2021-06-17T13:44:48.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-17</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="section">6.17</h2>
+<ul>
+<li>torch.tensor和np.array类似，可以互相转换</li>
+<li>tensor.shape()获取大小，view()修改大小</li>
+<li>broadcasting自动改变维度相加减</li>
+<li>如果要求gradient可以自动建图</li>
+<li>pytorch提供to(device)来确定运行设备</li>
+<li>自动求gradient使用backward()</li>
+<li>torch.nn.Module, 如nn.Linear(d_in, d_out)</li>
+<li>Activation function如nn.ReLU()</li>
+</ul>
+        
+          <a class="article-more-a" href="/2021/06/17/Pytorch/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Pytorch</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/06/17/Pytorch/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-Algorithm" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/06/05/Algorithm/">DBISAlgorithm</a>
+    </h1>
+  
+
+        
+        <a href="/2021/06/05/Algorithm/" class="archive-article-date">
+  	<time datetime="2021-06-04T17:14:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-05</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="剑指offer">6.4 剑指Offer</h2>
+<ul>
+<li>数组中重复的数字（set、原地交换）</li>
+<li>二维数组中的查找（旋转45度类似二叉树，比较排除一行或一列）</li>
+<li>替换空格（遍历添加、原地扩展，反向遍历）</li>
+<li>从尾到头打印链表（递归、辅助栈）</li>
+<li>根据前序遍历和中序遍历重建二叉树（划分左右子树递归处理）</li>
+<li>两个栈实现队列（一个栈负责入队，一个栈负责出队）</li>
+<li>斐波那契数列（a, b）</li>
+<li>青蛙跳台阶，一步或两步（动态规划）</li>
+<li>旋转数组的最小数字（二分法，与首尾元素比较）</li>
+<li>矩阵中的路径组成单词（深度优先搜索+标志+剪枝）</li>
+<li>机器人运动范围，矩阵索引的位数和小于某个数（DFS/BFS）</li>
+<li>剪绳子，整数长度，最大乘积是多少（切成长度为3的等分段）</li>
+<li>二进制数中1的个数（循环移位与1、n&amp;(n-1)）</li>
+</ul>
+        
+          <a class="article-more-a" href="/2021/06/05/Algorithm/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">算法</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/06/05/Algorithm/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-TinyKV" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/05/28/TinyKV/">TinyKV课程基础</a>
+    </h1>
+  
+
+        
+        <a href="/2021/05/28/TinyKV/" class="archive-article-date">
+  	<time datetime="2021-05-28T03:12:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-05-28</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>2021/5/28</p>
+</blockquote>
+<h2 id="overview">Overview</h2>
+<p>TiKV使用Key-Value模型保存数据，并且提供有序遍历方法。可以看做一个按照Key的二进制顺序有序的巨大Map。使用开源的RocksDB作为单机存储引擎</p>
+<h3 id="raft协议">Raft协议</h3>
+<p>Raft协议的每个副本都会处于三种状态之一：Leader、Follower、Candidate</p>
+<ul>
+<li>Leader：所有请求的处理者，接受client的更新请求，本地处理后再同步给多个其他的副本</li>
+<li>Follower：请求的被动更新着，从Leader接受更新请求，让后写入本地日志文件</li>
+<li>Candidate：如果Follower在一定时间内没有收到Leader的心跳，则判断Leader可能已经故障，此时从新启动选主过程，此时副本会变成Candidate状态，直到选主结束</li>
+</ul>
+        
+          <a class="article-more-a" href="/2021/05/28/TinyKV/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">TinyKV</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">数据库</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/05/28/TinyKV/">展开全文 >></a>
         </p>
       
 
@@ -1336,7 +1035,7 @@ p(\tilde{s} \mid \boldsymbol{z})=p\left(w^{1} \mid \boldsymbol{z}\right) \prod_{
   
   
     <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
     </nav>
   
 
@@ -1348,7 +1047,7 @@ p(\tilde{s} \mid \boldsymbol{z})=p\left(w^{1} \mid \boldsymbol{z}\right) \prod_{
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2021 Yunong
+    		&copy; 2022 Yunong
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -1457,6 +1156,14 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">面经</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">论文笔记</a>
               </li>
              
@@ -1465,7 +1172,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">技术</a>
+                <a href="javascript:void(0)" class="js-tag color2">TinyKV</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1481,11 +1188,47 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">知识图谱</a>
+                <a href="javascript:void(0)" class="js-tag color3">技术</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Neo4j</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">知识图谱</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">DBIS打卡</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">java</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Pytorch</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">论文</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">推荐系统</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">增量推荐</a>
               </li>
             
             <div class="clearfix"></div>
@@ -1537,27 +1280,7 @@ MathJax.Hub.Queue(function() {
         <ul class="search-ul">
           
             <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接1</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接2</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接3</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接4</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接5</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接6</a>
+              <a href="https://joycepy.github.io/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>pcy</a>
             </li>
           
         </ul>

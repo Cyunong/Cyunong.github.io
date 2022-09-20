@@ -19,7 +19,7 @@
 <meta property="og:image" content="http://chenyunong.com/2021/03/09/SeqGAN/MC.jpg">
 <meta property="og:image" content="http://chenyunong.com/2021/03/09/SeqGAN/algorithm.PNG">
 <meta property="article:published_time" content="2021-03-09T14:15:02.000Z">
-<meta property="article:modified_time" content="2021-03-09T14:24:33.396Z">
+<meta property="article:modified_time" content="2021-04-02T13:35:19.662Z">
 <meta property="article:author" content="Yunong">
 <meta property="article:tag" content="论文笔记">
 <meta property="article:tag" content="GAN">
@@ -182,6 +182,7 @@
 发表：AAAI 2017</p>
 </blockquote>
 <p>GAN模型在生成由离散 token 组成的句子时，判别器难以将梯度创给生成器更新参数，另外判别器只能评判整个句子，而对于生成句子的一部分，很难平衡当前分数和未来生成的句子的分数。这篇文章提出了 SeqGAN 来解决这些问题。该模型将生成器看成是强化学习中的随机策略，通过直接执行梯度策略（gradient policy）更新来绕过生成器的微分问题。模型使用GAN中判别器对整个句子评判的结果作为强化学习中的奖励信号，并用蒙特卡洛搜索将其传递给中间步的状态动作。</p>
+<a id="more"></a>
 <h2 id="seqgan">SeqGAN</h2>
 <p>序列生成任务定义如下。给定真实世界的一个结构化序列数据集，训练一个以 <span class="math inline">\(\theta\)</span> 为参数的生成模型 <span class="math inline">\(G_{\theta}\)</span> 来生成一个序列 <span class="math inline">\(Y_{1: T}=\left(y_{1}, \ldots, y_{t}, \ldots, y_{T}\right), y_{t} \in \mathcal{Y}\)</span>，其中 <span class="math inline">\(\mathcal{Y}\)</span> 是候选 tokens 的词汇表。论文将该问题视为强化学习任务：在时间步 <span class="math inline">\(t\)</span> ，状态 <span class="math inline">\(s\)</span> 是当前已产生的 tokens <span class="math inline">\((y_{1}, \ldots, y_{t-1})\)</span>，动作 <span class="math inline">\(a\)</span> 是下一个要选择的 token <span class="math inline">\(y_t\)</span>，因此策略模型 <span class="math inline">\(G_{\theta}\left(y_{t} \mid Y_{1: t-1}\right)\)</span> 是随机的，尽管在动作选择后状态的迁移是确定的。</p>
 另外，论文也训练了一个以 <span class="math inline">\(\phi\)</span> 为参数的判别模型 <span class="math inline">\(D_{\phi}\)</span> 来提供改进生成器 <span class="math inline">\(G_{\theta}\)</span> 的指导。<span class="math inline">\(D_{\phi}(Y_{1:T})\)</span> 表示序列 <span class="math inline">\(Y_{1:T}\)</span> 有多大的概率来自真实的序列数据。如下图所示，判别器 <span class="math inline">\(D_{\phi}\)</span> 使用真实序列数据作为正样本，生成器 <span class="math inline">\(G_{\theta}\)</span> 生成的序列作为负样本进行训练。于此同时，生成器 <span class="math inline">\(G_{\theta}\)</span> 依据判别器 <span class="math inline">\(D_{\phi}\)</span> 给出的最终期待奖励值，使用策略梯度和蒙特卡洛搜索进行更新。
@@ -377,7 +378,7 @@ D_{\phi}\left(Y_{1: t}\right) &amp; \text { for } t=T
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2021 Yunong
+    		&copy; 2022 Yunong
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -486,6 +487,14 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">面经</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">论文笔记</a>
               </li>
              
@@ -494,7 +503,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">技术</a>
+                <a href="javascript:void(0)" class="js-tag color2">TinyKV</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -510,11 +519,47 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">知识图谱</a>
+                <a href="javascript:void(0)" class="js-tag color3">技术</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Neo4j</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">知识图谱</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">DBIS打卡</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">java</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Pytorch</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">论文</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">推荐系统</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">增量推荐</a>
               </li>
             
             <div class="clearfix"></div>
@@ -566,27 +611,7 @@ MathJax.Hub.Queue(function() {
         <ul class="search-ul">
           
             <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接1</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接2</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接3</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接4</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接5</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接6</a>
+              <a href="https://joycepy.github.io/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>pcy</a>
             </li>
           
         </ul>

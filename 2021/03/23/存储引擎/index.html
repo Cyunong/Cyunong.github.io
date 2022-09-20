@@ -8,16 +8,16 @@
   <link rel="dns-prefetch" href="http://chenyunong.com">
   <title>存储引擎 | Control Yourself</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="存储引擎是MySQL中重要的一环，其插件式的存储引擎为我们提供了很多选择，MySQL服务器的主要架构图如下：    下面分别介绍一下几个常用的存储引擎的特点 ### MyISAM MySQL 5.5版本以前默认的存储引擎。其主要关注点在于性能，插入速度快、访问速度快。但是非常致命的是它不支持事务、不支持外键。采用的是表级锁，因此也不支持高并发。另外它采用的二进制层次式的文件，在不同操作系统">
+  <meta name="description" content="存储引擎是MySQL中重要的一环，其插件式的存储引擎为我们提供了很多选择，MySQL服务器的主要架构图如下：    下面分别介绍一下几个常用的存储引擎的特点">
 <meta property="og:type" content="article">
 <meta property="og:title" content="存储引擎">
 <meta property="og:url" content="http://chenyunong.com/2021/03/23/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/index.html">
 <meta property="og:site_name" content="Control Yourself">
-<meta property="og:description" content="存储引擎是MySQL中重要的一环，其插件式的存储引擎为我们提供了很多选择，MySQL服务器的主要架构图如下：    下面分别介绍一下几个常用的存储引擎的特点 ### MyISAM MySQL 5.5版本以前默认的存储引擎。其主要关注点在于性能，插入速度快、访问速度快。但是非常致命的是它不支持事务、不支持外键。采用的是表级锁，因此也不支持高并发。另外它采用的二进制层次式的文件，在不同操作系统">
+<meta property="og:description" content="存储引擎是MySQL中重要的一环，其插件式的存储引擎为我们提供了很多选择，MySQL服务器的主要架构图如下：    下面分别介绍一下几个常用的存储引擎的特点">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://chenyunong.com/2021/03/23/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/mysql.png">
 <meta property="article:published_time" content="2021-03-23T15:16:26.000Z">
-<meta property="article:modified_time" content="2021-03-23T15:21:49.108Z">
+<meta property="article:modified_time" content="2021-04-02T13:36:02.809Z">
 <meta property="article:author" content="Yunong">
 <meta property="article:tag" content="数据库">
 <meta property="article:tag" content="MySQL">
@@ -178,7 +178,7 @@
 <center>
 <img src="/2021/03/23/%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/mysql.png" width="60%" alt="MySQL架构">
 </center>
-<p>下面分别介绍一下几个常用的存储引擎的特点 ### MyISAM MySQL 5.5版本以前默认的存储引擎。其主要关注点在于性能，插入速度快、访问速度快。但是非常致命的是它不支持事务、不支持外键。采用的是表级锁，因此也不支持高并发。另外它采用的二进制层次式的文件，在不同操作系统间移植比较方便。</p>
+<p>下面分别介绍一下几个常用的存储引擎的特点 <a id="more"></a> ### MyISAM MySQL 5.5版本以前默认的存储引擎。其主要关注点在于性能，插入速度快、访问速度快。但是非常致命的是它不支持事务、不支持外键。采用的是表级锁，因此也不支持高并发。另外它采用的二进制层次式的文件，在不同操作系统间移植比较方便。</p>
 <h3 id="innodb">InnoDB</h3>
 <p>目前MySQL默认的存储引擎，支持事务、外键约束，采用行级锁，支持高并发。有独立的缓冲池，可以缓冲数据和索引。可以说是一个有着很多特性，均衡发展的存储引擎。但是插入查询速度比MyISAM而言较慢。</p>
 <h3 id="memory">Memory</h3>
@@ -326,7 +326,7 @@
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2021 Yunong
+    		&copy; 2022 Yunong
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -435,6 +435,14 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">面经</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">论文笔记</a>
               </li>
              
@@ -443,7 +451,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">技术</a>
+                <a href="javascript:void(0)" class="js-tag color2">TinyKV</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -459,11 +467,47 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">知识图谱</a>
+                <a href="javascript:void(0)" class="js-tag color3">技术</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Neo4j</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">知识图谱</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">DBIS打卡</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">java</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Pytorch</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">论文</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">推荐系统</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">增量推荐</a>
               </li>
             
             <div class="clearfix"></div>
@@ -515,27 +559,7 @@ MathJax.Hub.Queue(function() {
         <ul class="search-ul">
           
             <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接1</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接2</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接3</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接4</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接5</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接6</a>
+              <a href="https://joycepy.github.io/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>pcy</a>
             </li>
           
         </ul>

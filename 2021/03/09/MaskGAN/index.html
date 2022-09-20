@@ -17,7 +17,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://chenyunong.com/2021/03/09/MaskGAN/generator.PNG">
 <meta property="article:published_time" content="2021-03-09T14:15:21.000Z">
-<meta property="article:modified_time" content="2021-03-09T14:19:24.764Z">
+<meta property="article:modified_time" content="2021-04-02T13:34:54.082Z">
 <meta property="article:author" content="Yunong">
 <meta property="article:tag" content="论文笔记">
 <meta property="article:tag" content="GAN">
@@ -180,6 +180,7 @@
 发表：ICLR 2018</p>
 </blockquote>
 <p>文本生成的神经模型常常是自回归语言模型或者seq2seq模型，这些模型通过序列采样单词生成文本，每个词的生成受之前产生词的影响。虽然这些方法在一些 benchmark 上有比较好的结果，比较适合优化 perplexity，但常会因为前段序列产生了训练数据中未出现过的单词而导致错误累计（exposure bias），产生很差的结果。而 GAN 模型解决了以上问题却对离散数据生成有着难以计算梯度的问题，因此论文提出了一个 actor-critic conditional GAN，MaskGAN，通过周围的语境填充缺失的文本进行训练，在条件和非条件的 text samples 中有着很好的效果。</p>
+<a id="more"></a>
 <h2 id="maskgan">MaskGAN</h2>
 <p>用 <span class="math inline">\((x_t,y_t)\)</span> 表示输入和目标 tokens 对，&lt; m &gt; 表示用于遮住的 token（替代原 token），<span class="math inline">\(\hat{x_t}\)</span> 表示被遮住的原始的 token，<span class="math inline">\(\tilde{x_t}\)</span>表示填写的 token，它会被传递给判别器来判断真假。</p>
 <p>填写缺失的 tokens 需要结合之前和之后的信息，为此选择了 seq2seq 架构。生成器由编码模型和解码模型构成。对于一个离散的序列 <span class="math inline">\(\boldsymbol{x}=\left(x_{1}, \cdots, x_{T}\right)\)</span>，会随机或确定地生成一个相同长度的二元 mask，<span class="math inline">\(\boldsymbol{m}=\left(m_{1}, \cdots, m_{T}\right)\)</span>，其中 <span class="math inline">\(m_t \in \{0,1\}\)</span>，用于选择保留哪些 tokens。编码器会读入遮住后的序列，表示为 <span class="math inline">\(\boldsymbol{m}(\boldsymbol{x})\)</span>。</p>
@@ -350,7 +351,7 @@ r_{t} \equiv \log D_{\phi}\left(\tilde{x}_{t} \mid \tilde{x}_{0: T}, \boldsymbol
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2021 Yunong
+    		&copy; 2022 Yunong
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -459,6 +460,14 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">算法</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">面经</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">论文笔记</a>
               </li>
              
@@ -467,7 +476,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">技术</a>
+                <a href="javascript:void(0)" class="js-tag color2">TinyKV</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -483,11 +492,47 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">知识图谱</a>
+                <a href="javascript:void(0)" class="js-tag color3">技术</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Neo4j</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">知识图谱</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">DBIS打卡</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">java</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">操作系统</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机网络</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Pytorch</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">论文</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">推荐系统</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">增量推荐</a>
               </li>
             
             <div class="clearfix"></div>
@@ -539,27 +584,7 @@ MathJax.Hub.Queue(function() {
         <ul class="search-ul">
           
             <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接1</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接2</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接3</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接4</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接5</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接6</a>
+              <a href="https://joycepy.github.io/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>pcy</a>
             </li>
           
         </ul>
